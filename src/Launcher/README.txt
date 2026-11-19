@@ -27,12 +27,3 @@ gamepath.txt                           game folder chosen in the installer
 requests.log                           requests made by the game (useful if something fails)
 uninstall.exe                          uninstaller (also in Settings > Apps)
 
------------------------------------------------------------------------------
-ESPAÑOL
------------------------------------------------------------------------------
-Abre "Fractured Space Bootstrapper Offline" (menú Inicio, escritorio o búscalo).
-Arranca un servidor local y abre el juego sin conexión, en pantalla completa en
-ventana a la resolución de tu pantalla. Para jugar contra bots:
-Play -> Training -> Solo vs AI.
-La cuenta es una cuenta grabada y el progreso no se guarda; tienda y
-multijugador no funcionan. Desinstalar: Configuración > Aplicaciones.

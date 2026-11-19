@@ -9,7 +9,7 @@ New-Item -ItemType Directory -Force $dist, $obj | Out-Null
 
 $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 if (-not (Test-Path $csc)) { $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe' }
-if (-not (Test-Path $csc)) { throw 'No se encuentra csc.exe (.NET Framework 4.x)' }
+if (-not (Test-Path $csc)) { throw 'csc.exe (.NET Framework 4.x) not found' }
 
 # --- Icon (generated, multi-size PNG .ico) ---
 $ico = Join-Path $root 'assets\app.ico'
@@ -57,7 +57,7 @@ $refs = '/r:System.dll', '/r:System.Core.dll', '/r:System.Drawing.dll', '/r:Syst
 # --- Launcher ---
 $launcher = Join-Path $obj 'launcher.exe'
 & $csc /nologo /target:winexe /optimize+ "/out:$launcher" "/win32icon:$ico" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs')
-if ($LASTEXITCODE -ne 0) { throw 'Error compilando el launcher' }
+if ($LASTEXITCODE -ne 0) { throw 'Launcher build failed' }
 
 # --- Installer (embeds launcher + data + client patch) ---
 $patchRes = Get-ChildItem (Join-Path $root 'patch') -File | ForEach-Object { "/resource:$($_.FullName),patch/$($_.Name)" }
@@ -68,6 +68,6 @@ $setup = Join-Path $dist 'FracturedSpaceOfflineSetup.exe'
     "/resource:$(Join-Path $root 'LICENSE'),LICENSE" `
     "/resource:$(Join-Path $root 'src\Launcher\README.txt'),README.txt" `
     (Join-Path $root 'src\Installer\Installer.cs')
-if ($LASTEXITCODE -ne 0) { throw 'Error compilando el instalador' }
+if ($LASTEXITCODE -ne 0) { throw 'Installer build failed' }
 
 Get-Item $setup | Select-Object FullName, Length
