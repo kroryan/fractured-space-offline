@@ -15,11 +15,13 @@ $gameMode = 'spacegame.SinglePlayerLobbyGameMode'
 $expectedClass = "Game class is 'SinglePlayerLobbyGameMode'"
 $expectedState = $null
 if ($CoopMode) {
+    $map = '/Game/Maps/ActionConquest/Map_ActionConquest_A3_B6'
     $gameMode = '/Game/Blueprints/GameModes/BP_ConquestGameMode_Coop.BP_ConquestGameMode_Coop_C'
     $expectedClass = "Game class is 'BP_ConquestGameMode_Coop_C'"
     $expectedState = 'Match State Changed from WaitingToStart to InProgress'
 }
-$args = @('/Game/Maps/Lobby?game=' + $gameMode, '-nullrhi', '-unattended', '-log',
+$map = if ($map) { $map } else { '/Game/Maps/Lobby' }
+$args = @($map + '?game=' + $gameMode, '-nullrhi', '-unattended', '-log',
           "-abslog=$log", '-port=17777', '-multihome=127.0.0.1')
 $p = Start-Process -FilePath $server -ArgumentList $args -WorkingDirectory $bin -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput $out -RedirectStandardError $err
@@ -31,8 +33,10 @@ try {
         if (Test-Path $log) {
             $text = Get-Content $log -Raw -ErrorAction SilentlyContinue
             $readyMarker = $CoopMode -or $text -match 'lobby_ready'
+            $managerOk = -not $CoopMode -or $text -notmatch 'CommunicationManager blueprint not found in level'
             if ($readyMarker -and $text -match [regex]::Escape($expectedClass) -and
                 $text -match 'IpNetDriver listening on port 17777' -and
+                $managerOk -and
                 (-not $expectedState -or $text -match [regex]::Escape($expectedState))) {
                 $ready = $true; break
             }

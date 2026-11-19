@@ -96,6 +96,8 @@ static class ServerWrapper
         if (host)
         {
             if (list.Count > 0 && !list[0].StartsWith("-"))
+                list[0] = Regex.Replace(list[0], @"^[^?]+", "/Game/Maps/ActionConquest/Map_ActionConquest_A3_B6");
+            if (list.Count > 0 && !list[0].StartsWith("-"))
                 list[0] = Regex.Replace(list[0], @"(?i)(\?game=)[^?&]+", "$1/Game/Blueprints/GameModes/BP_ConquestGameMode_Coop.BP_ConquestGameMode_Coop_C");
             string extra = Environment.GetEnvironmentVariable("FSO_SERVER_URL_EXTRA") ?? "";
             if (extra.Length > 0 && list.Count > 0 && !list[0].StartsWith("-")) list[0] += extra;
