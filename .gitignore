@@ -1,0 +1,5 @@
+dist/
+obj/
+*.log
+__pycache__/
+

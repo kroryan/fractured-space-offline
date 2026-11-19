@@ -1,0 +1,28 @@
+FRACTURED SPACE BOOTSTRAPPER OFFLINE
+====================================
+
+Cómo jugar
+----------
+Abre "Fractured Space Bootstrapper Offline" (menú Inicio, escritorio o búscalo).
+- Arranca un servidor local integrado (emulador de Fireline) en http://127.0.0.1:8080
+- Abre el juego conectado a ese servidor (sin Discord ni internet)
+- Al cerrar el juego, el lanzador se cierra solo
+
+Para jugar contra bots: Play -> Training -> Solo vs AI.
+
+Limitaciones
+------------
+- La cuenta es una cuenta grabada del servidor oficial (no tu progreso online).
+- El progreso NO se guarda: el servidor local siempre responde lo mismo.
+- Tienda, compras y multijugador no funcionan en este modo.
+- Para jugar online usa el Fractured Space Bootstrapper de la comunidad (con Discord).
+
+Archivos
+--------
+FracturedSpaceBootstrapperOffline.exe  lanzador + servidor local
+responses.json                         respuestas grabadas del servidor oficial
+gamepath.txt                           carpeta del juego elegida en el instalador
+requests.log                           peticiones del juego (útil si algo falla)
+uninstall.exe                          desinstalador (también en Configuración > Aplicaciones)
+
+Proyecto: https://github.com/kroryan/fractured-space-offline
