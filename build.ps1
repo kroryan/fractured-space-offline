@@ -1,4 +1,4 @@
-﻿# Builds dist\FracturedSpaceOfflineSetup.exe using the C# compiler that ships with Windows
+# Builds dist\FracturedSpaceOfflineSetup.exe using the C# compiler that ships with Windows
 # (.NET Framework 4.x). No extra tools needed.
 #   powershell -ExecutionPolicy Bypass -File build.ps1
 $ErrorActionPreference = 'Stop'
@@ -56,14 +56,20 @@ $refs = '/r:System.dll', '/r:System.Core.dll', '/r:System.Drawing.dll', '/r:Syst
 
 # --- Launcher ---
 $launcher = Join-Path $obj 'launcher.exe'
-& $csc /nologo /target:winexe /optimize+ "/out:$launcher" "/win32icon:$ico" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs')
+& $csc /nologo /target:winexe /optimize+ "/out:$launcher" "/win32icon:$ico" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs') (Join-Path $root 'src\Launcher\CoopAdmission.cs') (Join-Path $root 'src\Launcher\UdpRelay.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Launcher build failed' }
+
+# --- Dedicated server wrapper (installed beside the original spserver.exe) ---
+$wrapper = Join-Path $obj 'spserver-wrapper.exe'
+& $csc /nologo /target:exe /optimize+ "/out:$wrapper" $refs (Join-Path $root 'src\ServerWrapper\ServerWrapper.cs')
+if ($LASTEXITCODE -ne 0) { throw 'Server wrapper build failed' }
 
 # --- Installer (embeds launcher + data + client patch) ---
 $patchRes = Get-ChildItem (Join-Path $root 'patch') -File | ForEach-Object { "/resource:$($_.FullName),patch/$($_.Name)" }
 $setup = Join-Path $dist 'FracturedSpaceOfflineSetup.exe'
 & $csc /nologo /target:winexe /optimize+ "/out:$setup" "/win32icon:$ico" $refs `
     "/resource:$launcher,launcher.exe" $patchRes `
+    "/resource:$wrapper,spserver-wrapper.exe" `
     "/resource:$(Join-Path $root 'server\responses.json'),responses.json" `
     "/resource:$(Join-Path $root 'LICENSE'),LICENSE" `
     "/resource:$(Join-Path $root 'src\Launcher\README.txt'),README.txt" `

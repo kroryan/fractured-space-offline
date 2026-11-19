@@ -13,12 +13,15 @@ Only needs Python 3.7+ (standard library). Environment overrides:
   FSO_PORT       local server port (default 8080)
 """
 import glob
+import base64
 import hashlib
 import http.server
+import ipaddress
 import json
 import os
 import re
 import shutil
+import socket
 import socketserver
 import subprocess
 import sys
@@ -36,8 +39,11 @@ STATE_DIR = os.path.join(os.environ.get("XDG_DATA_HOME", os.path.expanduser("~/.
 LOG = os.path.join(STATE_DIR, "requests.log")
 PORT = int(os.environ.get("FSO_PORT", "8080"))
 PREFIX = "https://api.fireteam.net/"
+RECORDED_IDENTITY = "197a97fc-4179-43f4-b009-9432ac0c8e53"
+ACTIVE_IDENTITY = os.environ.get("FSO_PLAYER_ID", RECORDED_IDENTITY)
 GAME_EXE_REL = "spacegame/Binaries/Win64/Fractured Space.exe"
 BACKUP_DIR = "fractured-offline-backup"
+SERVER_EXE_REL = "spacegame/Binaries/Win64/spserver.exe"
 PATCH_LEVEL = 30
 
 PATCH = [
@@ -79,6 +85,209 @@ def fail(msg):
             except OSError:
                 pass
     sys.exit(1)
+
+
+def choose_mode():
+    """Remember and present the launcher start screen using desktop-native dialogs."""
+    state = os.path.join(STATE_DIR, "launcher-mode")
+    try:
+        with open(state, encoding="utf-8") as fh:
+            last = fh.read().strip()
+    except OSError:
+        last = "solo"
+    labels = ["Play solo vs bots", "Create co-op game", "Join co-op game"]
+    if shutil.which("zenity"):
+        try:
+            p = subprocess.run(["zenity", "--list", "--radiolist", "--title=" + APP,
+                                "--text=Choose a game mode", "--column=", "--column=Mode",
+                                "TRUE" if last == "solo" else "FALSE", labels[0],
+                                "TRUE" if last == "host" else "FALSE", labels[1],
+                                "TRUE" if last == "join" else "FALSE", labels[2]],
+                               capture_output=True, text=True)
+            if p.returncode:
+                return None
+            mode = {labels[0]: "solo", labels[1]: "host", labels[2]: "join"}.get(p.stdout.strip())
+        except OSError:
+            mode = "solo"
+    elif shutil.which("kdialog"):
+        p = subprocess.run(["kdialog", "--title", APP, "--radiolist", "Choose a game mode",
+                            labels[0], "solo", "on" if last == "solo" else "off",
+                            labels[1], "host", "on" if last == "host" else "off",
+                            labels[2], "join", "on" if last == "join" else "off"], capture_output=True, text=True)
+        if p.returncode:
+            return None
+        mode = p.stdout.strip()
+    else:
+        log("No zenity/kdialog found; defaulting to solo mode.")
+        return "solo"
+    if mode:
+        os.makedirs(STATE_DIR, exist_ok=True)
+        with open(state, "w", encoding="utf-8") as fh:
+            fh.write(mode)
+    if mode == "join":
+        if shutil.which("zenity"):
+            p = subprocess.run(["zenity", "--entry", "--title=" + APP, "--text=Host IP address"], capture_output=True, text=True)
+            if p.returncode:
+                return None
+            os.environ["FSO_COOP_HOST"] = p.stdout.strip()
+        elif shutil.which("kdialog"):
+            p = subprocess.run(["kdialog", "--title", APP, "--inputbox", "Host IP address"], capture_output=True, text=True)
+            if p.returncode:
+                return None
+            os.environ["FSO_COOP_HOST"] = p.stdout.strip()
+        else:
+            fail("Install zenity or kdialog to enter the host IP.")
+    if mode == "host":
+        addresses = local_ipv4_addresses()
+        if addresses and shutil.which("zenity"):
+            p = subprocess.run(["zenity", "--list", "--radiolist", "--title=" + APP,
+                                "--text=Choose the address guests will connect to", "--column=", "--column=Address",
+                                *sum((["TRUE" if i == 0 else "FALSE", a] for i, a in enumerate(addresses)), [])],
+                               capture_output=True, text=True)
+            if p.returncode: return None
+            os.environ["FSO_BIND_HOST"] = p.stdout.strip().split()[0]
+        elif addresses:
+            os.environ["FSO_BIND_HOST"] = addresses[0].split()[0]
+        if shutil.which("zenity"):
+            same = subprocess.run(["zenity", "--question", "--title=" + APP,
+                                   "--text=Should human players be on the same team?" ]).returncode == 0
+            os.environ["FSO_SAME_TEAM"] = "1" if same else "0"
+        elif shutil.which("kdialog"):
+            same = subprocess.run(["kdialog", "--yesno", "Should human players be on the same team?", "--title", APP]).returncode == 0
+            os.environ["FSO_SAME_TEAM"] = "1" if same else "0"
+    return mode
+
+
+def local_ipv4_addresses():
+    """Return local IPv4 interfaces with VPN adapters ordered before LAN."""
+    try:
+        out = subprocess.run(["ip", "-o", "-4", "addr", "show", "scope", "global"],
+                             capture_output=True, text=True, timeout=5).stdout
+    except (OSError, subprocess.SubprocessError):
+        return []
+    items = []
+    for line in out.splitlines():
+        m = re.search(r"\d+:\s+([^ ]+)\s+inet\s+(\d+\.\d+\.\d+\.\d+)", line)
+        if not m: continue
+        name, ip = m.groups()
+        vpn = name.lower().startswith(("tailscale", "zt", "ham", "radmin"))
+        try:
+            addr = ipaddress.ip_address(ip)
+            vpn = vpn or addr in ipaddress.ip_network("100.64.0.0/10") or addr in ipaddress.ip_network("25.0.0.0/8") or addr in ipaddress.ip_network("26.0.0.0/8") or addr in ipaddress.ip_network("192.168.191.0/24") or addr in ipaddress.ip_network("192.168.192.0/24") or addr in ipaddress.ip_network("10.147.0.0/16")
+        except ValueError:
+            pass
+        items.append((0 if vpn else 1, name, ip))
+    items.sort()
+    return ["%s  (%s)" % (ip, name) for _, name, ip in items]
+
+
+class AdmissionServer:
+    """TCP join-only service. It has no remote account or server admin API."""
+    def __init__(self, state_file):
+        self.state_file = state_file
+        try:
+            with open(state_file, encoding="utf-8") as fh:
+                self.guests = json.load(fh)
+        except (OSError, ValueError):
+            self.guests = {}
+        self.allowed = set()
+        self.lock = threading.Lock()
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((os.environ.get("FSO_BIND_HOST", "0.0.0.0"), 8090)); self.sock.listen(16); self.sock.settimeout(1)
+        self.running = True
+        threading.Thread(target=self._serve, daemon=True).start()
+
+    def _approval(self, peer):
+        msg = "Player %s requests to join. Accept?" % peer
+        try:
+            if shutil.which("zenity"):
+                return subprocess.run(["zenity", "--question", "--title=" + APP, "--text=" + msg]).returncode == 0
+            if shutil.which("kdialog"):
+                return subprocess.run(["kdialog", "--yesno", msg, "--title", APP]).returncode == 0
+        except OSError:
+            pass
+        return False
+
+    def _serve(self):
+        while self.running:
+            try: conn, addr = self.sock.accept()
+            except socket.timeout: continue
+            except OSError: return
+            threading.Thread(target=self._handle, args=(conn, addr), daemon=True).start()
+
+    def _handle(self, conn, addr):
+        with conn:
+            try:
+                conn.settimeout(30)
+                raw = conn.makefile("rb").readline(4097)
+                if len(raw) > 4096: return
+                req = json.loads(raw.decode("utf-8"))
+                if req.get("op") != "join": return
+                prior = req.get("id", "")
+                with self.lock: ident = self.guests.get(prior)
+                peer = addr[0]
+                if not ident and not self._approval(peer):
+                    conn.sendall(b'{"status":"rejected","id":""}\n'); return
+                ident = ident or str(__import__("uuid").uuid4())
+                with self.lock:
+                    self.guests[ident] = ident; self.allowed.add(peer)
+                    os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
+                    with open(self.state_file, "w", encoding="utf-8") as fh: json.dump(self.guests, fh)
+                conn.sendall((json.dumps({"status":"accepted", "id":ident}) + "\n").encode())
+            except Exception as exc:
+                log("Join request error: %s" % exc)
+
+    def is_allowed(self, peer):
+        with self.lock: return peer in self.allowed
+
+    def close(self):
+        self.running = False
+        try: self.sock.close()
+        except OSError: pass
+
+
+class UdpRelay:
+    def __init__(self, admission):
+        self.admission = admission
+        self.routes = {}; self.lock = threading.Lock(); self.running = True
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind((os.environ.get("FSO_BIND_HOST", "0.0.0.0"), 7777)); self.sock.settimeout(1)
+        threading.Thread(target=self._serve, daemon=True).start()
+
+    def _serve(self):
+        while self.running:
+            try: data, addr = self.sock.recvfrom(65535)
+            except socket.timeout: continue
+            except OSError: return
+            if not self.admission.is_allowed(addr[0]): continue
+            with self.lock:
+                upstream = self.routes.get(addr)
+                if upstream is None:
+                    upstream = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    upstream.bind(("0.0.0.0", 0)); upstream.settimeout(1)
+                    self.routes[addr] = upstream
+                    threading.Thread(target=self._upstream, args=(upstream, addr), daemon=True).start()
+            try: upstream.sendto(data, ("127.0.0.1", 7777))
+            except OSError: pass
+
+    def _upstream(self, upstream, peer):
+        while self.running:
+            try: data, _ = upstream.recvfrom(65535)
+            except socket.timeout: continue
+            except OSError: return
+            try: self.sock.sendto(data, peer)
+            except OSError: return
+
+    def close(self):
+        self.running = False
+        try: self.sock.close()
+        except OSError: pass
+        with self.lock:
+            for upstream in self.routes.values():
+                try: upstream.close()
+                except OSError: pass
+            self.routes.clear()
 
 
 # ---------------------------------------------------------------- Steam / game
@@ -200,6 +409,18 @@ def patch_game(game):
         log("  patched " + src)
     with open(os.path.join(game, "bootlegger.json"), "w") as fh:
         fh.write('{"version":%d,"status":"ok"}' % PATCH_LEVEL)
+    wrapper_src = os.path.join(DATA_DIR, "spserver-wrapper.exe")
+    server = os.path.join(game, SERVER_EXE_REL)
+    if os.path.isfile(wrapper_src) and os.path.isfile(server):
+        server_dir = os.path.dirname(server)
+        original = os.path.join(server_dir, "spserver_original.exe")
+        saved = os.path.join(backup, SERVER_EXE_REL)
+        if not os.path.isfile(original):
+            os.makedirs(os.path.dirname(saved), exist_ok=True)
+            if not os.path.isfile(saved): shutil.copy2(server, saved)
+            shutil.copy2(server, original)
+        shutil.copy2(wrapper_src, server)
+        log("Installed co-op server wrapper (original backed up).")
     log("Patch OK (level %d)" % PATCH_LEVEL)
 
 
@@ -284,6 +505,18 @@ class Handler(http.server.BaseHTTPRequestHandler):
             item = CANNED.get((self.command, path)) or BY_PATH.get(path)
             if item:
                 status, payload = item
+                if ACTIVE_IDENTITY != RECORDED_IDENTITY:
+                    text = payload.decode("utf-8", "replace").replace(RECORDED_IDENTITY, ACTIVE_IDENTITY)
+                    def rewrite_jwt(match):
+                        try:
+                            part = match.group(1)
+                            part += "=" * ((4 - len(part) % 4) % 4)
+                            decoded = base64.urlsafe_b64decode(part.encode()).decode().replace(RECORDED_IDENTITY, ACTIVE_IDENTITY)
+                            return "eyJhbGciOiJIUzI1NiJ9." + base64.urlsafe_b64encode(decoded.encode()).decode().rstrip("=") + "."
+                        except Exception:
+                            return match.group(0)
+                    text = re.sub(r"eyJhbGciOiJIUzI1NiJ9\.([A-Za-z0-9_-]+)\.", rewrite_jwt, text)
+                    payload = text.encode("utf-8")
                 log("hit  %s /%s" % (self.command, path))
             else:
                 status, payload = 200, b"{}"
@@ -333,6 +566,37 @@ def main():
         while True:
             time.sleep(3600)
 
+    mode = choose_mode()
+    if mode is None:
+        return
+    if mode != "solo" and not os.path.isfile(os.path.join(DATA_DIR, "spserver-wrapper.exe")):
+        fail("This AppImage was built without spserver-wrapper.exe. Rebuild it with build.ps1 on Windows to enable co-op.")
+    identity_file = os.path.join(STATE_DIR, "player-id")
+    player_id = ""
+    try:
+        with open(identity_file, encoding="utf-8") as fh: player_id = fh.read().strip()
+    except OSError:
+        pass
+    admission = relay = None
+    if mode == "host":
+        admission = AdmissionServer(os.path.join(STATE_DIR, "approved-guests.json"))
+        try: relay = UdpRelay(admission)
+        except OSError as e:
+            admission.close(); fail("Could not open UDP 7777 for co-op: %s" % e)
+        log("Co-op admission listening on TCP 8090; approved UDP relay on 7777")
+    elif mode == "join":
+        try:
+            with socket.create_connection((os.environ["FSO_COOP_HOST"], 8090), timeout=120) as client:
+                client.sendall((json.dumps({"op":"join", "id":player_id}) + "\n").encode())
+                response = json.loads(client.makefile("rb").readline().decode())
+            if response.get("status") != "accepted": fail("The host rejected the join request.")
+            player_id = response["id"]
+            with open(identity_file, "w", encoding="utf-8") as fh: fh.write(player_id)
+        except Exception as e:
+            fail("Could not join host on TCP 8090:\n%s" % e)
+    global ACTIVE_IDENTITY
+    ACTIVE_IDENTITY = player_id or RECORDED_IDENTITY
+
     roots = steam_roots()
     game, lib = find_game(roots)
     if not game:
@@ -371,21 +635,59 @@ def main():
         "SteamAppId": APPID,
         "SteamGameId": APPID,
         "OPENSSL_ia32cap": ":~0x20000000",
+        "FSO_PLAYER_ID": player_id or RECORDED_IDENTITY,
     })
+    if mode == "host":
+        env["FSO_COOP_MODE"] = "host"
+        env["FSO_SERVER_URL_EXTRA"] = "?coop=" + os.environ.get("FSO_SAME_TEAM", "1")
+        env["FSO_BIND_HOST"] = os.environ.get("FSO_BIND_HOST", "0.0.0.0")
+    if mode == "join":
+        env["FSO_COOP_MODE"] = "guest"
+        env["FSO_COOP_HOST"] = os.environ["FSO_COOP_HOST"]
     exe = os.path.join(game, GAME_EXE_REL)
     # 'proton' is a Python script; run it directly if executable, else via python3
     runner = [proton] if os.access(proton, os.X_OK) else [sys.executable, proton]
     args = runner + ["run", exe,
                      "-flhost=http://127.0.0.1:%d" % PORT, "-discord=offline", "-culture=en-GB"]
     log("Starting game...")
+    progress = None
+    if shutil.which("zenity"):
+        progress = subprocess.Popen(["zenity", "--progress", "--title=" + APP, "--text=Preparing Proton…",
+                                     "--percentage=15", "--auto-close", "--no-cancel"],
+                                    stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                    text=True)
     try:
-        subprocess.run(args, cwd=os.path.dirname(exe), env=env)
+        if progress and progress.stdin:
+            progress.stdin.write("45\nStarting Proton…\n75\nWaiting for game window…\n"); progress.stdin.flush()
+        game_proc = subprocess.Popen(args, cwd=os.path.dirname(exe), env=env,
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # Keep the splash only through startup, not for the whole play session.
+        deadline = time.time() + 180
+        while time.time() < deadline and game_proc.poll() is None and not game_running():
+            time.sleep(0.5)
+        if progress:
+            try:
+                progress.stdin.close()
+                progress.wait(timeout=2)
+            except Exception:
+                progress.kill()
+            progress = None
+        game_proc.wait()
     except OSError as e:
         fail("Could not start Proton:\n%s" % e)
+    finally:
+        if progress:
+            try:
+                progress.stdin.close()
+                progress.wait(timeout=2)
+            except Exception:
+                progress.kill()
     # The game can outlive the proton process; wait for it to close
     while game_running():
         time.sleep(3)
     srv.shutdown()
+    if relay: relay.close()
+    if admission: admission.close()
     log("Game closed.")
 
 

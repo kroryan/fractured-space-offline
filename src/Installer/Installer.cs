@@ -22,13 +22,13 @@ using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Fractured Space Offline Setup")]
 [assembly: AssemblyProduct("Fractured Space Offline")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
 static class Setup
 {
     public const string AppName = "Fractured Space Bootstrapper Offline";
-    public const string AppVersion = "1.0.0";
+    public const string AppVersion = "1.1.0";
     public const string AppExe = "FracturedSpaceBootstrapperOffline.exe";
     public const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\FracturedSpaceBootstrapperOffline";
     public const string DpiKey = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
@@ -412,6 +412,7 @@ class SetupForm : Form
         }
         // Same marker the online bootstrapper uses, so both launchers agree it is patched
         File.WriteAllText(Path.Combine(game, "bootlegger.json"), "{\"version\":" + Setup.PatchLevel + ",\"status\":\"ok\"}");
+        InstallServerWrapper(game, backup);
         Log(L("Parche aplicado (nivel ", "Patch applied (level ") + Setup.PatchLevel + ").");
 
         // Stop Windows from upscaling the game on high-DPI screens (window bigger than the screen)
@@ -423,6 +424,21 @@ class SetupForm : Form
                   "Windows DPI scaling disabled for the game (high-DPI screens)."));
         }
         catch { }
+    }
+
+    void InstallServerWrapper(string game, string backup)
+    {
+        string server = Path.Combine(game, @"spacegame\Binaries\Win64\spserver.exe");
+        if (!File.Exists(server)) { Log(L("Servidor dedicado no encontrado; se omite wrapper.", "Dedicated server not found; skipping wrapper.")); return; }
+        string original = Path.Combine(Path.GetDirectoryName(server), "spserver_original.exe");
+        string saved = Path.Combine(backup, @"spacegame\Binaries\Win64\spserver.exe");
+        if (!File.Exists(original))
+        {
+            if (!File.Exists(saved)) { Directory.CreateDirectory(Path.GetDirectoryName(saved)); File.Copy(server, saved); }
+            File.Copy(server, original, true);
+        }
+        File.WriteAllBytes(server, Setup.Resource("spserver-wrapper.exe"));
+        Log(L("Wrapper co-op instalado (original respaldado).", "Co-op server wrapper installed (original backed up)."));
     }
 
     void InstallApp(string game, bool desktop)

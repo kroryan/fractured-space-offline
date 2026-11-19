@@ -54,9 +54,17 @@ FracturedSpaceBootstrapperOffline.exe
 - The launcher contains a minimal emulator that serves recorded responses from the original service, based on [Tigerhacker/refireline](https://github.com/Tigerhacker/refireline).
 - Requests made by the game are logged to `requests.log` in the install folder. Requests without a recorded response are marked `MISS`.
 
+### Co-op status
+
+The launcher includes an experimental co-op admission flow. A host must allow inbound **TCP 8090** for join requests and **UDP 7777** for game traffic; the launcher binds these services to the selected local address. The host explicitly accepts each new guest. Accepted guest identities are saved locally and reused on later joins.
+
+For Internet play, use a private VPN such as **Tailscale** (recommended) or ZeroTier so both players are on the same virtual LAN; this avoids exposing ports on a public router. On a direct Internet connection, forward TCP 8090 and UDP 7777 to the host PC. Do not expose other management ports.
+
+The game server wrapper and relay are experimental. Human team placement and bot rebalancing depend on undocumented game server behavior and are not guaranteed. The co-op path has not been validated with two live game clients yet.
+
 ### Limitations
 - The account is a **recorded** one, so progress is not saved between sessions.
-- The store, purchases and multiplayer do not work.
+- The store and purchases do not work.
 - To play online with the community, use the [Fractured Space Bootstrapper](https://github.com/Tigerhacker/fractured-bootstrapper). Both can be installed together because they use the same patch.
 
 ## Repository layout
@@ -64,6 +72,8 @@ FracturedSpaceBootstrapperOffline.exe
 | Path | Contents |
 |---|---|
 | `src/Launcher/OfflineLauncher.cs` | Launcher with the built-in local Fireline server |
+| `src/Launcher/CoopAdmission.cs`, `src/Launcher/UdpRelay.cs` | Experimental approved guest admission and UDP forwarding |
+| `src/ServerWrapper/ServerWrapper.cs` | Wrapper for the game's dedicated server process |
 | `src/Launcher/README.txt` | Readme installed next to the launcher |
 | `src/Installer/Installer.cs` | Graphical installer/uninstaller (applies the patch and installs the launcher) |
 | `server/responses.json` | Recorded `api.fireteam.net` responses (from refireline) |

@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Web.Script.Serialization;
@@ -17,17 +18,24 @@ using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Bootstrapper Offline")]
 [assembly: System.Reflection.AssemblyProduct("Fractured Space Bootstrapper Offline")]
-[assembly: System.Reflection.AssemblyVersion("1.0.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.0.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.1.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.1.0.0")]
 
 static class OfflineLauncher
 {
     const string Title = "Fractured Space Bootstrapper Offline";
     const string Prefix = "https://api.fireteam.net/";
+    const string RecordedIdentity = "197a97fc-4179-43f4-b009-9432ac0c8e53";
+    static string activeIdentity = RecordedIdentity;
     static readonly Dictionary<string, Canned> canned = new Dictionary<string, Canned>();
     static readonly Dictionary<string, Canned> byPath = new Dictionary<string, Canned>();
     static string logPath;
     static readonly object logLock = new object();
+    enum PlayMode { Solo, Host, Join }
+    static PlayMode selectedMode = PlayMode.Solo;
+    static string selectedHost = "";
+    static string selectedBindIp = "0.0.0.0";
+    static bool sameTeam = true;
 
     class Canned { public int Status; public byte[] Body; }
 
@@ -44,11 +52,43 @@ static class OfflineLauncher
             else if (args[i] == "--port" && i + 1 < args.Length) port = int.Parse(args[++i]);
         }
 
+        if (!serveOnly && !ChooseMode(appDir)) return 0;
+
         bool created;
         using (var mutex = new Mutex(true, "FracturedSpaceBootstrapperOffline_" + port, out created))
         {
             if (!created) { Fail(L("El lanzador offline ya está en marcha.", "The offline launcher is already running.")); return 1; }
             try { File.WriteAllText(logPath, ""); } catch { }
+
+            string playerId = LoadPlayerId(appDir);
+            CoopAdmission admission = null;
+            UdpRelay relay = null;
+            try
+            {
+                if (selectedMode == PlayMode.Host)
+                {
+                    string state = Path.Combine(appDir, "approved-guests.json");
+                    admission = new CoopAdmission(IPAddress.Parse(selectedBindIp), state, peer =>
+                    {
+                        DialogResult answer = DialogResult.No;
+                        var t = new Thread(() => answer = MessageBox.Show(
+                            L("El jugador " + peer + " solicita unirse. ¿Aceptar?", "Player " + peer + " requests to join. Accept?"),
+                            Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question));
+                        t.SetApartmentState(ApartmentState.STA); t.Start(); t.Join();
+                        return answer == DialogResult.Yes;
+                    });
+                    relay = new UdpRelay(admission, IPAddress.Parse(selectedBindIp), 7777);
+                    Log("Co-op admission listening on TCP 8090");
+                    Log("Approved-peer UDP relay listening on UDP 7777");
+                }
+                else if (selectedMode == PlayMode.Join)
+                {
+                    playerId = CoopAdmission.Request(selectedHost, playerId, 120000);
+                    File.WriteAllText(Path.Combine(appDir, "player-id.txt"), playerId);
+                }
+            }
+            catch (Exception ex) { Fail(L("No se pudo iniciar/unir a la partida cooperativa:\n", "Could not host/join the co-op game:\n") + ex.Message); return 1; }
+            activeIdentity = String.IsNullOrEmpty(playerId) ? RecordedIdentity : playerId;
 
             try { LoadResponses(Path.Combine(appDir, "responses.json")); }
             catch (Exception ex) { Fail(L("No se pudo leer responses.json:\n", "Could not read responses.json:\n") + ex.Message); return 1; }
@@ -78,6 +118,16 @@ static class OfflineLauncher
             string gameRoot = FindGame(appDir);
             if (gameRoot == null) { Fail(L("No se encuentra Fractured Space instalado en Steam.", "Fractured Space was not found in your Steam libraries.")); return 1; }
             string exe = Path.Combine(gameRoot, @"spacegame\Binaries\Win64\Fractured Space.exe");
+            if (selectedMode != PlayMode.Solo && !File.Exists(Path.Combine(gameRoot, @"spacegame\Binaries\Win64\spserver_original.exe")))
+            {
+                Fail(L("No está instalado el wrapper del servidor. Vuelve a ejecutar el instalador.", "The server wrapper is not installed. Run the installer again."));
+                return 1;
+            }
+            if (selectedMode != PlayMode.Solo && !File.Exists(Path.Combine(gameRoot, @"spacegame\Binaries\Win64\spserver_original.exe")))
+            {
+                Fail(L("No está instalado el wrapper del servidor. Vuelve a ejecutar el instalador.", "The server wrapper is not installed. Run the installer again."));
+                return 1;
+            }
             if (!File.Exists(exe)) { Fail(L("No se encuentra:\n", "Not found:\n") + exe); return 1; }
             if (!File.Exists(Path.Combine(gameRoot, "bootlegger.json")))
             {
@@ -93,6 +143,10 @@ static class OfflineLauncher
             }
 
             try { ConfigureDisplay(); } catch (Exception ex) { Log("Display config failed: " + ex.Message); }
+            using (var progress = new LaunchProgress())
+            {
+                progress.Show(); progress.Set(65, L("Preparando el servidor local…", "Preparing the local server…"));
+                Application.DoEvents();
 
             var psi = new ProcessStartInfo(exe,
                 "-flhost=http://127.0.0.1:" + port + " -discord=offline -culture=en-GB");
@@ -100,14 +154,109 @@ static class OfflineLauncher
             psi.UseShellExecute = false;
             psi.EnvironmentVariables["SteamAppId"] = "310380";
             psi.EnvironmentVariables["OPENSSL_ia32cap"] = ":~0x20000000";
-            try { Process.Start(psi).WaitForExit(); }
+            if (selectedMode == PlayMode.Host) psi.EnvironmentVariables["FSO_COOP_MODE"] = "host";
+            if (selectedMode == PlayMode.Host) psi.EnvironmentVariables["FSO_SERVER_URL_EXTRA"] = sameTeam ? "?coop=1" : "?coop=0";
+            if (selectedMode == PlayMode.Join) { psi.EnvironmentVariables["FSO_COOP_MODE"] = "guest"; psi.EnvironmentVariables["FSO_COOP_HOST"] = selectedHost; }
+            psi.EnvironmentVariables["FSO_PLAYER_ID"] = playerId;
+            try
+            {
+                progress.Set(82, L("Iniciando Fractured Space…", "Starting Fractured Space…")); Application.DoEvents();
+                var game = Process.Start(psi);
+                progress.Set(100, L("Esperando a que aparezca la ventana del juego…", "Waiting for the game window…"));
+                if (game != null)
+                {
+                    while (!game.HasExited && game.MainWindowHandle == IntPtr.Zero) { Thread.Sleep(500); game.Refresh(); Application.DoEvents(); }
+                    progress.Close();
+                    game.WaitForExit();
+                }
+                progress.Close();
+            }
             catch (Exception ex) { Fail(L("No se pudo abrir el juego:\n", "Could not start the game:\n") + ex.Message); return 1; }
+            }
 
             // The game may relaunch itself; wait until no instance remains.
             do { Thread.Sleep(3000); } while (Process.GetProcessesByName("Fractured Space").Length > 0);
+            if (admission != null) admission.Dispose();
+            if (relay != null) relay.Dispose();
             listener.Stop();
             return 0;
         }
+    }
+
+    static string LoadPlayerId(string appDir)
+    {
+        string f = Path.Combine(appDir, "player-id.txt");
+        try { string id = File.ReadAllText(f).Trim(); Guid.Parse(id); return id; } catch { return ""; }
+    }
+
+    static bool ChooseMode(string appDir)
+    {
+        string file = Path.Combine(appDir, "launcher-mode.txt");
+        int last = 0; try { int.TryParse(File.ReadAllText(file).Trim(), out last); } catch { }
+        using (var f = new Form())
+        {
+            f.Text = Title; f.Width = 480; f.Height = 330; f.StartPosition = FormStartPosition.CenterScreen;
+            var solo = new RadioButton { Left = 24, Top = 24, Width = 410, Text = L("Jugar solo contra bots", "Play solo vs bots"), Checked = last == 0 };
+            var host = new RadioButton { Left = 24, Top = 60, Width = 410, Text = L("Crear partida cooperativa (anfitrión)", "Create co-op game (host)"), Checked = last == 1 };
+            var join = new RadioButton { Left = 24, Top = 96, Width = 410, Text = L("Unirse a una partida cooperativa", "Join a co-op game"), Checked = last == 2 };
+            var ipLabel = new Label { Left = 46, Top = 132, Width = 100, Text = "Host IP:" };
+            var ip = new TextBox { Left = 145, Top = 128, Width = 250, Text = "127.0.0.1" };
+            var bindLabel = new Label { Left = 46, Top = 166, Width = 100, Text = L("IP local:", "Local IP:") };
+            var bind = new ComboBox { Left = 145, Top = 162, Width = 250, DropDownStyle = ComboBoxStyle.DropDownList };
+            foreach (var a in LocalAddresses()) bind.Items.Add(a);
+            if (bind.Items.Count > 0) bind.SelectedIndex = 0;
+            var team = new CheckBox { Left = 46, Top = 196, Width = 370, Text = L("Jugar en el mismo equipo", "Play on the same team"), Checked = true };
+            var go = new Button { Left = 300, Top = 235, Width = 100, Text = L("Continuar", "Continue"), DialogResult = DialogResult.OK };
+            go.Click += (s,e) => { IPAddress parsed; if (join.Checked && !IPAddress.TryParse(ip.Text.Trim(), out parsed)) { MessageBox.Show(L("Escribe una IP válida.", "Enter a valid IP address.")); f.DialogResult = DialogResult.None; } };
+            f.Controls.AddRange(new Control[] { solo, host, join, ipLabel, ip, bindLabel, bind, team, go }); f.AcceptButton = go;
+            if (f.ShowDialog() != DialogResult.OK) return false;
+            selectedMode = solo.Checked ? PlayMode.Solo : host.Checked ? PlayMode.Host : PlayMode.Join;
+            selectedHost = ip.Text.Trim();
+            selectedBindIp = bind.SelectedItem == null ? "0.0.0.0" : bind.SelectedItem.ToString().Split(' ')[0];
+            sameTeam = team.Checked;
+            try { File.WriteAllText(file, selectedMode == PlayMode.Solo ? "0" : selectedMode == PlayMode.Host ? "1" : "2"); } catch { }
+            return true;
+        }
+    }
+
+    static List<string> LocalAddresses()
+    {
+        var rows = new List<Tuple<int, string>>();
+        try
+        {
+            foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                string name = ((nic.Name ?? "") + " " + (nic.Description ?? "")).ToLowerInvariant();
+                foreach (var ua in nic.GetIPProperties().UnicastAddresses)
+                    if (ua.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(ua.Address))
+                    {
+                        string ip = ua.Address.ToString();
+                        byte[] b = ua.Address.GetAddressBytes();
+                        bool vpnRange = (b[0] == 100 && b[1] >= 64 && b[1] <= 127) || b[0] == 25 || b[0] == 26 ||
+                                        (b[0] == 192 && b[1] == 168 && (b[2] == 191 || b[2] == 192)) ||
+                                        (b[0] == 10 && b[1] >= 147 && b[1] <= 151);
+                        int rank = (name.Contains("tailscale") || name.Contains("zerotier") || name.Contains("hamachi") || name.Contains("radmin") || vpnRange) ? 0 : 1;
+                        rows.Add(Tuple.Create(rank, ip + "  —  " + nic.Name));
+                    }
+            }
+        }
+        catch { }
+        rows.Sort((a,b) => a.Item1 != b.Item1 ? a.Item1.CompareTo(b.Item1) : String.Compare(a.Item2,b.Item2,StringComparison.OrdinalIgnoreCase));
+        return rows.ConvertAll(x => x.Item2);
+    }
+
+    sealed class LaunchProgress : Form
+    {
+        readonly Label label; readonly ProgressBar bar;
+        public LaunchProgress()
+        {
+            Text = Title; Width = 470; Height = 135; FormBorderStyle = FormBorderStyle.FixedDialog;
+            ControlBox = false; StartPosition = FormStartPosition.CenterScreen;
+            label = new Label { Left = 18, Top = 16, Width = 420, Height = 24, Text = L("Buscando el juego…", "Finding the game…") };
+            bar = new ProgressBar { Left = 18, Top = 52, Width = 420, Height = 22, Minimum = 0, Maximum = 100, Value = 20 };
+            Controls.Add(label); Controls.Add(bar);
+        }
+        public void Set(int value, string text) { bar.Value = Math.Max(0, Math.Min(100, value)); label.Text = text; }
     }
 
     static readonly bool Spanish =
@@ -295,7 +444,7 @@ static class OfflineLauncher
                     }
                     else if (canned.TryGetValue(method + " " + path, out c) || byPath.TryGetValue(path, out c))
                     {
-                        status = c.Status; payload = c.Body;
+                        status = c.Status; payload = RewriteIdentity(c.Body);
                         Log("hit  " + method + " /" + path);
                     }
                     else
@@ -320,6 +469,25 @@ static class OfflineLauncher
             }
             catch { }
         }
+    }
+
+    static byte[] RewriteIdentity(byte[] source)
+    {
+        if (activeIdentity == RecordedIdentity) return source;
+        string body = Encoding.UTF8.GetString(source).Replace(RecordedIdentity, activeIdentity);
+        body = System.Text.RegularExpressions.Regex.Replace(body,
+            "eyJhbGciOiJIUzI1NiJ9\\.([A-Za-z0-9_-]+)\\.", m =>
+            {
+                try
+                {
+                    string encoded = m.Groups[1].Value.Replace('-', '+').Replace('_', '/');
+                    while (encoded.Length % 4 != 0) encoded += "=";
+                    string json = Encoding.UTF8.GetString(Convert.FromBase64String(encoded)).Replace(RecordedIdentity, activeIdentity);
+                    return "eyJhbGciOiJIUzI1NiJ9." + Convert.ToBase64String(Encoding.UTF8.GetBytes(json)).TrimEnd('=').Replace('+', '-').Replace('/', '_') + ".";
+                }
+                catch { return m.Value; }
+            });
+        return Encoding.UTF8.GetBytes(body);
     }
 
     // Reads bytes up to and including CRLFCRLF; returns header text without it.

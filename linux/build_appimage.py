@@ -63,6 +63,9 @@ def main():
     copy_lf(os.path.join(LINUX, "fso_linux.py"), os.path.join(share, "fso_linux.py"))
     shutil.copyfile(os.path.join(ROOT, "server", "responses.json"), os.path.join(share, "responses.json"))
     shutil.copyfile(os.path.join(ROOT, "LICENSE"), os.path.join(share, "LICENSE"))
+    wrapper = os.path.join(OBJ, "spserver-wrapper.exe")
+    if os.path.isfile(wrapper):
+        shutil.copyfile(wrapper, os.path.join(share, "spserver-wrapper.exe"))
     for f in os.listdir(os.path.join(ROOT, "patch")):
         shutil.copyfile(os.path.join(ROOT, "patch", f), os.path.join(share, "patch", f))
 
