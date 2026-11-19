@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Fractured Space Offline
+Comment=Play Fractured Space offline against bots
+Exec=AppRun
+Icon=fractured-space-offline
+Categories=Game;
+Terminal=false

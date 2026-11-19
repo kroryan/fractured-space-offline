@@ -71,3 +71,12 @@ $setup = Join-Path $dist 'FracturedSpaceOfflineSetup.exe'
 if ($LASTEXITCODE -ne 0) { throw 'Installer build failed' }
 
 Get-Item $setup | Select-Object FullName, Length
+
+# --- Linux AppImage (needs Python 3) ---
+$py = Get-Command python -ErrorAction SilentlyContinue
+if ($py) {
+    & $py.Source (Join-Path $root 'linux\build_appimage.py')
+    if ($LASTEXITCODE -ne 0) { throw 'AppImage build failed' }
+} else {
+    Write-Warning 'Python 3 not found: skipping the Linux AppImage'
+}

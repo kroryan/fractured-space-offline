@@ -1,0 +1,33 @@
+#!/bin/sh
+# Fractured Space Offline - AppImage entry point
+HERE="$(dirname "$(readlink -f "$0")")"
+export FSO_DATA_DIR="$HERE/usr/share/fractured-space-offline"
+
+if [ "$1" = "--install-desktop" ]; then
+    # Add a menu entry that points to this AppImage
+    APP="${APPIMAGE:-$(readlink -f "$0")}"
+    apps="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+    icons="${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/256x256/apps"
+    mkdir -p "$apps" "$icons"
+    cp "$HERE/fractured-space-offline.png" "$icons/fractured-space-offline.png"
+    sed "s|^Exec=.*|Exec=\"$APP\"|" "$HERE/fractured-space-offline.desktop" > "$apps/fractured-space-offline.desktop"
+    command -v update-desktop-database >/dev/null 2>&1 && update-desktop-database "$apps" >/dev/null 2>&1
+    echo "Menu entry installed: $apps/fractured-space-offline.desktop"
+    exit 0
+fi
+
+if [ "$1" = "--uninstall-desktop" ]; then
+    rm -f "${XDG_DATA_HOME:-$HOME/.local/share}/applications/fractured-space-offline.desktop" \
+          "${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/256x256/apps/fractured-space-offline.png"
+    echo "Menu entry removed."
+    exit 0
+fi
+
+PY="$(command -v python3 || command -v python)"
+if [ -z "$PY" ]; then
+    msg="Python 3 is required. Install it with your package manager (e.g. sudo apt install python3)."
+    command -v zenity >/dev/null 2>&1 && zenity --error --title "Fractured Space Offline" --text "$msg"
+    echo "$msg" >&2
+    exit 1
+fi
+exec "$PY" "$FSO_DATA_DIR/fso_linux.py" "$@"

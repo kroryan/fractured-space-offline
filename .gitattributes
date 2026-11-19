@@ -5,3 +5,7 @@
 *.ico binary
 
 patch/** binary
+*.py text eol=lf
+*.desktop text eol=lf
+linux/AppRun text eol=lf
+linux/runtime-x86_64 binary
