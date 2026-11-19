@@ -1,4 +1,4 @@
-# Builds dist\FracturedSpaceOfflineSetup.exe using the C# compiler that ships with Windows
+﻿# Builds dist\FracturedSpaceOfflineSetup.exe using the C# compiler that ships with Windows
 # (.NET Framework 4.x). No extra tools needed.
 #   powershell -ExecutionPolicy Bypass -File build.ps1
 $ErrorActionPreference = 'Stop'
@@ -65,7 +65,7 @@ $setup = Join-Path $dist 'FracturedSpaceOfflineSetup.exe'
     "/resource:$launcher,launcher.exe" `
     "/resource:$(Join-Path $root 'server\responses.json'),responses.json" `
     "/resource:$(Join-Path $root 'LICENSE'),LICENSE" `
-    "/resource:$(Join-Path $root 'src\Launcher\LEEME.txt'),LEEME.txt" `
+    "/resource:$(Join-Path $root 'src\Launcher\README.txt'),README.txt" `
     (Join-Path $root 'src\Installer\Installer.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Error compilando el instalador' }
 

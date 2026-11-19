@@ -47,11 +47,11 @@ static class OfflineLauncher
         bool created;
         using (var mutex = new Mutex(true, "FracturedSpaceBootstrapperOffline_" + port, out created))
         {
-            if (!created) { Fail("El lanzador offline ya está en marcha."); return 1; }
+            if (!created) { Fail(L("El lanzador offline ya está en marcha.", "The offline launcher is already running.")); return 1; }
             try { File.WriteAllText(logPath, ""); } catch { }
 
             try { LoadResponses(Path.Combine(appDir, "responses.json")); }
-            catch (Exception ex) { Fail("No se pudo leer responses.json:\n" + ex.Message); return 1; }
+            catch (Exception ex) { Fail(L("No se pudo leer responses.json:\n", "Could not read responses.json:\n") + ex.Message); return 1; }
 
             TcpListener listener;
             try
@@ -61,12 +61,13 @@ static class OfflineLauncher
             }
             catch (Exception ex)
             {
-                Fail("El puerto " + port + " está ocupado (¿hay otro servidor offline o el juego abierto?).\n\n" + ex.Message);
+                Fail(L("El puerto " + port + " está ocupado (¿hay otro servidor offline o el juego abierto?).\n\n",
+                     "Port " + port + " is in use (is another offline server or the game already running?).\n\n") + ex.Message);
                 return 1;
             }
             var serverThread = new Thread(() => Serve(listener)) { IsBackground = true };
             serverThread.Start();
-            Log("Servidor local en http://127.0.0.1:" + port);
+            Log("Local server on http://127.0.0.1:" + port);
 
             if (serveOnly)
             {
@@ -75,19 +76,23 @@ static class OfflineLauncher
             }
 
             string gameRoot = FindGame(appDir);
-            if (gameRoot == null) { Fail("No se encuentra Fractured Space instalado en Steam."); return 1; }
+            if (gameRoot == null) { Fail(L("No se encuentra Fractured Space instalado en Steam.", "Fractured Space was not found in your Steam libraries.")); return 1; }
             string exe = Path.Combine(gameRoot, @"spacegame\Binaries\Win64\Fractured Space.exe");
-            if (!File.Exists(exe)) { Fail("No se encuentra:\n" + exe); return 1; }
+            if (!File.Exists(exe)) { Fail(L("No se encuentra:\n", "Not found:\n") + exe); return 1; }
             if (!File.Exists(Path.Combine(gameRoot, "bootlegger.json")))
             {
-                Fail("El juego no está parcheado.\nVuelve a ejecutar el instalador de Fractured Space Offline.");
+                Fail(L("El juego no está parcheado.\nVuelve a ejecutar el instalador de Fractured Space Offline.",
+                     "The game is not patched.\nRun the Fractured Space Offline installer again."));
                 return 1;
             }
             if (Process.GetProcessesByName("Fractured Space").Length > 0)
             {
-                Fail("Fractured Space ya está abierto. Ciérralo antes de usar el modo offline.");
+                Fail(L("Fractured Space ya está abierto. Ciérralo antes de usar el modo offline.",
+                     "Fractured Space is already running. Close it before using offline mode."));
                 return 1;
             }
+
+            try { ConfigureDisplay(); } catch (Exception ex) { Log("Display config failed: " + ex.Message); }
 
             var psi = new ProcessStartInfo(exe,
                 "-flhost=http://127.0.0.1:" + port + " -discord=offline -culture=en-GB");
@@ -96,13 +101,60 @@ static class OfflineLauncher
             psi.EnvironmentVariables["SteamAppId"] = "310380";
             psi.EnvironmentVariables["OPENSSL_ia32cap"] = ":~0x20000000";
             try { Process.Start(psi).WaitForExit(); }
-            catch (Exception ex) { Fail("No se pudo abrir el juego:\n" + ex.Message); return 1; }
+            catch (Exception ex) { Fail(L("No se pudo abrir el juego:\n", "Could not start the game:\n") + ex.Message); return 1; }
 
             // The game may relaunch itself; wait until no instance remains.
             do { Thread.Sleep(3000); } while (Process.GetProcessesByName("Fractured Space").Length > 0);
             listener.Stop();
             return 0;
         }
+    }
+
+    static readonly bool Spanish =
+        System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "es";
+    static string L(string es, string en) { return Spanish ? es : en; }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    static extern bool SetProcessDPIAware();
+
+    // Windowed fullscreen at the monitor's real resolution, so the game always fits the screen.
+    static void ConfigureDisplay()
+    {
+        SetProcessDPIAware();
+        var b = Screen.PrimaryScreen.Bounds; // physical pixels once DPI-aware
+        string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            @"spacegame\Saved\Config\WindowsNoEditor");
+        string ini = Path.Combine(dir, "GameUserSettings.ini");
+        Directory.CreateDirectory(dir);
+        string text = File.Exists(ini) ? File.ReadAllText(ini) : "";
+        const string section = "[/Script/spacegame.SpaceUserSettings]";
+        if (text.IndexOf(section, StringComparison.Ordinal) < 0)
+            text = text.TrimEnd() + (text.Length > 0 ? "\r\n\r\n" : "") + section + "\r\n";
+        var values = new Dictionary<string, string>
+        {
+            { "ResolutionSizeX", b.Width.ToString() },
+            { "ResolutionSizeY", b.Height.ToString() },
+            { "LastUserConfirmedResolutionSizeX", b.Width.ToString() },
+            { "LastUserConfirmedResolutionSizeY", b.Height.ToString() },
+            { "DesiredScreenWidth", b.Width.ToString() },
+            { "DesiredScreenHeight", b.Height.ToString() },
+            { "FullscreenMode", "1" },
+            { "LastConfirmedFullscreenMode", "1" },
+            { "PreferredFullscreenMode", "1" },
+        };
+        foreach (var kv in values)
+        {
+            var rx = new System.Text.RegularExpressions.Regex("(?m)^" + kv.Key + "=.*$");
+            if (rx.IsMatch(text))
+                text = rx.Replace(text, kv.Key + "=" + kv.Value);
+            else
+            {
+                int i = text.IndexOf(section, StringComparison.Ordinal) + section.Length;
+                text = text.Insert(i, "\r\n" + kv.Key + "=" + kv.Value);
+            }
+        }
+        File.WriteAllText(ini, text);
+        Log("Display: windowed fullscreen " + b.Width + "x" + b.Height);
     }
 
     static void Fail(string msg)

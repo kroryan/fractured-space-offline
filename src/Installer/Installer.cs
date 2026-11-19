@@ -5,6 +5,7 @@
 // - Installs "Fractured Space Bootstrapper Offline" (launcher + local Fireline emulator)
 //   with Start Menu / Desktop shortcuts and an entry in Settings > Apps
 // Run with /uninstall to remove it.
+// UI is English, or Spanish when Windows is in Spanish.
 // C# 5 (compiled with .NET Framework csc).
 using System;
 using System.Collections.Generic;
@@ -31,10 +32,16 @@ static class Setup
     public const string AppVersion = "1.0.0";
     public const string AppExe = "FracturedSpaceBootstrapperOffline.exe";
     public const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\FracturedSpaceBootstrapperOffline";
+    public const string DpiKey = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
     public const string PatchCommit = "0b89d9e97d03734a9411f389b58a4d7eed21ea32";
     public const string PatchBase = "https://raw.githubusercontent.com/Tigerhacker/fractured-bootstrapper/" + PatchCommit + "/data/";
     public const int PatchLevel = 30;
     public const string BackupDirName = "fractured-offline-backup";
+    public const string GameExeRel = @"spacegame\Binaries\Win64\Fractured Space.exe";
+
+    public static readonly bool Spanish =
+        System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "es";
+    public static string L(string es, string en) { return Spanish ? es : en; }
 
     public static string InstallDir
     {
@@ -53,7 +60,7 @@ static class Setup
 
     public static readonly PatchFile[] Patch = new[]
     {
-        new PatchFile("Fractured Space.exe", @"spacegame\Binaries\Win64\Fractured Space.exe", "fa6288c2d914366e14175c1d9ebbb459f6bd605c348b6148e9eea33d7290bc2a", false),
+        new PatchFile("Fractured Space.exe", GameExeRel, "fa6288c2d914366e14175c1d9ebbb459f6bd605c348b6148e9eea33d7290bc2a", false),
         new PatchFile("ClientConfig.json", @"spacegame\ClientConfig.json", "0087a651ad5fbb235fa438b8d3a3f47cf2f6b11b3f88c528f82c48ccdc8d4b91", true),
         new PatchFile("startgame-script.js", @"spacegame\Content\UIResources\frontend\views\startgame\startgame-script.js", "bac58eaa7f06a1b2401e5300e0141739055736bfb66d285e28b0096b83bcc1bb", true),
         new PatchFile("startgame-style.css", @"spacegame\Content\UIResources\frontend\views\startgame\startgame-style.css", "49e856f3667e0c22db18a8c864c62ae66f1e1e2940d0efb783955ea6e0460301", true),
@@ -181,7 +188,7 @@ static class Setup
 
     static int Uninstall()
     {
-        if (MessageBox.Show("¿Desinstalar " + AppName + "?", AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+        if (MessageBox.Show(L("¿Desinstalar ", "Uninstall ") + AppName + "?", AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
             return 0;
 
         foreach (var p in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(AppExe)))
@@ -193,9 +200,12 @@ static class Setup
         if (backup != null && Directory.Exists(backup))
         {
             var r = MessageBox.Show(
-                "¿Restaurar también los archivos originales del juego?\n\n" +
-                "Sí: el juego vuelve a como estaba (el Bootstrapper online tendrá que volver a parchearlo).\n" +
-                "No: el juego queda parcheado (sigue funcionando con el Bootstrapper online).",
+                L("¿Restaurar también los archivos originales del juego?\n\n" +
+                  "Sí: el juego vuelve a como estaba (el Bootstrapper online tendrá que volver a parchearlo).\n" +
+                  "No: el juego queda parcheado (sigue funcionando con el Bootstrapper online).",
+                  "Also restore the original game files?\n\n" +
+                  "Yes: the game goes back to how it was (the online Bootstrapper will need to patch it again).\n" +
+                  "No: the game stays patched (keeps working with the online Bootstrapper)."),
                 AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (r == DialogResult.Yes)
             {
@@ -213,7 +223,7 @@ static class Setup
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("No se pudieron restaurar todos los archivos:\n" + ex.Message, AppName);
+                    MessageBox.Show(L("No se pudieron restaurar todos los archivos:\n", "Could not restore all files:\n") + ex.Message, AppName);
                 }
             }
         }
@@ -229,13 +239,15 @@ static class Setup
         psi.CreateNoWindow = true;
         psi.WorkingDirectory = Path.GetTempPath();
         Process.Start(psi);
-        MessageBox.Show(AppName + " se ha desinstalado.", AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(AppName + L(" se ha desinstalado.", " has been uninstalled."), AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         return 0;
     }
 }
 
 class SetupForm : Form
 {
+    static string L(string es, string en) { return Setup.L(es, en); }
+
     TextBox txtPath, txtLog;
     Button btnBrowse, btnInstall, btnClose;
     CheckBox chkDesktop;
@@ -244,7 +256,7 @@ class SetupForm : Form
 
     public SetupForm()
     {
-        Text = "Instalar Fractured Space Offline";
+        Text = L("Instalar Fractured Space Offline", "Fractured Space Offline Setup");
         Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
@@ -256,32 +268,37 @@ class SetupForm : Form
         var title = new Label { Text = "Fractured Space Offline", Font = new Font("Segoe UI", 15f, FontStyle.Bold), AutoSize = true, Location = new Point(16, 12) };
         var sub = new Label
         {
-            Text = "Juega a Fractured Space sin conexión contra bots, con un servidor local.\r\n" +
-                   "Selecciona la carpeta del juego (la que contiene \"spacegame\") y pulsa Instalar.",
+            Text = L("Juega a Fractured Space sin conexión contra bots, con un servidor local.\r\n" +
+                     "Selecciona la carpeta del juego (la que contiene \"spacegame\") y pulsa Instalar.",
+                     "Play Fractured Space offline against bots, using a local server.\r\n" +
+                     "Select the game folder (the one containing \"spacegame\") and click Install."),
             AutoSize = true, Location = new Point(18, 48)
         };
-        var lbl = new Label { Text = "Carpeta del juego:", AutoSize = true, Location = new Point(18, 96) };
+        var lbl = new Label { Text = L("Carpeta del juego:", "Game folder:"), AutoSize = true, Location = new Point(18, 96) };
         txtPath = new TextBox { Location = new Point(18, 116), Width = 490, Text = Setup.DetectGame() };
-        btnBrowse = new Button { Text = "Examinar...", Location = new Point(516, 114), Width = 88 };
+        btnBrowse = new Button { Text = L("Examinar...", "Browse..."), Location = new Point(516, 114), Width = 88 };
         btnBrowse.Click += (s, e) => Browse();
-        chkDesktop = new CheckBox { Text = "Crear acceso directo en el escritorio", Checked = true, AutoSize = true, Location = new Point(18, 148) };
+        chkDesktop = new CheckBox { Text = L("Crear acceso directo en el escritorio", "Create a desktop shortcut"), Checked = true, AutoSize = true, Location = new Point(18, 148) };
         bar = new ProgressBar { Location = new Point(18, 178), Width = 586, Height = 18, Maximum = Setup.Patch.Length + 2 };
         txtLog = new TextBox { Location = new Point(18, 204), Width = 586, Height = 170, Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, BackColor = SystemColors.Window };
-        btnInstall = new Button { Text = "Instalar", Location = new Point(424, 388), Width = 88, Height = 28 };
+        btnInstall = new Button { Text = L("Instalar", "Install"), Location = new Point(424, 388), Width = 88, Height = 28 };
         btnInstall.Click += (s, e) => StartInstall();
-        btnClose = new Button { Text = "Cerrar", Location = new Point(516, 388), Width = 88, Height = 28 };
+        btnClose = new Button { Text = L("Cerrar", "Close"), Location = new Point(516, 388), Width = 88, Height = 28 };
         btnClose.Click += (s, e) => Close();
         AcceptButton = btnInstall;
 
         Controls.AddRange(new Control[] { title, sub, lbl, txtPath, btnBrowse, chkDesktop, bar, txtLog, btnInstall, btnClose });
-        Log(txtPath.Text.Length > 0 ? "Juego detectado en: " + txtPath.Text : "No se detectó el juego automáticamente. Pulsa Examinar.");
+        Log(txtPath.Text.Length > 0
+            ? L("Juego detectado en: ", "Game found at: ") + txtPath.Text
+            : L("No se detectó el juego automáticamente. Pulsa Examinar.", "The game was not detected automatically. Click Browse."));
     }
 
     void Browse()
     {
         using (var d = new FolderBrowserDialog())
         {
-            d.Description = "Selecciona la carpeta de Fractured Space (normalmente ...\\steamapps\\common\\Space)";
+            d.Description = L("Selecciona la carpeta de Fractured Space (normalmente ...\\steamapps\\common\\Space)",
+                              "Select the Fractured Space folder (usually ...\\steamapps\\common\\Space)");
             if (Directory.Exists(txtPath.Text)) d.SelectedPath = txtPath.Text;
             if (d.ShowDialog(this) == DialogResult.OK)
             {
@@ -316,12 +333,15 @@ class SetupForm : Form
         string game = txtPath.Text.Trim().TrimEnd('\\');
         if (!Setup.IsGameFolder(game))
         {
-            MessageBox.Show(this, "Esa carpeta no parece ser Fractured Space.\nDebe contener spacegame\\Binaries\\Win64.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, L("Esa carpeta no parece ser Fractured Space.\nDebe contener spacegame\\Binaries\\Win64.",
+                                    "That folder does not look like Fractured Space.\nIt must contain spacegame\\Binaries\\Win64."),
+                Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
         if (Process.GetProcessesByName("Fractured Space").Length > 0)
         {
-            MessageBox.Show(this, "Cierra Fractured Space antes de instalar.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, L("Cierra Fractured Space antes de instalar.", "Close Fractured Space before installing."),
+                Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
         btnInstall.Enabled = btnBrowse.Enabled = txtPath.Enabled = chkDesktop.Enabled = false;
@@ -339,20 +359,22 @@ class SetupForm : Form
             InstallApp(game, desktop);
             Step();
             Log("");
-            Log("¡Listo! Abre \"" + Setup.AppName + "\" desde el menú Inicio" + (desktop ? " o el escritorio" : "") + ".");
-            Log("En el juego: Play -> Training -> Solo vs AI para jugar contra bots.");
+            Log(L("¡Listo! Abre \"" + Setup.AppName + "\" desde el menú Inicio" + (desktop ? " o el escritorio" : "") + ".",
+                  "Done! Open \"" + Setup.AppName + "\" from the Start menu" + (desktop ? " or the desktop" : "") + "."));
+            Log(L("En el juego: Play -> Training -> Solo vs AI para jugar contra bots.",
+                  "In game: Play -> Training -> Solo vs AI to play against bots."));
             BeginInvoke(new Action(() =>
             {
                 installed = true;
-                btnInstall.Text = "Jugar";
+                btnInstall.Text = L("Jugar", "Play");
                 btnInstall.Enabled = true;
-                btnClose.Text = "Cerrar";
             }));
         }
         catch (UnauthorizedAccessException ex)
         {
-            Log("ERROR: sin permiso para escribir: " + ex.Message);
-            Log("Ejecuta el instalador con clic derecho -> Ejecutar como administrador.");
+            Log(L("ERROR: sin permiso para escribir: ", "ERROR: no permission to write: ") + ex.Message);
+            Log(L("Ejecuta el instalador con clic derecho -> Ejecutar como administrador.",
+                  "Run the installer with right click -> Run as administrator."));
             Reenable();
         }
         catch (Exception ex)
@@ -369,7 +391,7 @@ class SetupForm : Form
 
     void PatchGame(string game)
     {
-        Log("Comprobando parche del juego...");
+        Log(L("Comprobando parche del juego...", "Checking game patch..."));
         string backup = Path.Combine(game, Setup.BackupDirName);
         using (var wc = new WebClient())
         {
@@ -379,16 +401,18 @@ class SetupForm : Form
                 string dest = Path.Combine(game, f.Dest);
                 if (File.Exists(dest) && Setup.Sha256File(dest) == f.Sha256)
                 {
-                    Log("  OK (ya parcheado): " + f.Src);
+                    Log(L("  OK (ya parcheado): ", "  OK (already patched): ") + f.Src);
                     Step();
                     continue;
                 }
-                Log("  Descargando " + f.Src + "...");
+                Log(L("  Descargando ", "  Downloading ") + f.Src + "...");
                 byte[] data = wc.DownloadData(Setup.PatchBase + Uri.EscapeDataString(f.Src));
                 if (f.Text) data = Setup.ToCrlf(data);
                 string got;
                 using (var h = SHA256.Create()) got = Setup.Hex(h.ComputeHash(data));
-                if (got != f.Sha256) throw new Exception("El archivo descargado " + f.Src + " no coincide con el esperado (hash).");
+                if (got != f.Sha256)
+                    throw new Exception(L("El archivo descargado " + f.Src + " no coincide con el esperado (hash).",
+                                          "Downloaded file " + f.Src + " does not match the expected hash."));
 
                 if (File.Exists(dest))
                 {
@@ -401,19 +425,29 @@ class SetupForm : Form
                 }
                 Directory.CreateDirectory(Path.GetDirectoryName(dest));
                 File.WriteAllBytes(dest, data);
-                Log("  Parcheado: " + f.Src);
+                Log(L("  Parcheado: ", "  Patched: ") + f.Src);
                 Step();
             }
         }
         // Same marker the online bootstrapper uses, so both launchers agree it is patched
         File.WriteAllText(Path.Combine(game, "bootlegger.json"), "{\"version\":" + Setup.PatchLevel + ",\"status\":\"ok\"}");
-        Log("Parche aplicado (nivel " + Setup.PatchLevel + ").");
+        Log(L("Parche aplicado (nivel ", "Patch applied (level ") + Setup.PatchLevel + ").");
+
+        // Stop Windows from upscaling the game on high-DPI screens (window bigger than the screen)
+        try
+        {
+            using (var k = Registry.CurrentUser.CreateSubKey(Setup.DpiKey))
+                k.SetValue(Path.Combine(game, Setup.GameExeRel), "~ HIGHDPIAWARE");
+            Log(L("Escalado de Windows desactivado para el juego (pantallas con DPI alto).",
+                  "Windows DPI scaling disabled for the game (high-DPI screens)."));
+        }
+        catch { }
     }
 
     void InstallApp(string game, bool desktop)
     {
         string dir = Setup.InstallDir;
-        Log("Instalando en " + dir + "...");
+        Log(L("Instalando en ", "Installing to ") + dir + "...");
         foreach (var p in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Setup.AppExe)))
             try { p.Kill(); p.WaitForExit(3000); } catch { }
         Directory.CreateDirectory(dir);
@@ -421,15 +455,16 @@ class SetupForm : Form
         File.WriteAllBytes(exe, Setup.Resource("launcher.exe"));
         File.WriteAllBytes(Path.Combine(dir, "responses.json"), Setup.Resource("responses.json"));
         File.WriteAllBytes(Path.Combine(dir, "LICENSE.txt"), Setup.Resource("LICENSE"));
-        File.WriteAllBytes(Path.Combine(dir, "LEEME.txt"), Setup.Resource("LEEME.txt"));
+        File.WriteAllBytes(Path.Combine(dir, "README.txt"), Setup.Resource("README.txt"));
         File.WriteAllText(Path.Combine(dir, "gamepath.txt"), game);
         string uninst = Path.Combine(dir, "uninstall.exe");
         File.Copy(Application.ExecutablePath, uninst, true);
 
-        Setup.CreateShortcut(Setup.StartLnk, exe, dir, "Fractured Space sin conexión");
-        if (desktop) Setup.CreateShortcut(Setup.DesktopLnk, exe, dir, "Fractured Space sin conexión");
+        string desc = L("Fractured Space sin conexión", "Fractured Space offline");
+        Setup.CreateShortcut(Setup.StartLnk, exe, dir, desc);
+        if (desktop) Setup.CreateShortcut(Setup.DesktopLnk, exe, dir, desc);
         else { try { File.Delete(Setup.DesktopLnk); } catch { } }
-        Log("Accesos directos creados.");
+        Log(L("Accesos directos creados.", "Shortcuts created."));
 
         using (var k = Registry.CurrentUser.CreateSubKey(Setup.RegKey))
         {
@@ -444,7 +479,7 @@ class SetupForm : Form
             k.SetValue("NoRepair", 1, RegistryValueKind.DWord);
             k.SetValue("EstimatedSize", 1400, RegistryValueKind.DWord);
         }
-        Log("Registrado en Configuración > Aplicaciones.");
+        Log(L("Registrado en Configuración > Aplicaciones.", "Registered in Settings > Apps."));
     }
 
     void LaunchApp()
