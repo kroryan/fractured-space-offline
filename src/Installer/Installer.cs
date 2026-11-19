@@ -366,6 +366,7 @@ class SetupForm : Form
             BeginInvoke(new Action(() =>
             {
                 installed = true;
+                bar.Value = bar.Maximum;
                 btnInstall.Text = L("Jugar", "Play");
                 btnInstall.Enabled = true;
             }));
