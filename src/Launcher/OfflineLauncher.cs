@@ -487,7 +487,53 @@ static class OfflineLauncher
                 }
                 catch { return m.Value; }
             });
+        body = System.Text.RegularExpressions.Regex.Replace(body,
+            "(\\\"refresh_token\\\"\\s*:\\s*\\\")\\.([A-Za-z0-9_-]+)\\.([A-Za-z0-9_-]+)(\\\")", m =>
+            {
+                try
+                {
+                    byte[] packed = DecodeBase64Url(m.Groups[2].Value);
+                    if (packed.Length < 6) return m.Value;
+                    string json;
+                    using (var input = new MemoryStream(packed, 2, packed.Length - 6))
+                    using (var deflate = new System.IO.Compression.DeflateStream(input, System.IO.Compression.CompressionMode.Decompress))
+                    using (var output = new MemoryStream())
+                    {
+                        deflate.CopyTo(output);
+                        json = Encoding.UTF8.GetString(output.ToArray()).Replace(RecordedIdentity, activeIdentity);
+                    }
+                    byte[] raw;
+                    using (var output = new MemoryStream())
+                    {
+                        using (var deflate = new System.IO.Compression.DeflateStream(output, System.IO.Compression.CompressionLevel.Optimal, true))
+                        {
+                            byte[] plain = Encoding.UTF8.GetBytes(json); deflate.Write(plain, 0, plain.Length);
+                        }
+                        raw = output.ToArray();
+                    }
+                    byte[] zlib = new byte[raw.Length + 6]; zlib[0] = 0x78; zlib[1] = 0x9c;
+                    Buffer.BlockCopy(raw, 0, zlib, 2, raw.Length);
+                    uint a = 1, b = 0;
+                    for (int i = 0; i < Encoding.UTF8.GetByteCount(json); i++) { a = (a + Encoding.UTF8.GetBytes(json)[i]) % 65521; b = (b + a) % 65521; }
+                    uint sum = (b << 16) | a; int end = zlib.Length - 4;
+                    zlib[end] = (byte)(sum >> 24); zlib[end + 1] = (byte)(sum >> 16); zlib[end + 2] = (byte)(sum >> 8); zlib[end + 3] = (byte)sum;
+                    return m.Groups[1].Value + "." + Base64Url(zlib) + "." + m.Groups[3].Value + m.Groups[4].Value;
+                }
+                catch { return m.Value; }
+            });
         return Encoding.UTF8.GetBytes(body);
+    }
+
+    static byte[] DecodeBase64Url(string value)
+    {
+        value = value.Replace('-', '+').Replace('_', '/');
+        while (value.Length % 4 != 0) value += "=";
+        return Convert.FromBase64String(value);
+    }
+
+    static string Base64Url(byte[] value)
+    {
+        return Convert.ToBase64String(value).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }
 
     // Reads bytes up to and including CRLFCRLF; returns header text without it.

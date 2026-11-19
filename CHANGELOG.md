@@ -9,6 +9,7 @@
 - Added a dedicated-server wrapper that preserves the original `spserver.exe`; included it in the Windows installer and AppImage payload.
 - Added the co-op Conquest game mode to the host wrapper; a headless server smoke test confirms the mode loads, enters `InProgress` and listens on UDP 7777.
 - Added identity rewriting to the local Fireline response emulator and documented VPN/port setup.
+- Rewrites player identity claims in the recorded access token and compressed refresh token in both launchers.
 
 ### Known limitations
 

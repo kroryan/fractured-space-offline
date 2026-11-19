@@ -27,6 +27,7 @@ import subprocess
 import sys
 import threading
 import time
+import zlib
 
 APP = "Fractured Space Offline"
 APPID = "310380"
@@ -59,6 +60,36 @@ PATCH = [
 ]
 
 log_lock = threading.Lock()
+
+
+def rewrite_identity_payload(payload):
+    if ACTIVE_IDENTITY == RECORDED_IDENTITY:
+        return payload
+    text = payload.decode("utf-8", "replace").replace(RECORDED_IDENTITY, ACTIVE_IDENTITY)
+
+    def rewrite_jwt(match):
+        try:
+            part = match.group(1)
+            part += "=" * ((4 - len(part) % 4) % 4)
+            decoded = base64.urlsafe_b64decode(part.encode()).decode().replace(RECORDED_IDENTITY, ACTIVE_IDENTITY)
+            return "eyJhbGciOiJIUzI1NiJ9." + base64.urlsafe_b64encode(decoded.encode()).decode().rstrip("=") + "."
+        except Exception:
+            return match.group(0)
+
+    text = re.sub(r"eyJhbGciOiJIUzI1NiJ9\.([A-Za-z0-9_-]+)\.", rewrite_jwt, text)
+
+    def rewrite_refresh(match):
+        try:
+            part = match.group(2) + "=" * ((4 - len(match.group(2)) % 4) % 4)
+            raw = zlib.decompress(base64.urlsafe_b64decode(part.encode())).decode("utf-8")
+            raw = raw.replace(RECORDED_IDENTITY, ACTIVE_IDENTITY)
+            packed = base64.urlsafe_b64encode(zlib.compress(raw.encode("utf-8"))).decode().rstrip("=")
+            return match.group(1) + "." + packed + "." + match.group(3) + match.group(4)
+        except Exception:
+            return match.group(0)
+
+    text = re.sub(r"(\"refresh_token\"\s*:\s*\")\.([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)(\")", rewrite_refresh, text)
+    return text.encode("utf-8")
 
 
 def log(msg):
@@ -506,17 +537,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if item:
                 status, payload = item
                 if ACTIVE_IDENTITY != RECORDED_IDENTITY:
-                    text = payload.decode("utf-8", "replace").replace(RECORDED_IDENTITY, ACTIVE_IDENTITY)
-                    def rewrite_jwt(match):
-                        try:
-                            part = match.group(1)
-                            part += "=" * ((4 - len(part) % 4) % 4)
-                            decoded = base64.urlsafe_b64decode(part.encode()).decode().replace(RECORDED_IDENTITY, ACTIVE_IDENTITY)
-                            return "eyJhbGciOiJIUzI1NiJ9." + base64.urlsafe_b64encode(decoded.encode()).decode().rstrip("=") + "."
-                        except Exception:
-                            return match.group(0)
-                    text = re.sub(r"eyJhbGciOiJIUzI1NiJ9\.([A-Za-z0-9_-]+)\.", rewrite_jwt, text)
-                    payload = text.encode("utf-8")
+                    payload = rewrite_identity_payload(payload)
                 log("hit  %s /%s" % (self.command, path))
             else:
                 status, payload = 200, b"{}"
