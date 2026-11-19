@@ -12,9 +12,7 @@ $fakeSource = Join-Path $tmp 'FakeServer.cs'
 using System;
 class FakeServer {
     static int Main(string[] args) {
-        Console.WriteLine("lobby_ready");
-        Console.WriteLine("ecg_fs_sp_server_host=127.0.0.1");
-        Console.WriteLine("ecg_fs_sp_server_port=7777");
+        Console.WriteLine("LogNet: GameNetDriver IpNetDriver_0 IpNetDriver listening on port 7777");
         Console.WriteLine("ARGS=" + String.Join("|", args));
         return 0;
     }
@@ -29,7 +27,7 @@ $env:FSO_COOP_STATUS = Join-Path $tmp 'status.txt'
 try {
     $output = & (Join-Path $tmp 'wrapper.exe') '/Game/Maps/Lobby?game=spacegame.SinglePlayerLobbyGameMode' '-log' 2>&1
     $text = $output -join "`n"
-    foreach ($expected in @('lobby_ready', 'ecg_fs_sp_server_port=7777', '/Game/Maps/ActionConquest/Map_ActionConquest_A3_B6', 'BP_ConquestGameMode_Coop_C', 'coop=1', '-multihome=127.0.0.1')) {
+    foreach ($expected in @('lobby_ready', 'ecg_fs_sp_server_host=127.0.0.1', 'ecg_fs_sp_server_port=7777', '/Game/Maps/ActionConquest/Map_ActionConquest_A3_B6', 'BP_ConquestGameMode_Coop_C', 'coop=1', '-multihome=127.0.0.1')) {
         if ($text -notmatch [regex]::Escape($expected)) { throw "Wrapper output did not include: $expected`n$text" }
     }
     if (-not (Test-Path $env:FSO_COOP_STATUS)) { throw 'Wrapper did not write host status.' }
