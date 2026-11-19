@@ -1,7 +1,7 @@
 // Fractured Space Offline - Installer / Uninstaller
 // - Lets the user pick the Fractured Space game folder (auto-detects Steam)
-// - Applies the community patch (files downloaded from Tigerhacker/fractured-bootstrapper,
-//   pinned commit, verified by SHA-256; originals backed up)
+// - Applies the community client patch (files embedded in this installer, verified by
+//   SHA-256; originals backed up). Works fully offline.
 // - Installs "Fractured Space Bootstrapper Offline" (launcher + local Fireline emulator)
 //   with Start Menu / Desktop shortcuts and an entry in Settings > Apps
 // Run with /uninstall to remove it.
@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -33,8 +32,6 @@ static class Setup
     public const string AppExe = "FracturedSpaceBootstrapperOffline.exe";
     public const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\FracturedSpaceBootstrapperOffline";
     public const string DpiKey = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
-    public const string PatchCommit = "0b89d9e97d03734a9411f389b58a4d7eed21ea32";
-    public const string PatchBase = "https://raw.githubusercontent.com/Tigerhacker/fractured-bootstrapper/" + PatchCommit + "/data/";
     public const int PatchLevel = 30;
     public const string BackupDirName = "fractured-offline-backup";
     public const string GameExeRel = @"spacegame\Binaries\Win64\Fractured Space.exe";
@@ -75,7 +72,6 @@ static class Setup
     static int Main(string[] args)
     {
         Application.EnableVisualStyles();
-        ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072; // TLS 1.2
         foreach (var a in args)
         {
             if (a.Equals("/uninstall", StringComparison.OrdinalIgnoreCase))
@@ -99,18 +95,6 @@ static class Setup
         var sb = new StringBuilder(b.Length * 2);
         foreach (var x in b) sb.Append(x.ToString("x2"));
         return sb.ToString();
-    }
-
-    // Git stores the text files with LF; the original patch uses CRLF.
-    public static byte[] ToCrlf(byte[] data)
-    {
-        var o = new List<byte>(data.Length + data.Length / 20);
-        for (int i = 0; i < data.Length; i++)
-        {
-            if (data[i] == (byte)'\n' && (i == 0 || data[i - 1] != (byte)'\r')) o.Add((byte)'\r');
-            o.Add(data[i]);
-        }
-        return o.ToArray();
     }
 
     public static bool IsGameFolder(string p)
@@ -394,9 +378,7 @@ class SetupForm : Form
     {
         Log(L("Comprobando parche del juego...", "Checking game patch..."));
         string backup = Path.Combine(game, Setup.BackupDirName);
-        using (var wc = new WebClient())
         {
-            wc.Headers[HttpRequestHeader.UserAgent] = "fractured-space-offline-setup";
             foreach (var f in Setup.Patch)
             {
                 string dest = Path.Combine(game, f.Dest);
@@ -406,14 +388,12 @@ class SetupForm : Form
                     Step();
                     continue;
                 }
-                Log(L("  Descargando ", "  Downloading ") + f.Src + "...");
-                byte[] data = wc.DownloadData(Setup.PatchBase + Uri.EscapeDataString(f.Src));
-                if (f.Text) data = Setup.ToCrlf(data);
+                byte[] data = Setup.Resource("patch/" + f.Src);
                 string got;
                 using (var h = SHA256.Create()) got = Setup.Hex(h.ComputeHash(data));
                 if (got != f.Sha256)
-                    throw new Exception(L("El archivo descargado " + f.Src + " no coincide con el esperado (hash).",
-                                          "Downloaded file " + f.Src + " does not match the expected hash."));
+                    throw new Exception(L("El archivo del parche " + f.Src + " está dañado (hash).",
+                                          "Patch file " + f.Src + " is corrupted (hash mismatch)."));
 
                 if (File.Exists(dest))
                 {

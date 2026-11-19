@@ -59,10 +59,11 @@ $launcher = Join-Path $obj 'launcher.exe'
 & $csc /nologo /target:winexe /optimize+ "/out:$launcher" "/win32icon:$ico" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Error compilando el launcher' }
 
-# --- Installer (embeds launcher + data) ---
+# --- Installer (embeds launcher + data + client patch) ---
+$patchRes = Get-ChildItem (Join-Path $root 'patch') -File | ForEach-Object { "/resource:$($_.FullName),patch/$($_.Name)" }
 $setup = Join-Path $dist 'FracturedSpaceOfflineSetup.exe'
 & $csc /nologo /target:winexe /optimize+ "/out:$setup" "/win32icon:$ico" $refs `
-    "/resource:$launcher,launcher.exe" `
+    "/resource:$launcher,launcher.exe" $patchRes `
     "/resource:$(Join-Path $root 'server\responses.json'),responses.json" `
     "/resource:$(Join-Path $root 'LICENSE'),LICENSE" `
     "/resource:$(Join-Path $root 'src\Launcher\README.txt'),README.txt" `
