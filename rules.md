@@ -48,6 +48,6 @@ All project-owned interfaces, messages, trainer/F1 controls, documentation, rele
 
 ## Imported ships and default ownership
 
-Inventory all loose and archived ship definitions in imported packages; do not infer ship count from package count. `tools/audit_expanse.py` and `mods/expanse/source-manifest.json` record the current six-package review. Resolve each asset's license separately, preserve credits and modification notices, and exclude unlicensed show-derived audio. Keep non-GPL graphics under their own applicable licenses.
+Inventory all loose and archived ship definitions in imported packages; do not infer ship count from package count. `tools/audit_expanse.py` and `mods/expanse/source-manifest.json` record the current seven-package review. Resolve each asset's license separately, preserve credits and modification notices, and exclude unlicensed show-derived audio. Keep non-GPL graphics under their own applicable licenses.
 
 Every successfully integrated playable ship must be owned by the default local account, alongside the existing fleet. Add ownership only after compatible cooked assets and client/server definitions exist and the ship can actually load; source-only SpaceEngine meshes or fictional inventory entries are not integration. Check hangar selection, spawning and gameplay before publishing a release claiming the ships are included.

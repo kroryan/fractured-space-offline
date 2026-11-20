@@ -129,16 +129,19 @@ The installer and AppImage include the game-side fixes from [Makichika/Fractured
 
 ### The Expanse ship sources under review
 
-The downloaded SpaceEngine sources have been inventoried, including ship definitions inside their ZIP-based PAKs. Each of the six reviewed packages contains one ship; these ships are not yet integrated or included in the installer. The [full source review](mods/expanse/README.md) records attribution, license links, technical blockers and the required default-account ownership behavior once playable assets exist. No third-party graphics or sounds are redistributed by this review.
+The downloaded SpaceEngine sources have been inventoried, including ship definitions inside their ZIP-based PAKs. Each of the seven reviewed packages contains one ship; these ships are not yet integrated or included in the installer. The [full source review](mods/expanse/README.md) records attribution, license links, technical blockers and the required default-account ownership behavior once playable assets exist. No third-party graphics or sounds are redistributed by this review.
 
 | Ship | Model / texture credit | SpaceEngine adaptation | Declared graphics license |
 | --- | --- | --- | --- |
-| [MCRN Tachi](https://steamcommunity.com/sharedfiles/filedetails/?id=2211361535) | Anton Perfilev (`wintermute666`) | jamesmule | CC BY-NC-SA 4.0 |
+| [MCRN Tachi (planned in-game name: Rocinante)](https://steamcommunity.com/sharedfiles/filedetails/?id=2211361535) | Anton Perfilev (`wintermute666`) | jamesmule | CC BY-NC-SA 4.0 |
 | [Razorback](https://steamcommunity.com/sharedfiles/filedetails/?id=2224316655) | Chris Kuhn; CC0Textures.com | jamesmule; retro-visor | CC0 1.0 |
 | [MCRN Donnager](https://steamcommunity.com/sharedfiles/filedetails/?id=2375119898) | Chris Kuhn; distributed by strawfinch | jamesmule; retro-visor | CC0 1.0 |
 | [UNN Mayotte](https://steamcommunity.com/sharedfiles/filedetails/?id=2687045417) | Azzecco (`lux_comodo`) | jamesmule | CC BY-NC 4.0 |
 | [MCRN Avalanche](https://steamcommunity.com/sharedfiles/filedetails/?id=2687094193) | Azzecco (`lux_comodo`) | jamesmule | CC BY-NC 4.0 |
 | [Epstein's Yacht](https://steamcommunity.com/sharedfiles/filedetails/?id=2368610280) | Chris Kun as credited by the source; strawfinch / owlstraw | retro-visor | Conflicting CC0 / CC BY notices; mod-specific texture rights need clarification |
+| [MCRN Chariot-Type Dropship](https://steamcommunity.com/sharedfiles/filedetails/?id=2375181309) | Chris Kuhn; distributed by strawfinch | jamesmule | CC0 1.0 |
+
+The [fleet integration plan](mods/expanse/INTEGRATION_PLAN.md) defines the proposed roles, weapon/effect work, balance checks and ownership requirements. It is a plan, not a claim of implemented ships.
 
 The project's code license does not replace third-party graphics licenses. Source-derived television audio is excluded from any proposed import unless separately licensed. These credits do not imply endorsement.
 

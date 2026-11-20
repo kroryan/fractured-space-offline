@@ -2,6 +2,8 @@
 
 ## Unreleased — The Expanse source audit
 
+- Expanded the current inventory to seven ships with the Chariot-Type Dropship, and added a proposed integration/balance plan. The Tachi asset is planned to appear as Rocinante with its source model unchanged.
+
 - Inventoried all six downloaded SpaceEngine packages, including archived definitions: one ship and one SM02 mesh per package, with source paths, sizes and SHA-256 hashes.
 - Added model/texture and SpaceEngine adaptation credits to README.md, linked the declared per-asset licenses, and recorded the yacht's conflicting license notices.
 - Added a repeatable source audit script. Playable integration and default-account ownership remain pending compatible Unreal 4.19.2 assets and client/server registration; no new ship assets or installer binaries are published by this audit.

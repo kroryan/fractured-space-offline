@@ -17,6 +17,7 @@ PACKS = {
     '2687045417': ('UNN Mayotte', 'Azzecco (lux_comodo)', 'jamesmule', 'CC-BY-NC-4.0', 'https://creativecommons.org/licenses/by-nc/4.0/'),
     '2687094193': ('MCRN Avalanche', 'Azzecco (lux_comodo)', 'jamesmule', 'CC-BY-NC-4.0', 'https://creativecommons.org/licenses/by-nc/4.0/'),
     '2368610280': ("Epstein's Yacht", 'Chris Kun (as credited by the source); strawfinch', 'retro-visor', 'REQUIRES-VERIFICATION', None),
+    '2375181309': ('MCRN Chariot-Type Dropship', 'Chris Kuhn; model distributed by strawfinch', 'jamesmule', 'CC0-1.0', 'https://creativecommons.org/publicdomain/zero/1.0/'),
 }
 
 def digest(data):
@@ -58,6 +59,7 @@ def main():
         if not files:
             raise SystemExit('Workshop item is missing or not downloaded: ' + ident)
         records.append({'workshop_id': ident, 'title': title,
+                        'planned_ingame_display_name': 'Rocinante' if ident == '2211361535' else title,
                         'source_url': 'https://steamcommunity.com/sharedfiles/filedetails/?id=' + ident,
                         'model_texture_credit': artist, 'spaceengine_adapter_credit': adapter,
                         'declared_graphics_license': license_id, 'license_url': license_url,
@@ -71,7 +73,7 @@ def main():
                                            'Register client/server ship definitions and default-account ownership',
                                            'Verify hangar selection, spawning and gameplay before release']}
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=True) + '\n', encoding='utf-8')
+    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=True) + '\n', encoding='utf-8', newline='\n')
 
 if __name__ == '__main__':
     main()

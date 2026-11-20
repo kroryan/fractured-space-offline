@@ -2,7 +2,9 @@
 
 Status: source inventory and licensing review only. These ships are **not yet playable or included in the installer**. No model, texture, preview image or sound from the Workshop packages is redistributed by this directory.
 
-The six downloaded packages each contain one `.sss` ship definition and one `.sm` mesh. The inventory includes definitions inside ZIP-based `.pak` files; no additional ship variants were found in these downloads. See `source-manifest.json` for paths, byte counts and SHA-256 hashes. The source spells the yacht name "Epstein's Yatch"; the display name in this review uses "Yacht".
+The seven downloaded packages each contain one `.sss` ship definition and one `.sm` mesh. The inventory includes definitions inside ZIP-based `.pak` files; no additional ship variants were found in these downloads. See `source-manifest.json` for paths, byte counts and SHA-256 hashes. The source spells the yacht name "Epstein's Yatch"; the display name in this review uses "Yacht".
+
+The planned in-game display name for the Tachi asset is **Rocinante**, preserving the source model and original credits. See the [integration and balance plan](INTEGRATION_PLAN.md).
 
 ## Attribution and declared licenses
 
@@ -14,6 +16,7 @@ The six downloaded packages each contain one `.sss` ship definition and one `.sm
 | [UNN Mayotte](https://steamcommunity.com/sharedfiles/filedetails/?id=2687045417) | [Azzecco (`lux_comodo`)](https://sketchfab.com/lux_comodo) | jamesmule | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), not BY-NC-SA. |
 | [MCRN Avalanche](https://steamcommunity.com/sharedfiles/filedetails/?id=2687094193) | [Azzecco (`lux_comodo`)](https://sketchfab.com/lux_comodo) | jamesmule | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), confirmed from the Steam published-file details API. |
 | [Epstein's Yacht](https://steamcommunity.com/sharedfiles/filedetails/?id=2368610280) | Chris Kun as credited by the source; original model distributed by strawfinch / owlstraw | retro-visor | Needs clarification: the [Sketchfab model](https://sketchfab.com/3d-models/epsteins-yacht-the-expanse-137498e7aabb47dfaee3fe2652fadefa) describes CC0 but displays CC Attribution metadata. The Workshop page does not state a license for its modified texture. Do not assume the complete mod is CC0. |
+| [MCRN Chariot-Type Dropship](https://steamcommunity.com/sharedfiles/filedetails/?id=2375181309) | Chris Kuhn; model distributed by strawfinch | jamesmule | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) as declared by the source publisher. |
 
 These are the source publishers' license declarations, not a guarantee that they control every underlying right. The model licenses do not establish permission to redistribute recordings from the television series. Show-derived audio must be excluded from an import unless separately licensed. Existing game audio can be referenced instead. Credits do not imply endorsement by the artists, SpaceEngine or The Expanse rights holders.
 
@@ -40,4 +43,4 @@ Run from the repository root after Steam finishes downloading:
 python tools/audit_expanse.py --output mods/expanse/source-manifest.json
 ```
 
-Use `--workshop-root` for a different Steam library. The scanner reads every loose and archived `.sss` definition and `.sm` mesh in the six selected packages, and hashes every source file. It does not extract archives into the game or silently turn source files into installable content. Review additional packages and add their source IDs and license evidence before expanding the inventory.
+Use `--workshop-root` for a different Steam library. The scanner reads every loose and archived `.sss` definition and `.sm` mesh in the seven selected packages, and hashes every source file. It does not extract archives into the game or silently turn source files into installable content. Review additional packages and add their source IDs and license evidence before expanding the inventory.

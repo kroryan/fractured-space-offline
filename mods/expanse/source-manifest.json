@@ -5,6 +5,7 @@
     {
       "workshop_id": "2211361535",
       "title": "MCRN Tachi",
+      "planned_ingame_display_name": "Rocinante",
       "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2211361535",
       "model_texture_credit": "Anton Perfilev (wintermute666)",
       "spaceengine_adapter_credit": "jamesmule",
@@ -117,6 +118,7 @@
     {
       "workshop_id": "2224316655",
       "title": "Razorback",
+      "planned_ingame_display_name": "Razorback",
       "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2224316655",
       "model_texture_credit": "Chris Kuhn; CC0Textures.com",
       "spaceengine_adapter_credit": "jamesmule; retro-visor",
@@ -219,6 +221,7 @@
     {
       "workshop_id": "2375119898",
       "title": "MCRN Donnager",
+      "planned_ingame_display_name": "MCRN Donnager",
       "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2375119898",
       "model_texture_credit": "Chris Kuhn; model distributed by strawfinch",
       "spaceengine_adapter_credit": "jamesmule; retro-visor",
@@ -316,6 +319,7 @@
     {
       "workshop_id": "2687045417",
       "title": "UNN Mayotte",
+      "planned_ingame_display_name": "UNN Mayotte",
       "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2687045417",
       "model_texture_credit": "Azzecco (lux_comodo)",
       "spaceengine_adapter_credit": "jamesmule",
@@ -588,6 +592,7 @@
     {
       "workshop_id": "2687094193",
       "title": "MCRN Avalanche",
+      "planned_ingame_display_name": "MCRN Avalanche",
       "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2687094193",
       "model_texture_credit": "Azzecco (lux_comodo)",
       "spaceengine_adapter_credit": "jamesmule",
@@ -1040,6 +1045,7 @@
     {
       "workshop_id": "2368610280",
       "title": "Epstein's Yacht",
+      "planned_ingame_display_name": "Epstein's Yacht",
       "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2368610280",
       "model_texture_credit": "Chris Kun (as credited by the source); strawfinch",
       "spaceengine_adapter_credit": "retro-visor",
@@ -1071,6 +1077,89 @@
           "path": "preview.jpg",
           "bytes": 563620,
           "sha256": "c963c676f3ca7ccb0c554a8c4b17363ae64bbda4d195fb990a307493c0770ef8"
+        }
+      ]
+    },
+    {
+      "workshop_id": "2375181309",
+      "title": "MCRN Chariot-Type Dropship",
+      "planned_ingame_display_name": "MCRN Chariot-Type Dropship",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2375181309",
+      "model_texture_credit": "Chris Kuhn; model distributed by strawfinch",
+      "spaceengine_adapter_credit": "jamesmule",
+      "declared_graphics_license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "playable_in_fractured_space": false,
+      "default_account_ownership_when_integrated": true,
+      "ship_definitions": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Dropship/MCRN_Dropship.sss",
+          "name": "MCRN Chariot-Type",
+          "sha256": "44676f85aafa92f0e29be8220c63a383584718f7d9ec98a72ae6f441cff42451"
+        }
+      ],
+      "meshes": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Dropship/MCRN_Dropship.pak::MCRN_Dropship.sm",
+          "format": "SM02",
+          "bytes": 14558044
+        }
+      ],
+      "files": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Dropship/MCRN_Dropship.cfg",
+          "bytes": 4402,
+          "sha256": "0e740183f85854ce7f392f61bf425994903445a14e970a9713b8ec244e49aab7"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Dropship/MCRN_Dropship.pak",
+          "bytes": 7514754,
+          "sha256": "78d2748ce21fb508aedd8460a306f647f17ff9adc3d027823775a7944b11f6d0"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Dropship/MCRN_Dropship.sss",
+          "bytes": 551,
+          "sha256": "44676f85aafa92f0e29be8220c63a383584718f7d9ec98a72ae6f441cff42451"
+        },
+        {
+          "path": "preview.jpg",
+          "bytes": 635603,
+          "sha256": "0a9073fd29c1e1f6db11ad1af13ced8e2c0e6c8aa49d1395f975c71003e98eb2"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_chariot_type_epstein.ogg",
+          "bytes": 37344,
+          "sha256": "76f37af94e20f40ae281cc17dea3523b959697b5af66a429a1279d338873ebca"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_chariot_type_maneuvering.ogg",
+          "bytes": 39626,
+          "sha256": "49f76982dc43c97aaeaca1c77ae308cb767f199cadcf483574c436fcd5f09e5e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Dropship/chariot_type.mtl",
+          "bytes": 1122,
+          "sha256": "fbf9d34ad91857b99dc0a5a8f5f87639d9cadb1223f61070d8e40eef1772508c"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Dropship/Color_Texture.jpg",
+          "bytes": 2219547,
+          "sha256": "f8aa9471c1ccdedbdb0df6c869cce017efc193e4fc4de235727338acc04ebc36"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Dropship/MCRN_Dropship.sml",
+          "bytes": 1246,
+          "sha256": "74cacffc5a36fb649ed238b86080b07438a20bb453426f3e3cc3db61cd28c28b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Dropship/Spec_Texture.jpg",
+          "bytes": 3886328,
+          "sha256": "83660d8f6aa9c3c262afcb8a431550627760ffe528d849453205b103642ecbcf"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Dropship/White.jpg",
+          "bytes": 1053,
+          "sha256": "ac757d567eb8ee3180cf1b638e2565d124208dc09bfded5e59a1c22df8ac100e"
         }
       ]
     }
