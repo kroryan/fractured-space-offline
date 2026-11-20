@@ -18,8 +18,8 @@ using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Bootstrapper Offline")]
 [assembly: System.Reflection.AssemblyProduct("Fractured Space Bootstrapper Offline")]
-[assembly: System.Reflection.AssemblyVersion("1.4.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.4.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.4.1.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.4.1.0")]
 
 static class OfflineLauncher
 {
@@ -62,7 +62,7 @@ static class OfflineLauncher
         bool created;
         using (var mutex = new Mutex(true, "FracturedSpaceBootstrapperOffline_" + port, out created))
         {
-            if (!created) { Fail(L("El lanzador offline ya está en marcha.", "The offline launcher is already running.")); return 1; }
+            if (!created) { Fail(("The offline launcher is already running.")); return 1; }
             try { File.WriteAllText(logPath, ""); } catch { }
 
             string playerId = LoadPlayerId(appDir);
@@ -79,8 +79,7 @@ static class OfflineLauncher
                     {
                         DialogResult answer = DialogResult.No;
                         var t = new Thread(() => answer = MessageBox.Show(
-                            L("El jugador " + peer + " solicita unirse al equipo " + team + ". ¿Aceptar?",
-                              "Player " + peer + " requests to join team " + team + ". Accept?"),
+                            ("Player " + peer + " requests to join team " + team + ". Accept?"),
                             Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question));
                         t.SetApartmentState(ApartmentState.STA); t.Start(); t.Join();
                         return answer == DialogResult.Yes;
@@ -97,13 +96,13 @@ static class OfflineLauncher
                     File.WriteAllText(Path.Combine(appDir, "player-id.txt"), playerId);
                 }
             }
-            catch (Exception ex) { Fail(L("No se pudo iniciar/unir a la partida cooperativa:\n", "Could not host/join the co-op game:\n") + ex.Message); return 1; }
+            catch (Exception ex) { Fail(("Could not host/join the co-op game:\n") + ex.Message); return 1; }
             activeIdentity = String.IsNullOrEmpty(playerId) ? RecordedIdentity : playerId;
             string profileDirectory = serveOnly ? Path.Combine(appDir, "profiles") : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FracturedSpaceOffline", "profiles");
             profile = new ProfileStore(profileDirectory, activeIdentity);
 
             try { LoadResponses(Path.Combine(appDir, "responses.json")); }
-            catch (Exception ex) { Fail(L("No se pudo leer responses.json:\n", "Could not read responses.json:\n") + ex.Message); return 1; }
+            catch (Exception ex) { Fail(("Could not read responses.json:\n") + ex.Message); return 1; }
 
             TcpListener listener;
             try
@@ -113,8 +112,7 @@ static class OfflineLauncher
             }
             catch (Exception ex)
             {
-                Fail(L("El puerto " + port + " está ocupado (¿hay otro servidor offline o el juego abierto?).\n\n",
-                     "Port " + port + " is in use (is another offline server or the game already running?).\n\n") + ex.Message);
+                Fail(("Port " + port + " is in use (is another offline server or the game already running?).\n\n") + ex.Message);
                 return 1;
             }
             var serverThread = new Thread(() => Serve(listener)) { IsBackground = true };
@@ -128,30 +126,28 @@ static class OfflineLauncher
             }
 
             string gameRoot = FindGame(appDir);
-            if (gameRoot == null) { Fail(L("No se encuentra Fractured Space instalado en Steam.", "Fractured Space was not found in your Steam libraries.")); return 1; }
+            if (gameRoot == null) { Fail(("Fractured Space was not found in your Steam libraries.")); return 1; }
             string exe = Path.Combine(gameRoot, @"spacegame\Binaries\Win64\Fractured Space.exe");
             if (selectedMode != PlayMode.Solo && !File.Exists(Path.Combine(gameRoot, @"spacegame\Binaries\Win64\spserver_original.exe")))
             {
-                Fail(L("No está instalado el wrapper del servidor. Vuelve a ejecutar el instalador.", "The server wrapper is not installed. Run the installer again."));
+                Fail(("The server wrapper is not installed. Run the installer again."));
                 return 1;
             }
             if (selectedMode != PlayMode.Solo && !File.Exists(Path.Combine(gameRoot, @"spacegame\Binaries\Win64\spserver_original.exe")))
             {
-                Fail(L("No está instalado el wrapper del servidor. Vuelve a ejecutar el instalador.", "The server wrapper is not installed. Run the installer again."));
+                Fail(("The server wrapper is not installed. Run the installer again."));
                 return 1;
             }
-            if (!File.Exists(exe)) { Fail(L("No se encuentra:\n", "Not found:\n") + exe); return 1; }
+            if (!File.Exists(exe)) { Fail(("Not found:\n") + exe); return 1; }
             if (!File.Exists(Path.Combine(gameRoot, "fractured-space-offline.json")) &&
                 !File.Exists(Path.Combine(gameRoot, "bootlegger.json")))
             {
-                Fail(L("El juego no está parcheado.\nVuelve a ejecutar el instalador de Fractured Space Offline.",
-                     "The game is not patched.\nRun the Fractured Space Offline installer again."));
+                Fail(("The game is not patched.\nRun the Fractured Space Offline installer again."));
                 return 1;
             }
             if (Process.GetProcessesByName("Fractured Space").Length > 0)
             {
-                Fail(L("Fractured Space ya está abierto. Ciérralo antes de usar el modo offline.",
-                     "Fractured Space is already running. Close it before using offline mode."));
+                Fail(("Fractured Space is already running. Close it before using offline mode."));
                 return 1;
             }
 
@@ -163,7 +159,7 @@ static class OfflineLauncher
             try { ConfigureDisplay(); } catch (Exception ex) { Log("Display config failed: " + ex.Message); }
             using (var progress = new LaunchProgress())
             {
-                progress.Show(); progress.Set(65, L("Preparando el servidor local…", "Preparing the local server…"));
+                progress.Show(); progress.Set(65, ("Preparing the local server…"));
                 Application.DoEvents();
 
             var psi = new ProcessStartInfo(exe,
@@ -187,10 +183,10 @@ static class OfflineLauncher
             psi.EnvironmentVariables["FSO_PLAYER_ID"] = playerId;
             try
             {
-                progress.Set(82, L("Iniciando Fractured Space…", "Starting Fractured Space…")); Application.DoEvents();
+                progress.Set(82, ("Starting Fractured Space…")); Application.DoEvents();
                 var recorder = new MatchRecorder(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"spacegame\Saved\FracturedSpace\fso-results.json"), profile, Log);
                 var game = Process.Start(psi);
-                progress.Set(100, L("Esperando a que aparezca la ventana del juego…", "Waiting for the game window…"));
+                progress.Set(100, ("Waiting for the game window…"));
                 if (game != null)
                 {
                     while (!game.HasExited && game.MainWindowHandle == IntPtr.Zero) { Thread.Sleep(500); game.Refresh(); Application.DoEvents(); }
@@ -202,7 +198,7 @@ static class OfflineLauncher
                 }
                 progress.Close();
             }
-            catch (Exception ex) { Fail(L("No se pudo abrir el juego:\n", "Could not start the game:\n") + ex.Message); return 1; }
+            catch (Exception ex) { Fail(("Could not start the game:\n") + ex.Message); return 1; }
             }
 
             // The game may relaunch itself; wait until no instance remains.
@@ -237,18 +233,18 @@ static class OfflineLauncher
         {
             f.BackColor = System.Drawing.Color.FromArgb(18, 22, 30); f.ForeColor = System.Drawing.Color.FromArgb(225, 232, 240); f.Font = new System.Drawing.Font("Segoe UI", 10);
             f.Text = Title; f.Width = 520; f.Height = 420; f.StartPosition = FormStartPosition.CenterScreen;
-            var solo = new RadioButton { Left = 24, Top = 24, Width = 410, Text = L("Jugar solo contra bots", "Play solo vs bots"), Checked = last == 0 };
-            var host = new RadioButton { Left = 24, Top = 60, Width = 410, Text = L("Crear partida cooperativa (anfitrión)", "Create co-op game (host)"), Checked = last == 1 };
-            var join = new RadioButton { Left = 24, Top = 96, Width = 410, Text = L("Unirse a una partida cooperativa", "Join a co-op game"), Checked = last == 2 };
+            var solo = new RadioButton { Left = 24, Top = 24, Width = 410, Text = ("Play solo vs bots"), Checked = last == 0 };
+            var host = new RadioButton { Left = 24, Top = 60, Width = 410, Text = ("Create co-op game (host)"), Checked = last == 1 };
+            var join = new RadioButton { Left = 24, Top = 96, Width = 410, Text = ("Join a co-op game"), Checked = last == 2 };
             var ipLabel = new Label { Left = 46, Top = 132, Width = 100, Text = "Host IP:" };
             var ip = new TextBox { Left = 145, Top = 128, Width = 250, Text = "127.0.0.1" };
-            var bindLabel = new Label { Left = 46, Top = 166, Width = 100, Text = L("IP local:", "Local IP:") };
+            var bindLabel = new Label { Left = 46, Top = 166, Width = 100, Text = ("Local IP:") };
             var bind = new ComboBox { Left = 145, Top = 162, Width = 250, DropDownStyle = ComboBoxStyle.DropDownList };
             foreach (var a in LocalAddresses()) bind.Items.Add(a);
             if (bind.Items.Count > 0) bind.SelectedIndex = 0;
-            var partyLabel = new Label { Left = 46, Top = 202, Width = 215, Text = L("Jugadores humanos (contándote):", "Human players (including you):") };
+            var partyLabel = new Label { Left = 46, Top = 202, Width = 215, Text = ("Human players (including you):") };
             var party = new NumericUpDown { Left = 270, Top = 198, Width = 65, Minimum = 2, Maximum = 4, Value = expectedPlayers };
-            var teamLabel = new Label { Left = 46, Top = 238, Width = 215, Text = L("Humanos en tu equipo:", "Humans on your team:") };
+            var teamLabel = new Label { Left = 46, Top = 238, Width = 215, Text = ("Humans on your team:") };
             var teamSize = new ComboBox { Left = 270, Top = 234, Width = 175, DropDownStyle = ComboBoxStyle.DropDownList };
             var distribution = new Label { Left = 46, Top = 270, Width = 410, Height = 38 };
             Action refreshTeams = () =>
@@ -258,12 +254,11 @@ static class OfflineLauncher
                 teamSize.Items.Clear();
                 for (int i = 1; i <= count; i++)
                     teamSize.Items.Add(i == count
-                        ? L("Todos juntos (" + count + ")", "All together (" + count + ")")
-                        : L(i + " en tu equipo / " + (count - i) + " en el otro", i + " on your team / " + (count - i) + " on the other"));
+                        ? ("All together (" + count + ")")
+                        : (i + " on your team / " + (count - i) + " on the other"));
                 teamSize.SelectedIndex = selected - 1;
                 hostTeamSize = selected;
-                distribution.Text = L("El anfitrión irá en el equipo 1. Cada solicitud mostrará el equipo asignado.",
-                                      "The host will be on team 1. Each join request will show its assigned team.");
+                distribution.Text = ("The host will be on team 1. Each join request will show its assigned team.");
             };
             party.ValueChanged += (s, e) => refreshTeams();
             teamSize.SelectedIndexChanged += (s, e) => { if (teamSize.SelectedIndex >= 0) hostTeamSize = teamSize.SelectedIndex + 1; };
@@ -279,8 +274,8 @@ static class OfflineLauncher
             host.CheckedChanged += (s, e) => updateEnabled();
             join.CheckedChanged += (s, e) => updateEnabled();
             updateEnabled();
-            var go = new Button { Left = 335, Top = 325, Width = 110, Text = L("Continuar", "Continue"), DialogResult = DialogResult.OK };
-            go.Click += (s,e) => { IPAddress parsed; if (join.Checked && !IPAddress.TryParse(ip.Text.Trim(), out parsed)) { MessageBox.Show(L("Escribe una IP válida.", "Enter a valid IP address.")); f.DialogResult = DialogResult.None; } };
+            var go = new Button { Left = 335, Top = 325, Width = 110, Text = ("Continue"), DialogResult = DialogResult.OK };
+            go.Click += (s,e) => { IPAddress parsed; if (join.Checked && !IPAddress.TryParse(ip.Text.Trim(), out parsed)) { MessageBox.Show(("Enter a valid IP address.")); f.DialogResult = DialogResult.None; } };
             f.Controls.AddRange(new Control[] { solo, host, join, ipLabel, ip, bindLabel, bind, partyLabel, party, teamLabel, teamSize, distribution, go }); f.AcceptButton = go;
             foreach (Control control in f.Controls) {
                 if (control is TextBox || control is ComboBox || control is Button) {
@@ -336,16 +331,13 @@ static class OfflineLauncher
             BackColor = System.Drawing.Color.FromArgb(18, 22, 30); ForeColor = System.Drawing.Color.FromArgb(225, 232, 240); Font = new System.Drawing.Font("Segoe UI", 10);
             Text = Title; Width = 470; Height = 135; FormBorderStyle = FormBorderStyle.FixedDialog;
             ControlBox = false; StartPosition = FormStartPosition.CenterScreen;
-            label = new Label { Left = 18, Top = 16, Width = 420, Height = 24, Text = L("Buscando el juego…", "Finding the game…") };
+            label = new Label { Left = 18, Top = 16, Width = 420, Height = 24, Text = ("Finding the game…") };
             bar = new ProgressBar { Left = 18, Top = 52, Width = 420, Height = 22, Minimum = 0, Maximum = 100, Value = 20 };
             Controls.Add(label); Controls.Add(bar);
         }
         public void Set(int value, string text) { bar.Value = Math.Max(0, Math.Min(100, value)); label.Text = text; }
     }
 
-    static readonly bool Spanish =
-        System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "es";
-    static string L(string es, string en) { return Spanish ? es : en; }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     static extern bool SetProcessDPIAware();

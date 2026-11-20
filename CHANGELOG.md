@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1 — English-only interfaces and documentation
+
+- Removed automatic Spanish localization and translated strings from the installer, launcher and DirectX 11 F1 menu. All application-owned text now uses English regardless of the Windows display language.
+- Translated the trainer security documentation into English and recorded the English-only policy in project rules.
+- Rebuilt the Windows installer and Linux AppImage. This release retains the personal profiles and F1 trainer features from 1.4.0, including its documented gameplay verification limits.
+
 ## 1.4.0 — Personal profiles and in-game F1 menu
 
 - Adapted the Dreadnought launcher dark palette and DirectX 11 F1 overlay to Fractured Space.

@@ -46,7 +46,6 @@ static DWORD g_startTick;
 
 static int g_port;
 static std::wstring g_token;
-static bool g_es;
 
 static std::mutex g_mu;
 static std::string g_status = "...";
@@ -54,7 +53,6 @@ static std::string g_result;
 static std::atomic<bool> g_busy{false};
 static DWORD g_lastRefresh;
 
-static const char *T(const char *en, const char *es) { return g_es ? es : en; }
 
 static void MenuLog(const char *fmt, ...) {
   char dir[MAX_PATH];
@@ -106,7 +104,7 @@ static std::string Http(const wchar_t *method, const std::wstring &path) {
 static void RefreshStatus() {
   std::string st = Http(L"GET", L"/status?t=" + g_token);
   std::lock_guard<std::mutex> l(g_mu);
-  g_status = st.empty() ? T("Fractured Space Offline launcher not reachable.", "No se encuentra el launcher de Fractured Space Offline.") : st;
+  g_status = st.empty() ? ("Fractured Space Offline launcher not reachable.") : st;
 }
 
 static void RunAction(const std::wstring &query) {
@@ -114,13 +112,13 @@ static void RunAction(const std::wstring &query) {
     return;
   {
     std::lock_guard<std::mutex> l(g_mu);
-    g_result = T("Working...", "Aplicando...");
+    g_result = ("Working...");
   }
   std::thread([query]() {
     std::string res = Http(L"POST", L"/action?t=" + g_token + L"&" + query);
     {
       std::lock_guard<std::mutex> l(g_mu);
-      g_result = res.empty() ? T("No answer from the launcher.", "El launcher no responde.") : res;
+      g_result = res.empty() ? ("No answer from the launcher.") : res;
     }
     RefreshStatus();
     g_busy = false;
@@ -199,7 +197,7 @@ static void DrawMenu() {
   ImGui::SetNextWindowSize(ImVec2(fs * 40, io.DisplaySize.y * 0.88f), ImGuiCond_Always);
   ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f), ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
   bool keep = true;
-  ImGui::Begin(T("FRACTURED SPACE OFFLINE  -  F1###dnmenu", "FRACTURED SPACE OFFLINE  -  F1###dnmenu"), &keep,
+  ImGui::Begin(("FRACTURED SPACE OFFLINE  -  F1###dnmenu"), &keep,
                ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings);
   if (!keep)
     g_open = false;
@@ -225,13 +223,13 @@ static void DrawMenu() {
     reqs = g_requests;
   }
   if (!reqs.empty()) {
-    Section(T("Players asking to join your game", "Jugadores que piden unirse a tu partida"));
+    Section(("Players asking to join your game"));
     for (const JoinReq &q : reqs) {
       ImGui::AlignTextToFramePadding();
       ImGui::TextUnformatted(q.label.c_str());
       ImGui::SameLine(avail - w3 * 2 / 3 * 2 - ImGui::GetStyle().ItemSpacing.x);
-      std::string a = std::string(T("Accept", "Aceptar")) + "##a" + q.id;
-      std::string d = std::string(T("Reject", "Rechazar")) + "##d" + q.id;
+      std::string a = std::string(("Accept")) + "##a" + q.id;
+      std::string d = std::string(("Reject")) + "##d" + q.id;
       std::wstring wid(q.id.begin(), q.id.end());
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.16f, 0.45f, 0.28f, 1.0f));
       if (Btn(a.c_str(), w3 * 2 / 3))
@@ -243,38 +241,36 @@ static void DrawMenu() {
     }
   }
 
-  Section(T("Local match", "Partida local"));
-  if (Btn(T("Toggle player god mode", "Activar/desactivar invulnerabilidad"), avail)) Act(L"god_player");
-  if (Btn(T("Toggle allied bot god mode", "Invulnerabilidad de bots aliados"), avail)) Act(L"god_allies");
-  if (Btn(T("Toggle enemy bot god mode", "Invulnerabilidad de bots enemigos"), avail)) Act(L"god_enemies");
+  Section(("Local match"));
+  if (Btn(("Toggle player god mode"), avail)) Act(L"god_player");
+  if (Btn(("Toggle allied bot god mode"), avail)) Act(L"god_allies");
+  if (Btn(("Toggle enemy bot god mode"), avail)) Act(L"god_enemies");
   static int selectedShip = 0;
   static const char* ships[] = {"Aegis", "Basilisk", "Black Widow", "Brawler", "Centurion", "Colossus", "Destroyer", "Displacer", "Disruptor", "Endeavor", "Enforcer", "Equalizer", "Executioner", "Furion", "Ghost", "Gladiator", "Guardian", "Hunter", "Infiltrator", "Interceptor", "Leviathan", "Overseer", "Paladin", "Paragon", "Persecutor", "Pioneer", "Protector", "Punisher", "Raider", "Ranger", "Raven", "Reaper", "Sentinel", "Superlifter", "Venturer", "Watchman"};
-  ImGui::Combo(T("Ship", "Nave"), &selectedShip, ships, IM_ARRAYSIZE(ships));
-  if (Btn(T("Spawn allied ship", "Crear nave aliada"), avail)) {
+  ImGui::Combo(("Ship"), &selectedShip, ships, IM_ARRAYSIZE(ships));
+  if (Btn(("Spawn allied ship"), avail)) {
     std::string name(ships[selectedShip]); RunAction(L"name=spawn_ally&ship=" + std::wstring(name.begin(),name.end()));
   }
-  if (Btn(T("Spawn enemy ship", "Crear nave enemiga"), avail)) {
+  if (Btn(("Spawn enemy ship"), avail)) {
     std::string name(ships[selectedShip]); RunAction(L"name=spawn_enemy&ship=" + std::wstring(name.begin(),name.end()));
   }
-  Section(T("Credits", "Créditos"));
+  Section(("Credits"));
   if (Btn("+100,000", avail)) Act(L"credits_100k");
-  if (Btn(T("Maximum credits", "Créditos al máximo"), avail)) Act(L"credits_max");
-  Section(T("Offline profile", "Perfil offline"));
-  if (Btn(T("Unlock all ships", "Desbloquear todas las naves"), avail)) Act(L"unlock_ships");
-  if (Btn(T("Restore level 68", "Restaurar nivel 68"), avail)) Act(L"level_68");
-  Section(T("Personal statistics", "Estadísticas personales"));
+  if (Btn(("Maximum credits"), avail)) Act(L"credits_max");
+  Section(("Offline profile"));
+  if (Btn(("Unlock all ships"), avail)) Act(L"unlock_ships");
+  if (Btn(("Restore level 68"), avail)) Act(L"level_68");
+  Section(("Personal statistics"));
   static bool confirmReset = false;
-  ImGui::Checkbox(T("Confirm statistics reset", "Confirmar borrado de estadísticas"), &confirmReset);
-  if (Btn(T("Reset my statistics", "Borrar mis estadísticas"), avail) && confirmReset) {
+  ImGui::Checkbox(("Confirm statistics reset"), &confirmReset);
+  if (Btn(("Reset my statistics"), avail) && confirmReset) {
     Act(L"reset_stats"); confirmReset = false;
   }
-  ImGui::TextWrapped("%s", T("Profile changes apply on the next login. Ships and level are separate from combat statistics.",
-    "Los cambios se aplican al volver a entrar. Las naves y el nivel son independientes de las estadísticas de combate."));
+  ImGui::TextWrapped("%s", ("Profile changes apply on the next login. Ships and level are separate from combat statistics."));
   ImGui::Spacing();
   if (!result.empty())
     ImGui::TextWrapped("%s", result.c_str());
-  ImGui::TextDisabled("%s", T("F1: show / hide. If the hangar does not refresh, open another screen and come back.",
-                              "F1: mostrar / ocultar. Si el hangar no se actualiza, cambia de pantalla y vuelve."));
+  ImGui::TextDisabled("%s", ("F1: show / hide. If the hangar does not refresh, open another screen and come back."));
   ImGui::End();
 }
 
@@ -297,10 +293,10 @@ static void DrawHint() {
       for (const JoinReq &q : g_requests)
         who += (who.empty() ? "" : ", ") + q.label;
     }
-    ImGui::TextColored(ImVec4(0.45f, 0.95f, 0.55f, 1.0f), "%s %s  -  %s", T("Wants to join:", "Quiere unirse:"), who.c_str(),
-                       T("press F1", "pulsa F1"));
+    ImGui::TextColored(ImVec4(0.45f, 0.95f, 0.55f, 1.0f), "%s %s  -  %s", ("Wants to join:"), who.c_str(),
+                       ("press F1"));
   } else {
-    ImGui::TextUnformatted(T("Fractured Space Offline  -  F1: menu", "Fractured Space Offline  -  F1: menú"));
+    ImGui::TextUnformatted(("Fractured Space Offline  -  F1: menu"));
   }
   ImGui::End();
 }
@@ -429,7 +425,6 @@ static DWORD WINAPI Init(LPVOID) {
     return 0;
   g_port = _wtoi(v.substr(0, colon).c_str());
   g_token = v.substr(colon + 1);
-  g_es = PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_SPANISH;
 
   // The game creates its device after start-up; kiero needs d3d11 loaded.
   for (int i = 0; i < 600 && !GetModuleHandleW(L"d3d11.dll"); ++i)

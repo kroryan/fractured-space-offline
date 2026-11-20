@@ -41,3 +41,7 @@ The import covers the `Space` payload. Bootstrapper application binaries belong 
 - For updates, fetch the reference into ignored `obj/reference-cheat-menu`, compare its revision and hashes against the lock, and merge changes into `src/Trainer` individually. Preserve the authenticated headless bridge, configured server-path filtering, process lifecycle and upstream executable signature guards. Never restore the separate trainer window as the normal user flow.
 - The F1 menu must render in the game's own DirectX 11 frame. Guests cannot issue server-memory actions; only the local host can operate its server. Never target the wrapper executable or select an arbitrary server by PID.
 - Keep personal statistics separate from recorded account unlocks and experience. New profiles start with zero historical combat statistics and preserve the unlocked ships and level 68. Persist supported updates per player identity and test isolation/reset across restarts. Do not claim match result recording unless an actual match reports its results through a supported endpoint.
+
+## English-only language policy
+
+All project-owned interfaces, messages, trainer/F1 controls, documentation, release titles and changelogs must be written in English. Do not select another language from the operating system locale or reintroduce translated UI strings when importing reference updates. Keep Fractured Space launched with its English culture setting. Preserve third-party license notices and identifiers unchanged.

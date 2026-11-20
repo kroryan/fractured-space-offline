@@ -22,7 +22,7 @@ It works fully offline and needs no administrator rights. It does not install ce
 
 Windows SmartScreen may warn about the installer because it is not code-signed. Click *More info → Run anyway*.
 
-The installer and launcher UI is in English, or in Spanish when Windows is set to Spanish.
+The installer, launcher, F1 menu and project documentation are English-only, regardless of the system language.
 
 ## Linux (Steam Deck, desktop) — quick and dirty
 

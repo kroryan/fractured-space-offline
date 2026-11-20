@@ -28,7 +28,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Offline server wrapper")]
-[assembly: System.Reflection.AssemblyVersion("1.4.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.4.1.0")]
 
 static class ServerWrapper
 {

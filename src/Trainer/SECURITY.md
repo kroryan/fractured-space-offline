@@ -1,7 +1,7 @@
-# Sécurité et provenance
+# Security and provenance
 
-Ce projet est destiné au serveur solo local `spserver.exe`. Il lit et modifie la mémoire de ce processus et y exécute du code pour certaines actions. Ces opérations peuvent déclencher une alerte heuristique de Windows.
+This project targets the local solo server, `spserver.exe`. It reads and modifies that process's memory and executes code inside it for some actions. These operations can trigger heuristic Windows security alerts.
 
-Les scripts publiés ne désactivent pas Microsoft Defender ou Smart App Control, ne créent pas de tâche planifiée ni de service, et ne téléchargent pas de code distant. `RUN_V20.bat` utilise `-ExecutionPolicy Bypass` pour son seul processus PowerShell ; il ne modifie pas la politique du système.
+The published scripts do not disable Microsoft Defender or Smart App Control, create scheduled tasks or services, or download remote code. The offline integration runs PowerShell with a process-scoped execution policy; it does not change the system policy.
 
-`data/trainer-debug.log` peut être créé localement, mais il est exclu du dépôt. Vérifie les empreintes de `SHA256SUMS.txt` pour contrôler les fichiers publiés. N'exécute le menu qu'à partir d'une source que tu reconnais.
+`data/trainer-debug.log` may be created locally and is excluded from the repository. The original source revision and hashes are recorded in `tools/trainer-lock.json`. Use builds from a source you recognize.
