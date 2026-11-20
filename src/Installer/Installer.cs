@@ -22,17 +22,17 @@ using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Fractured Space Offline Setup")]
 [assembly: AssemblyProduct("Fractured Space Offline")]
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 
 static class Setup
 {
     public const string AppName = "Fractured Space Bootstrapper Offline";
-    public const string AppVersion = "1.2.0";
+    public const string AppVersion = "1.3.0";
     public const string AppExe = "FracturedSpaceBootstrapperOffline.exe";
     public const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\FracturedSpaceBootstrapperOffline";
     public const string DpiKey = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
-    public const int PatchLevel = 31;
+    public const int PatchLevel = 32;
     public const string BackupDirName = "fractured-offline-backup";
     public const string OfflineMarkerName = "fractured-space-offline.json";
     public const string GameExeRel = @"spacegame\Binaries\Win64\Fractured Space.exe";
@@ -58,9 +58,21 @@ static class Setup
 
     public static readonly PatchFile[] Patch = new[]
     {
-        new PatchFile("Fractured Space.exe", GameExeRel, "fa6288c2d914366e14175c1d9ebbb459f6bd605c348b6148e9eea33d7290bc2a", false),
+        new PatchFile("player.js", @"spacegame\Content\UIResources\frontend\script\player.js", "8e722a3a5205808fc84cad489c0e9f0c70ccac96bdc43ba58006400429c8ffaa", false),
+        new PatchFile("common.js", @"spacegame\Content\UIResources\frontend\script\common.js", "42c777e308cbbbb147ad95c9ba84e116f696f8c9c98e800ee1f769a551b37d2c", false),
+        new PatchFile("scoreboard.js", @"spacegame\Content\UIResources\frontend\map\scoreboard.js", "91a4d1342dbee1786421eba7ab138126e599ef5819881ba512f7d77f3d39368b", false),
+        new PatchFile("mode-selector.js", @"spacegame\Content\UIResources\frontend\drafting\mode-selector.js", "9b83c60984b50c2ce82fd6690e808b10acc9332df076000781cc994b97d07be7", false),
+        new PatchFile("drafting-style.css", @"spacegame\Content\UIResources\frontend\drafting\drafting-style.css", "141794cd40ffbf06c30d3f05cdaea2be05fc6c60384143922b7dbf5dd6b45079", false),
+        new PatchFile("drafting-script.js", @"spacegame\Content\UIResources\frontend\drafting\drafting-script.js", "f0123b19191d9208581fd8a77dcd9c440af1d8f3cff1b6811dce16aafa5cfdb1", false),
+        new PatchFile("Makichika_XmasEvent_P.pak", @"spacegame\Content\Paks\Makichika_XmasEvent_P.pak", "c20482888a928d878548da0ef51073abcdb7ef6bf9e3c51cfdb793bf5a419a48", false),
+        new PatchFile("Makichika_VenturerSkins_P.pak", @"spacegame\Content\Paks\Makichika_VenturerSkins_P.pak", "b5dd72b42563c75da64883903a57f151919c119a86ad90bdc6ca26072dedb997", false),
+        new PatchFile("Makichika_ProtectorShield_P.pak", @"spacegame\Content\Paks\Makichika_ProtectorShield_P.pak", "527ee940e636dab6fbeb53099ba6008cedb36fde3b0a46f89826cdda2b3eb8e1", false),
+        new PatchFile("Makichika_MapJamming_P.pak", @"spacegame\Content\Paks\Makichika_MapJamming_P.pak", "ae20f8f7ab1a7c59ea433b8b5d93a7ae3f9089c8169710b3705371d7d53b6aa1", false),
+        new PatchFile("Makichika_DiscordAvatars_P.pak", @"spacegame\Content\Paks\Makichika_DiscordAvatars_P.pak", "9ef2d2f35d9ef8df8a0e26258992a6e018db5f47d50e2cef8bc012017812a23c", false),
+        new PatchFile("Makichika_CharonEvent_P.pak", @"spacegame\Content\Paks\Makichika_CharonEvent_P.pak", "8718acfd43663cd9613a5c2993e2596b23f081b57490db1beefe9826d491fde2", false),
+        new PatchFile("Fractured Space.exe", @"spacegame\Binaries\Win64\Fractured Space.exe", "faefbe37c6403fd1097ea5351711f364b1fba421c20cac002587b06c54d12f1e", false),
         new PatchFile("ClientConfig.json", @"spacegame\ClientConfig.json", "0087a651ad5fbb235fa438b8d3a3f47cf2f6b11b3f88c528f82c48ccdc8d4b91", true),
-        new PatchFile("startgame-script.js", @"spacegame\Content\UIResources\frontend\views\startgame\startgame-script.js", "bac58eaa7f06a1b2401e5300e0141739055736bfb66d285e28b0096b83bcc1bb", true),
+        new PatchFile("startgame-script.js", @"spacegame\Content\UIResources\frontend\views\startgame\startgame-script.js", "1c62a37d09fc3930aa97e7b798c337e95ce1d24be4829fa15e62eb23de7711af", false),
         new PatchFile("startgame-style.css", @"spacegame\Content\UIResources\frontend\views\startgame\startgame-style.css", "49e856f3667e0c22db18a8c864c62ae66f1e1e2940d0efb783955ea6e0460301", true),
         new PatchFile("gamemodes-config.js", @"spacegame\Content\UIResources\frontend\views\gamemodes\gamemodes-config.js", "7d864d2985f05b81cd37199c4150652c4becf9c5cc253f160c2f38d7db7509bd", true),
         new PatchFile("nsloctext.js", @"spacegame\Content\UIResources\frontend\data\translations\nsloctext.js", "c1d43e513deb470d763b5d023db9275d3cde6bb689c45f1da110eb14ddd091af", true),
@@ -199,9 +211,17 @@ static class Setup
                     foreach (var f in Directory.GetFiles(backup, "*", SearchOption.AllDirectories))
                     {
                         string rel = f.Substring(backup.Length + 1);
+                        if (rel.EndsWith(".fso-absent", StringComparison.Ordinal)) continue;
                         string dest = Path.Combine(game, rel);
                         Directory.CreateDirectory(Path.GetDirectoryName(dest));
                         File.Copy(f, dest, true);
+                    }
+                    foreach (var f in Setup.Patch)
+                    {
+                        string dest = Path.Combine(game, f.Dest);
+                        if (File.Exists(Path.Combine(backup, f.Dest) + ".fso-absent") &&
+                            File.Exists(dest) && Setup.Sha256File(dest) == f.Sha256)
+                            File.Delete(dest);
                     }
                     string bootlegger = Path.Combine(game, "bootlegger.json");
                     string bootleggerBackup = Path.Combine(backup, "bootlegger.json");
@@ -438,6 +458,15 @@ class SetupForm : Form
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(b));
                         File.Copy(dest, b);
+                    }
+                }
+                else
+                {
+                    string b = Path.Combine(backup, f.Dest);
+                    if (!File.Exists(b))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(b));
+                        File.WriteAllText(b + ".fso-absent", "");
                     }
                 }
                 Directory.CreateDirectory(Path.GetDirectoryName(dest));

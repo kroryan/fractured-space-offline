@@ -1,0 +1,90 @@
+{
+  "repository": "https://github.com/Makichika/Fractured-space-fixe-",
+  "revision": "7e43fb70ca660c35ae903fcc1f703b9c0a624cb0",
+  "files": [
+    {
+      "source": "Space/spacegame/Binaries/Win64/Fractured Space.exe",
+      "file": "Fractured Space.exe",
+      "destination": "spacegame/Binaries/Win64/Fractured Space.exe",
+      "sha256": "faefbe37c6403fd1097ea5351711f364b1fba421c20cac002587b06c54d12f1e"
+    },
+    {
+      "source": "Space/spacegame/Content/Paks/Makichika_CharonEvent_P.pak",
+      "file": "Makichika_CharonEvent_P.pak",
+      "destination": "spacegame/Content/Paks/Makichika_CharonEvent_P.pak",
+      "sha256": "8718acfd43663cd9613a5c2993e2596b23f081b57490db1beefe9826d491fde2"
+    },
+    {
+      "source": "Space/spacegame/Content/Paks/Makichika_DiscordAvatars_P.pak",
+      "file": "Makichika_DiscordAvatars_P.pak",
+      "destination": "spacegame/Content/Paks/Makichika_DiscordAvatars_P.pak",
+      "sha256": "9ef2d2f35d9ef8df8a0e26258992a6e018db5f47d50e2cef8bc012017812a23c"
+    },
+    {
+      "source": "Space/spacegame/Content/Paks/Makichika_MapJamming_P.pak",
+      "file": "Makichika_MapJamming_P.pak",
+      "destination": "spacegame/Content/Paks/Makichika_MapJamming_P.pak",
+      "sha256": "ae20f8f7ab1a7c59ea433b8b5d93a7ae3f9089c8169710b3705371d7d53b6aa1"
+    },
+    {
+      "source": "Space/spacegame/Content/Paks/Makichika_ProtectorShield_P.pak",
+      "file": "Makichika_ProtectorShield_P.pak",
+      "destination": "spacegame/Content/Paks/Makichika_ProtectorShield_P.pak",
+      "sha256": "527ee940e636dab6fbeb53099ba6008cedb36fde3b0a46f89826cdda2b3eb8e1"
+    },
+    {
+      "source": "Space/spacegame/Content/Paks/Makichika_VenturerSkins_P.pak",
+      "file": "Makichika_VenturerSkins_P.pak",
+      "destination": "spacegame/Content/Paks/Makichika_VenturerSkins_P.pak",
+      "sha256": "b5dd72b42563c75da64883903a57f151919c119a86ad90bdc6ca26072dedb997"
+    },
+    {
+      "source": "Space/spacegame/Content/Paks/Makichika_XmasEvent_P.pak",
+      "file": "Makichika_XmasEvent_P.pak",
+      "destination": "spacegame/Content/Paks/Makichika_XmasEvent_P.pak",
+      "sha256": "c20482888a928d878548da0ef51073abcdb7ef6bf9e3c51cfdb793bf5a419a48"
+    },
+    {
+      "source": "Space/spacegame/Content/UIResources/frontend/drafting/drafting-script.js",
+      "file": "drafting-script.js",
+      "destination": "spacegame/Content/UIResources/frontend/drafting/drafting-script.js",
+      "sha256": "f0123b19191d9208581fd8a77dcd9c440af1d8f3cff1b6811dce16aafa5cfdb1"
+    },
+    {
+      "source": "Space/spacegame/Content/UIResources/frontend/drafting/drafting-style.css",
+      "file": "drafting-style.css",
+      "destination": "spacegame/Content/UIResources/frontend/drafting/drafting-style.css",
+      "sha256": "141794cd40ffbf06c30d3f05cdaea2be05fc6c60384143922b7dbf5dd6b45079"
+    },
+    {
+      "source": "Space/spacegame/Content/UIResources/frontend/drafting/mode-selector.js",
+      "file": "mode-selector.js",
+      "destination": "spacegame/Content/UIResources/frontend/drafting/mode-selector.js",
+      "sha256": "9b83c60984b50c2ce82fd6690e808b10acc9332df076000781cc994b97d07be7"
+    },
+    {
+      "source": "Space/spacegame/Content/UIResources/frontend/map/scoreboard.js",
+      "file": "scoreboard.js",
+      "destination": "spacegame/Content/UIResources/frontend/map/scoreboard.js",
+      "sha256": "91a4d1342dbee1786421eba7ab138126e599ef5819881ba512f7d77f3d39368b"
+    },
+    {
+      "source": "Space/spacegame/Content/UIResources/frontend/script/common.js",
+      "file": "common.js",
+      "destination": "spacegame/Content/UIResources/frontend/script/common.js",
+      "sha256": "42c777e308cbbbb147ad95c9ba84e116f696f8c9c98e800ee1f769a551b37d2c"
+    },
+    {
+      "source": "Space/spacegame/Content/UIResources/frontend/script/player.js",
+      "file": "player.js",
+      "destination": "spacegame/Content/UIResources/frontend/script/player.js",
+      "sha256": "8e722a3a5205808fc84cad489c0e9f0c70ccac96bdc43ba58006400429c8ffaa"
+    },
+    {
+      "source": "Space/spacegame/Content/UIResources/frontend/views/startgame/startgame-script.js",
+      "file": "startgame-script.js",
+      "destination": "spacegame/Content/UIResources/frontend/views/startgame/startgame-script.js",
+      "sha256": "1c62a37d09fc3930aa97e7b798c337e95ce1d24be4829fa15e62eb23de7711af"
+    }
+  ]
+}

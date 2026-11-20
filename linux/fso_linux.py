@@ -45,13 +45,25 @@ ACTIVE_IDENTITY = os.environ.get("FSO_PLAYER_ID", RECORDED_IDENTITY)
 GAME_EXE_REL = "spacegame/Binaries/Win64/Fractured Space.exe"
 BACKUP_DIR = "fractured-offline-backup"
 SERVER_EXE_REL = "spacegame/Binaries/Win64/spserver.exe"
-PATCH_LEVEL = 31
+PATCH_LEVEL = 32
 OFFLINE_MARKER = "fractured-space-offline.json"
 
 PATCH = [
-    ("Fractured Space.exe", GAME_EXE_REL, "fa6288c2d914366e14175c1d9ebbb459f6bd605c348b6148e9eea33d7290bc2a"),
+    ("player.js", "spacegame/Content/UIResources/frontend/script/player.js", "8e722a3a5205808fc84cad489c0e9f0c70ccac96bdc43ba58006400429c8ffaa"),
+    ("common.js", "spacegame/Content/UIResources/frontend/script/common.js", "42c777e308cbbbb147ad95c9ba84e116f696f8c9c98e800ee1f769a551b37d2c"),
+    ("scoreboard.js", "spacegame/Content/UIResources/frontend/map/scoreboard.js", "91a4d1342dbee1786421eba7ab138126e599ef5819881ba512f7d77f3d39368b"),
+    ("mode-selector.js", "spacegame/Content/UIResources/frontend/drafting/mode-selector.js", "9b83c60984b50c2ce82fd6690e808b10acc9332df076000781cc994b97d07be7"),
+    ("drafting-style.css", "spacegame/Content/UIResources/frontend/drafting/drafting-style.css", "141794cd40ffbf06c30d3f05cdaea2be05fc6c60384143922b7dbf5dd6b45079"),
+    ("drafting-script.js", "spacegame/Content/UIResources/frontend/drafting/drafting-script.js", "f0123b19191d9208581fd8a77dcd9c440af1d8f3cff1b6811dce16aafa5cfdb1"),
+    ("Makichika_XmasEvent_P.pak", "spacegame/Content/Paks/Makichika_XmasEvent_P.pak", "c20482888a928d878548da0ef51073abcdb7ef6bf9e3c51cfdb793bf5a419a48"),
+    ("Makichika_VenturerSkins_P.pak", "spacegame/Content/Paks/Makichika_VenturerSkins_P.pak", "b5dd72b42563c75da64883903a57f151919c119a86ad90bdc6ca26072dedb997"),
+    ("Makichika_ProtectorShield_P.pak", "spacegame/Content/Paks/Makichika_ProtectorShield_P.pak", "527ee940e636dab6fbeb53099ba6008cedb36fde3b0a46f89826cdda2b3eb8e1"),
+    ("Makichika_MapJamming_P.pak", "spacegame/Content/Paks/Makichika_MapJamming_P.pak", "ae20f8f7ab1a7c59ea433b8b5d93a7ae3f9089c8169710b3705371d7d53b6aa1"),
+    ("Makichika_DiscordAvatars_P.pak", "spacegame/Content/Paks/Makichika_DiscordAvatars_P.pak", "9ef2d2f35d9ef8df8a0e26258992a6e018db5f47d50e2cef8bc012017812a23c"),
+    ("Makichika_CharonEvent_P.pak", "spacegame/Content/Paks/Makichika_CharonEvent_P.pak", "8718acfd43663cd9613a5c2993e2596b23f081b57490db1beefe9826d491fde2"),
+    ("Fractured Space.exe", "spacegame/Binaries/Win64/Fractured Space.exe", "faefbe37c6403fd1097ea5351711f364b1fba421c20cac002587b06c54d12f1e"),
     ("ClientConfig.json", "spacegame/ClientConfig.json", "0087a651ad5fbb235fa438b8d3a3f47cf2f6b11b3f88c528f82c48ccdc8d4b91"),
-    ("startgame-script.js", "spacegame/Content/UIResources/frontend/views/startgame/startgame-script.js", "bac58eaa7f06a1b2401e5300e0141739055736bfb66d285e28b0096b83bcc1bb"),
+    ("startgame-script.js", "spacegame/Content/UIResources/frontend/views/startgame/startgame-script.js", "1c62a37d09fc3930aa97e7b798c337e95ce1d24be4829fa15e62eb23de7711af"),
     ("startgame-style.css", "spacegame/Content/UIResources/frontend/views/startgame/startgame-style.css", "49e856f3667e0c22db18a8c864c62ae66f1e1e2940d0efb783955ea6e0460301"),
     ("gamemodes-config.js", "spacegame/Content/UIResources/frontend/views/gamemodes/gamemodes-config.js", "7d864d2985f05b81cd37199c4150652c4becf9c5cc253f160c2f38d7db7509bd"),
     ("nsloctext.js", "spacegame/Content/UIResources/frontend/data/translations/nsloctext.js", "c1d43e513deb470d763b5d023db9275d3cde6bb689c45f1da110eb14ddd091af"),

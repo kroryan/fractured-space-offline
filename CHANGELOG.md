@@ -1,10 +1,17 @@
 # Changelog
 
-## Unreleased — Server-fix reference review
+## 1.3.0 — Community client fixes
 
-- Reviewed `Makichika/Fractured-space-fixe-` at `7e43fb70ca660c35ae903fcc1f703b9c0a624cb0` and recorded it in `rules.md` as a reference project.
-- Deferred its advertised server-side fixes because the repository supplies client files and says the server changes are installed on the author's servers; it contains no distributable server implementation to port.
-- Did not import its game executable, Bootstrapper files or event PAKs: the executable differs from this project's patched binary, and the event content requires compatible server support.
+- Bundled all 14 game-side files from Makichika/Fractured-space-fixe- at `7e43fb70ca660c35ae903fcc1f703b9c0a624cb0` in the Windows installer and Linux AppImage, with SHA-256 verification.
+- Updated the patched client executable, draft UI, scoreboard/player scripts, map jamming, Venturer skins and Protector shield visuals; included Charon and Christmas event client content and Discord avatar client support.
+- Preserved the offline launcher, local backend, co-op wrapper and existing offline UI patches.
+- Added a reproducible update script and revision/hash lock for future imports. Bootstrapper application files are not installed over the user's online Bootstrapper.
+
+### Compatibility limits
+
+- Charon/Christmas modes and game-time effect clocks require compatible server behavior. Client content alone does not add the reference author's private server fixes.
+- Discord profile avatars require the reference Bootstrapper's local avatar service; offline play retains the client's fallback avatars.
+- Automated checks cover packaging, backend identity, co-op admission and server startup. Full visual gameplay and two-live-client team assignment require a play session.
 
 ## 1.2.0 — Co-op team distribution
 

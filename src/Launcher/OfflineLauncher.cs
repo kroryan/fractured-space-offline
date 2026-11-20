@@ -18,8 +18,8 @@ using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Bootstrapper Offline")]
 [assembly: System.Reflection.AssemblyProduct("Fractured Space Bootstrapper Offline")]
-[assembly: System.Reflection.AssemblyVersion("1.2.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.2.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.3.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.3.0.0")]
 
 static class OfflineLauncher
 {

@@ -115,8 +115,13 @@ set SteamAppId=310380
 "...\Space\spacegame\Binaries\Win64\Fractured Space.exe" -flhost=http://127.0.0.1:8080 -discord=offline
 ```
 
+## Community client updates
+
+The installer and AppImage include the game-side fixes from [Makichika/Fractured-space-fixe-](https://github.com/Makichika/Fractured-space-fixe-): updated client executable, drafting UI, visual fixes and event content. Event modes and effect clocks need compatible server logic; Discord avatars need the online Bootstrapper avatar service and use fallback avatars offline. See `tools/makichika-lock.json` for the imported revision and `rules.md` for the update workflow.
+
 ## Credits and license
 
+- [Makichika/Fractured-space-fixe-](https://github.com/Makichika/Fractured-space-fixe-): community client fixes and assets.
 - [Tigerhacker/refireline](https://github.com/Tigerhacker/refireline): Fireline emulator and recorded responses (GPL-3.0).
 - [Tigerhacker/fractured-bootstrapper](https://github.com/Tigerhacker/fractured-bootstrapper): origin of the client patch included in `patch/`.
 - [AppImage/type2-runtime](https://github.com/AppImage/type2-runtime): AppImage runtime (MIT).
