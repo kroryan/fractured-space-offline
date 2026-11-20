@@ -33,3 +33,11 @@ The reviewed revision and exact imported bytes are recorded in `tools/makichika-
 5. Review the resulting diff, check local Fireline support, build both binaries and run relevant smoke checks. Bump the patch level/version and update the changelog for a release. Document server-dependent functionality accurately.
 
 The import covers the `Space` payload. Bootstrapper application binaries belong to a different launcher; implement any needed service in our own launcher before claiming equivalent online integration.
+
+## Dreadnought launcher and Fractured Space trainer reference
+
+- `C:\Users\PC\dreadnought-offline` supplies the dark launcher palette and DirectX 11 F1 overlay design. This project owns its adapted launcher and backend; keep the third-party ImGui, kiero and MinHook notices in `src/Overlay/third_party`.
+- `https://github.com/Makichika/Fractured-space-cheat-menu` supplies the local-server trainer engine. The reviewed revision and original hashes are in `tools/trainer-lock.json`. Keep `src/Trainer/README.md` and `SECURITY.md` for provenance.
+- For updates, fetch the reference into ignored `obj/reference-cheat-menu`, compare its revision and hashes against the lock, and merge changes into `src/Trainer` individually. Preserve the authenticated headless bridge, configured server-path filtering, process lifecycle and upstream executable signature guards. Never restore the separate trainer window as the normal user flow.
+- The F1 menu must render in the game's own DirectX 11 frame. Guests cannot issue server-memory actions; only the local host can operate its server. Never target the wrapper executable or select an arbitrary server by PID.
+- Keep personal statistics separate from recorded account unlocks and experience. New profiles start with zero historical combat statistics and preserve the unlocked ships and level 68. Persist supported updates per player identity and test isolation/reset across restarts. Do not claim match result recording unless an actual match reports its results through a supported endpoint.

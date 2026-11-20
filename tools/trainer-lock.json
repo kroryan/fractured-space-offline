@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/Makichika/Fractured-space-cheat-menu",
+  "revision": "636ffc81915bea523a718e85d0ec6e94e11342e4",
+  "adaptation": "Headless authenticated bridge for F1; target only configured spserver_original.exe; preserve upstream signature guards.",
+  "files": {
+    ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+    ".gitignore": "95c5a6810d352c95b30c849fe1c541633ec83ff701290c47d4365fb38c793558",
+    "FracturedSpaceSoloTrainer_v20.ps1": "7073bdf3d41f62b55d74c8c76bafcd75310fe5e69d32dfe365f67d0897f4a8f8",
+    "FrigateLoader_v20.ps1": "91f942a375ae691c1706e46daa70f084e582ebe9776164b3fe514c97abe0137a",
+    "README.md": "f0e79ef0dc1ba45ff3ab2b5afded81fef17ef6c0782ab8e0e546a22c767bab7c",
+    "RUN_V20.bat": "32ce0f2a6418a85e37c1a41e6f4737f51eb3634b6fc63446c72af4674a64da0c",
+    "Sandbox_v20.ps1": "9552397df6c43d0a646a9e1800d7e6410fb7ac62266065851929b2564baf4eff",
+    "SECURITY.md": "d1382316625aabb3bd428a2ea50463beb727b167493da8d405b4836ebc48d9f8",
+    "SHA256SUMS.txt": "72c9e34ebf4819890c583a63e7caec55adeb01b9f3524d72af5543299ba44668",
+    "data/ship-systems.json": "e3d2828f5a1a57969bcdca37ce60a8f579444bbc9672e4961e4339bb5983ea90"
+  }
+}

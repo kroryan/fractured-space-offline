@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.4.0 — Personal profiles and in-game F1 menu
+
+- Adapted the Dreadnought launcher dark palette and DirectX 11 F1 overlay to Fractured Space.
+- Embedded the Makichika solo trainer engine behind an authenticated loopback bridge, with player/allied/enemy invulnerability and allied/enemy ship spawning exposed inside the game. The trainer uses the configured original server path and retains upstream signature checks. Guests cannot operate the host trainer.
+- Added profile controls for credits, level 68 and resetting personal statistics. The default inventory keeps all ships unlocked.
+- Removed inherited combat history from new Windows and Linux profiles, including account, mode, ship and combo statistics. Added per-identity persistence for supported PUT/PATCH updates and live result event recording, with match-ID duplicate protection, without changing recorded inventory/experience.
+- Added trainer revision/hashes and update rules, and retained overlay third-party licenses.
+
+### Verification limits
+
+- Profile reset, persistence and identity isolation were verified locally. The trainer and overlay compile; runtime trainer tests were blocked by automatic tool review, so combat actions and F1 rendering in the actual game remain unverified.
+- Live engine result events are recorded locally and imported into the personal profile. Aggregation and duplicate protection were tested with representative events; real match completion still needs gameplay validation. Only explicitly reported statistics are accumulated.
+- The native in-game F1 overlay is currently Windows-only; the AppImage includes the personal statistics backend.
+
 ## 1.3.0 — Community client fixes
 
 - Bundled all 14 game-side files from Makichika/Fractured-space-fixe- at `7e43fb70ca660c35ae903fcc1f703b9c0a624cb0` in the Windows installer and Linux AppImage, with SHA-256 verification.

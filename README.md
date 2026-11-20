@@ -62,8 +62,14 @@ For Internet play, use a private VPN such as **Tailscale** (recommended) or Zero
 
 The host can choose a party size of two to four humans and how many humans belong on the host's team. Approved guests are assigned to fill those team sizes, and the wrapper passes the selected team in the Unreal join URL. Team placement and bot rebalancing still depend on undocumented game behavior; a two-live-client team-assignment session has not been confirmed.
 
+### Personal profiles and F1 menu
+
+Each installation creates its own player identity. New profiles keep all ships unlocked and the recorded experience for level 68, with inherited combat statistics cleared. Supported statistic updates are saved under `profiles/<player-id>.json` in `%LOCALAPPDATA%/FracturedSpaceOffline`, or the Linux state directory. Live result events are saved locally and imported with duplicate protection. A full in-game match completion still needs validation.
+
+On Windows, **F1** opens a menu rendered inside the game using DirectX 11. It includes personal profile controls and local-server trainer actions adapted from [Makichika's trainer](https://github.com/Makichika/Fractured-space-cheat-menu). Start a local match and wait for your ship to spawn before using combat controls. Co-op guests cannot modify the host server. Profile changes refresh on the next login. Combat controls and in-game rendering still need gameplay validation; runtime testing was blocked by tool approval review.
+
 ### Limitations
-- The account is a **recorded** one, so progress is not saved between sessions.
+- Inventory and unlocks come from a recorded account. Personal combat history starts empty; supported profile updates are saved per player.
 - The store and purchases do not work.
 - To play online with the community, use the [Fractured Space Bootstrapper](https://github.com/Tigerhacker/fractured-bootstrapper). The offline launcher has its own app directory and marker, and reuses the shared game patch when its hashes match. If a different Bootstrapper patch is present, the installer stops instead of overwriting it.
 
@@ -89,7 +95,7 @@ The host can choose a party size of two to four humans and how many humans belon
 
 ## Building
 
-Only Windows is needed: the build uses the C# compiler that ships with .NET Framework 4.x.
+Windows builds need the .NET Framework C# compiler and Visual Studio Build Tools with the Desktop development with C++ workload for the DirectX 11 F1 overlay.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File build.ps1

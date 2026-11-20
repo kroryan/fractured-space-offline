@@ -22,17 +22,17 @@ using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Fractured Space Offline Setup")]
 [assembly: AssemblyProduct("Fractured Space Offline")]
-[assembly: AssemblyVersion("1.3.0.0")]
-[assembly: AssemblyFileVersion("1.3.0.0")]
+[assembly: AssemblyVersion("1.4.0.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
 
 static class Setup
 {
     public const string AppName = "Fractured Space Bootstrapper Offline";
-    public const string AppVersion = "1.3.0";
+    public const string AppVersion = "1.4.0";
     public const string AppExe = "FracturedSpaceBootstrapperOffline.exe";
     public const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\FracturedSpaceBootstrapperOffline";
     public const string DpiKey = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
-    public const int PatchLevel = 32;
+    public const int PatchLevel = 33;
     public const string BackupDirName = "fractured-offline-backup";
     public const string OfflineMarkerName = "fractured-space-offline.json";
     public const string GameExeRel = @"spacegame\Binaries\Win64\Fractured Space.exe";
@@ -77,7 +77,7 @@ static class Setup
         new PatchFile("gamemodes-config.js", @"spacegame\Content\UIResources\frontend\views\gamemodes\gamemodes-config.js", "7d864d2985f05b81cd37199c4150652c4becf9c5cc253f160c2f38d7db7509bd", true),
         new PatchFile("nsloctext.js", @"spacegame\Content\UIResources\frontend\data\translations\nsloctext.js", "c1d43e513deb470d763b5d023db9275d3cde6bb689c45f1da110eb14ddd091af", true),
         new PatchFile("BP.pak", @"spacegame\Content\Paks\BP.pak", "cac460fbce8a33e8f155b9a4abd14c15981156978b3a2d420dc2b468399d1681", false),
-        new PatchFile("results-script.js", @"spacegame\Content\UIResources\frontend\views\results\results-script.js", "ace5e5197f6779efd46531c0f08c6b2b7d963f3ee23533bcbea3c6ab7c710766", true),
+        new PatchFile("results-script.js", @"spacegame\Content\UIResources\frontend\views\results\results-script.js", "c3cf69101faccd85c84c54102a377fb16f8cd05ed18ea7ca2beef3d3303d4852", true),
         new PatchFile("hangar-script.js", @"spacegame\Content\UIResources\frontend\views\hangar\hangar-script.js", "b3290327dfa2c94af87a58aa13b3021706f5685f249edbcd1a34bbb40ff8eede", true),
     };
 
@@ -521,8 +521,22 @@ class SetupForm : Form
         Directory.CreateDirectory(dir);
         string exe = Path.Combine(dir, Setup.AppExe);
         File.WriteAllBytes(exe, Setup.Resource("launcher.exe"));
+        File.WriteAllBytes(Path.Combine(dir, "fso_offline_menu.dll"), Setup.Resource("fso_offline_menu.dll"));
+        using (var archive = new System.IO.Compression.ZipArchive(new MemoryStream(Setup.Resource("trainer.zip"))))
+        foreach (var entry in archive.Entries)
+        {
+            string target = Path.GetFullPath(Path.Combine(dir, "trainer", entry.FullName));
+            string root = Path.GetFullPath(Path.Combine(dir, "trainer")) + Path.DirectorySeparatorChar;
+            if (!target.StartsWith(root, StringComparison.OrdinalIgnoreCase)) throw new Exception("Invalid trainer path");
+            if (entry.Name.Length == 0) { Directory.CreateDirectory(target); continue; }
+            Directory.CreateDirectory(Path.GetDirectoryName(target));
+            using (var input = entry.Open()) using (var output = File.Create(target)) input.CopyTo(output);
+        }
+
         File.WriteAllBytes(Path.Combine(dir, "responses.json"), Setup.Resource("responses.json"));
         File.WriteAllBytes(Path.Combine(dir, "LICENSE.txt"), Setup.Resource("LICENSE"));
+        foreach (string notice in new[] { "NOTICE.md", "overlay-licenses.md", "minhook-license.txt" })
+            File.WriteAllBytes(Path.Combine(dir, notice), Setup.Resource(notice));
         File.WriteAllBytes(Path.Combine(dir, "README.txt"), Setup.Resource("README.txt"));
         File.WriteAllText(Path.Combine(dir, "gamepath.txt"), game);
         string uninst = Path.Combine(dir, "uninstall.exe");

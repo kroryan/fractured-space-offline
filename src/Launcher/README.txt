@@ -19,7 +19,8 @@ remaining team slots. Guests select Join and enter the host's VPN or LAN address
 Limitations
 -----------
 - The account is a recorded one from the official servers (not your online progress).
-- Progress is NOT saved: the local server always answers the same.
+- Personal combat statistics start empty. New result events are recorded per player; inventory and level 68 stay unlocked.
+- On Windows, F1 opens the in-game DirectX 11 menu. Combat controls require a local match and are unavailable to guests.
 - Store, purchases and official online matchmaking do not work.
 - Co-op uses the local dedicated-server wrapper and requires TCP 8090 and UDP
   7777 between players. Team assignment is sent with the Unreal join URL; the

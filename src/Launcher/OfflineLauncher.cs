@@ -18,8 +18,8 @@ using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Bootstrapper Offline")]
 [assembly: System.Reflection.AssemblyProduct("Fractured Space Bootstrapper Offline")]
-[assembly: System.Reflection.AssemblyVersion("1.3.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.3.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.4.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.4.0.0")]
 
 static class OfflineLauncher
 {
@@ -30,6 +30,9 @@ static class OfflineLauncher
     static readonly Dictionary<string, Canned> canned = new Dictionary<string, Canned>();
     static readonly Dictionary<string, Canned> byPath = new Dictionary<string, Canned>();
     static string logPath;
+    static ProfileStore profile;
+    static TrainerBridge trainer;
+    static readonly string menuToken = Guid.NewGuid().ToString("N");
     static readonly object logLock = new object();
     enum PlayMode { Solo, Host, Join }
     static PlayMode selectedMode = PlayMode.Solo;
@@ -96,6 +99,8 @@ static class OfflineLauncher
             }
             catch (Exception ex) { Fail(L("No se pudo iniciar/unir a la partida cooperativa:\n", "Could not host/join the co-op game:\n") + ex.Message); return 1; }
             activeIdentity = String.IsNullOrEmpty(playerId) ? RecordedIdentity : playerId;
+            string profileDirectory = serveOnly ? Path.Combine(appDir, "profiles") : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FracturedSpaceOffline", "profiles");
+            profile = new ProfileStore(profileDirectory, activeIdentity);
 
             try { LoadResponses(Path.Combine(appDir, "responses.json")); }
             catch (Exception ex) { Fail(L("No se pudo leer responses.json:\n", "Could not read responses.json:\n") + ex.Message); return 1; }
@@ -150,6 +155,11 @@ static class OfflineLauncher
                 return 1;
             }
 
+            if (selectedMode != PlayMode.Join) {
+                trainer = new TrainerBridge();
+                trainer.Start(appDir, gameRoot);
+                AppDomain.CurrentDomain.ProcessExit += (sender, e) => trainer.Dispose();
+            }
             try { ConfigureDisplay(); } catch (Exception ex) { Log("Display config failed: " + ex.Message); }
             using (var progress = new LaunchProgress())
             {
@@ -160,6 +170,7 @@ static class OfflineLauncher
                 "-flhost=http://127.0.0.1:" + port + " -discord=offline -culture=en-GB");
             psi.WorkingDirectory = Path.GetDirectoryName(exe);
             psi.UseShellExecute = false;
+            psi.EnvironmentVariables["FSO_OFFLINE_MENU"] = port + ":" + menuToken;
             psi.EnvironmentVariables["SteamAppId"] = "310380";
             psi.EnvironmentVariables["OPENSSL_ia32cap"] = ":~0x20000000";
             if (selectedMode == PlayMode.Host) psi.EnvironmentVariables["FSO_COOP_MODE"] = "host";
@@ -177,13 +188,17 @@ static class OfflineLauncher
             try
             {
                 progress.Set(82, L("Iniciando Fractured Space…", "Starting Fractured Space…")); Application.DoEvents();
+                var recorder = new MatchRecorder(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"spacegame\Saved\FracturedSpace\fso-results.json"), profile, Log);
                 var game = Process.Start(psi);
                 progress.Set(100, L("Esperando a que aparezca la ventana del juego…", "Waiting for the game window…"));
                 if (game != null)
                 {
                     while (!game.HasExited && game.MainWindowHandle == IntPtr.Zero) { Thread.Sleep(500); game.Refresh(); Application.DoEvents(); }
                     progress.Close();
-                    game.WaitForExit();
+                    try { OverlayLoader.Load(game, Path.Combine(appDir, "fso_offline_menu.dll")); }
+                    catch (Exception overlayError) { Log("F1 menu failed: " + overlayError.Message); }
+                    while (!game.HasExited) { recorder.Poll(); Application.DoEvents(); Thread.Sleep(100); game.Refresh(); }
+                    recorder.Poll();
                 }
                 progress.Close();
             }
@@ -194,6 +209,7 @@ static class OfflineLauncher
             do { Thread.Sleep(3000); } while (Process.GetProcessesByName("Fractured Space").Length > 0);
             if (admission != null) admission.Dispose();
             if (relay != null) relay.Dispose();
+            if (trainer != null) trainer.Dispose();
             listener.Stop();
             return 0;
         }
@@ -202,7 +218,7 @@ static class OfflineLauncher
     static string LoadPlayerId(string appDir)
     {
         string f = Path.Combine(appDir, "player-id.txt");
-        try { string id = File.ReadAllText(f).Trim(); Guid.Parse(id); return id; } catch { return ""; }
+        try { string id = File.ReadAllText(f).Trim(); Guid.Parse(id); return id; } catch { string id = Guid.NewGuid().ToString(); File.WriteAllText(f, id); return id; }
     }
 
     static bool ChooseMode(string appDir)
@@ -219,6 +235,7 @@ static class OfflineLauncher
         catch { expectedPlayers = 2; hostTeamSize = 2; }
         using (var f = new Form())
         {
+            f.BackColor = System.Drawing.Color.FromArgb(18, 22, 30); f.ForeColor = System.Drawing.Color.FromArgb(225, 232, 240); f.Font = new System.Drawing.Font("Segoe UI", 10);
             f.Text = Title; f.Width = 520; f.Height = 420; f.StartPosition = FormStartPosition.CenterScreen;
             var solo = new RadioButton { Left = 24, Top = 24, Width = 410, Text = L("Jugar solo contra bots", "Play solo vs bots"), Checked = last == 0 };
             var host = new RadioButton { Left = 24, Top = 60, Width = 410, Text = L("Crear partida cooperativa (anfitrión)", "Create co-op game (host)"), Checked = last == 1 };
@@ -265,6 +282,14 @@ static class OfflineLauncher
             var go = new Button { Left = 335, Top = 325, Width = 110, Text = L("Continuar", "Continue"), DialogResult = DialogResult.OK };
             go.Click += (s,e) => { IPAddress parsed; if (join.Checked && !IPAddress.TryParse(ip.Text.Trim(), out parsed)) { MessageBox.Show(L("Escribe una IP válida.", "Enter a valid IP address.")); f.DialogResult = DialogResult.None; } };
             f.Controls.AddRange(new Control[] { solo, host, join, ipLabel, ip, bindLabel, bind, partyLabel, party, teamLabel, teamSize, distribution, go }); f.AcceptButton = go;
+            foreach (Control control in f.Controls) {
+                if (control is TextBox || control is ComboBox || control is Button) {
+                    control.BackColor = System.Drawing.Color.FromArgb(32, 42, 56);
+                    control.ForeColor = System.Drawing.Color.FromArgb(225, 232, 240);
+                }
+            }
+            go.FlatStyle = FlatStyle.Flat;
+            go.BackColor = System.Drawing.Color.FromArgb(35, 102, 155);
             if (f.ShowDialog() != DialogResult.OK) return false;
             selectedMode = solo.Checked ? PlayMode.Solo : host.Checked ? PlayMode.Host : PlayMode.Join;
             selectedHost = ip.Text.Trim();
@@ -308,6 +333,7 @@ static class OfflineLauncher
         readonly Label label; readonly ProgressBar bar;
         public LaunchProgress()
         {
+            BackColor = System.Drawing.Color.FromArgb(18, 22, 30); ForeColor = System.Drawing.Color.FromArgb(225, 232, 240); Font = new System.Drawing.Font("Segoe UI", 10);
             Text = Title; Width = 470; Height = 135; FormBorderStyle = FormBorderStyle.FixedDialog;
             ControlBox = false; StartPosition = FormStartPosition.CenterScreen;
             label = new Label { Left = 18, Top = 16, Width = 420, Height = 24, Text = L("Buscando el juego…", "Finding the game…") };
@@ -434,6 +460,7 @@ static class OfflineLauncher
                 Status = Convert.ToInt32(res["status_code"]),
                 Body = Encoding.UTF8.GetBytes((string)res["content"] ?? "")
             };
+            profile.Register(path, c.Body);
             canned[(string)req["method"] + " " + path] = c;
             byPath[path] = c;
         }
@@ -495,7 +522,24 @@ static class OfflineLauncher
                     Canned c;
                     int status = 200;
                     byte[] payload;
-                    if (path.Length == 0)
+                    if (path == "status" || path == "action" || path == "requests")
+                    {
+                        var args = System.Web.HttpUtility.ParseQueryString(query);
+                        if (args["t"] != menuToken) { status = 403; payload = Encoding.UTF8.GetBytes("Forbidden"); }
+                        else if (path == "action" && method == "POST")
+                            {
+                            string action = args["name"] ?? "";
+                            bool combat = action.StartsWith("god_") || action.StartsWith("spawn_");
+                            try { payload = Encoding.UTF8.GetBytes(combat ? (trainer == null ? "Only the local host can control the server." : trainer.Action(action, args["ship"])) : profile.Action(action)); }
+                            catch (Exception error) { payload = Encoding.UTF8.GetBytes(error.Message); }
+                        }
+                        else payload = Encoding.UTF8.GetBytes(path == "status" ? "Fractured Space Offline | Personal profile | All ships unlocked" : "");
+                    }
+                    else if (profile.Handle(method, path, body, out payload))
+                    {
+                        payload = RewriteIdentity(payload); Log("profile " + method + " /" + path);
+                    }
+                    else if (path.Length == 0)
                     {
                         payload = Encoding.UTF8.GetBytes("Fireline Emulator for Fractured Space (offline launcher)");
                         Log(method + " /");

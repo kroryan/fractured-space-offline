@@ -52,11 +52,16 @@ if (-not (Test-Path $ico)) {
     $w.Flush(); [IO.File]::WriteAllBytes($ico, $out.ToArray())
 }
 
-$refs = '/r:System.dll', '/r:System.Core.dll', '/r:System.Drawing.dll', '/r:System.Windows.Forms.dll', '/r:System.Web.Extensions.dll', '/r:Microsoft.CSharp.dll'
+$refs = '/r:System.dll', '/r:System.Core.dll', '/r:System.Drawing.dll', '/r:System.Windows.Forms.dll', '/r:System.Web.Extensions.dll', '/r:System.Web.dll', '/r:System.IO.Compression.dll', '/r:System.IO.Compression.FileSystem.dll', '/r:Microsoft.CSharp.dll'
+
+# --- In-game DirectX 11 F1 menu ---
+& cmd /c (Join-Path $root 'src\Overlay\build.bat')
+if ($LASTEXITCODE -ne 0) { throw 'F1 overlay build failed' }
+Copy-Item (Join-Path $root 'src\Overlay\build\fso_offline_menu.dll') (Join-Path $obj 'fso_offline_menu.dll') -Force
 
 # --- Launcher ---
 $launcher = Join-Path $obj 'launcher.exe'
-& $csc /nologo /target:winexe /optimize+ "/out:$launcher" "/win32icon:$ico" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs') (Join-Path $root 'src\Launcher\CoopAdmission.cs') (Join-Path $root 'src\Launcher\UdpRelay.cs')
+& $csc /nologo /target:winexe /platform:x64 /optimize+ "/out:$launcher" "/win32icon:$ico" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs') (Join-Path $root 'src\Launcher\CoopAdmission.cs') (Join-Path $root 'src\Launcher\UdpRelay.cs') (Join-Path $root 'src\Launcher\ProfileStore.cs') (Join-Path $root 'src\Launcher\MatchRecorder.cs') (Join-Path $root 'src\Launcher\OverlayLoader.cs') (Join-Path $root 'src\Launcher\TrainerBridge.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Launcher build failed' }
 
 # --- Dedicated server wrapper (installed beside the original spserver.exe) ---
@@ -64,14 +69,24 @@ $wrapper = Join-Path $obj 'spserver-wrapper.exe'
 & $csc /nologo /target:exe /optimize+ "/out:$wrapper" $refs (Join-Path $root 'src\ServerWrapper\ServerWrapper.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Server wrapper build failed' }
 
+# --- Trainer engine, embedded for fully offline installation ---
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$trainerZip = Join-Path $obj 'trainer.zip'
+if (Test-Path $trainerZip) { Remove-Item -LiteralPath $trainerZip }
+[IO.Compression.ZipFile]::CreateFromDirectory((Join-Path $root 'src\Trainer'), $trainerZip)
+
 # --- Installer (embeds launcher + data + client patch) ---
 $patchRes = Get-ChildItem (Join-Path $root 'patch') -File | ForEach-Object { "/resource:$($_.FullName),patch/$($_.Name)" }
 $setup = Join-Path $dist 'FracturedSpaceOfflineSetup.exe'
 & $csc /nologo /target:winexe /optimize+ "/out:$setup" "/win32icon:$ico" $refs `
-    "/resource:$launcher,launcher.exe" $patchRes `
+    "/resource:$launcher,launcher.exe" "/resource:$(Join-Path $obj 'fso_offline_menu.dll'),fso_offline_menu.dll" $patchRes `
+    "/resource:$trainerZip,trainer.zip" `
     "/resource:$wrapper,spserver-wrapper.exe" `
     "/resource:$(Join-Path $root 'server\responses.json'),responses.json" `
     "/resource:$(Join-Path $root 'LICENSE'),LICENSE" `
+    "/resource:$(Join-Path $root 'NOTICE.md'),NOTICE.md" `
+    "/resource:$(Join-Path $root 'src\Overlay\third_party\LICENSES.md'),overlay-licenses.md" `
+    "/resource:$(Join-Path $root 'src\Overlay\third_party\minhook\LICENSE.txt'),minhook-license.txt" `
     "/resource:$(Join-Path $root 'src\Launcher\README.txt'),README.txt" `
     (Join-Path $root 'src\Installer\Installer.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Installer build failed' }

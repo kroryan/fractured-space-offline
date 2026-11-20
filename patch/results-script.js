@@ -202,7 +202,13 @@
     VIEW.el.parentNode.addEventListener('webkitTransitionEnd', onShown);
 
     engine.on('CampaignsProgress', onGotCampaignProgress);
-    engine.on('GameResult', onGotGameResult);
+    engine.on('GameResult', function (info, result) {
+      // Record only live engine results, never history views or mock events.
+      try {
+        engine.call('SaveStringToFile', 'fso-results.json', JSON.stringify({info: info, result: result}), true, true);
+      } catch (error) { console.warn('Offline statistics could not be saved', error); }
+      onGotGameResult(info, result);
+    });
     engine.on('GameResultAlliesPlayers', onGotGameResultAllies);
     engine.on('GameResultEnemiesPlayers', onGotGameResultEnemies);
     engine.on('BoosterApplied', onBoosterApplied);

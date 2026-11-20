@@ -13,6 +13,7 @@ Only needs Python 3.7+ (standard library). Environment overrides:
   FSO_PORT       local server port (default 8080)
 """
 import glob
+import uuid
 import base64
 import hashlib
 import http.server
@@ -28,6 +29,9 @@ import sys
 import threading
 import time
 import zlib
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from profile_store import ProfileStore, MatchRecorder
 
 APP = "Fractured Space Offline"
 APPID = "310380"
@@ -45,7 +49,7 @@ ACTIVE_IDENTITY = os.environ.get("FSO_PLAYER_ID", RECORDED_IDENTITY)
 GAME_EXE_REL = "spacegame/Binaries/Win64/Fractured Space.exe"
 BACKUP_DIR = "fractured-offline-backup"
 SERVER_EXE_REL = "spacegame/Binaries/Win64/spserver.exe"
-PATCH_LEVEL = 32
+PATCH_LEVEL = 33
 OFFLINE_MARKER = "fractured-space-offline.json"
 
 PATCH = [
@@ -68,7 +72,7 @@ PATCH = [
     ("gamemodes-config.js", "spacegame/Content/UIResources/frontend/views/gamemodes/gamemodes-config.js", "7d864d2985f05b81cd37199c4150652c4becf9c5cc253f160c2f38d7db7509bd"),
     ("nsloctext.js", "spacegame/Content/UIResources/frontend/data/translations/nsloctext.js", "c1d43e513deb470d763b5d023db9275d3cde6bb689c45f1da110eb14ddd091af"),
     ("BP.pak", "spacegame/Content/Paks/BP.pak", "cac460fbce8a33e8f155b9a4abd14c15981156978b3a2d420dc2b468399d1681"),
-    ("results-script.js", "spacegame/Content/UIResources/frontend/views/results/results-script.js", "ace5e5197f6779efd46531c0f08c6b2b7d963f3ee23533bcbea3c6ab7c710766"),
+    ("results-script.js", "spacegame/Content/UIResources/frontend/views/results/results-script.js", "c3cf69101faccd85c84c54102a377fb16f8cd05ed18ea7ca2beef3d3303d4852"),
     ("hangar-script.js", "spacegame/Content/UIResources/frontend/views/hangar/hangar-script.js", "b3290327dfa2c94af87a58aa13b3021706f5685f249edbcd1a34bbb40ff8eede"),
 ]
 
@@ -584,15 +588,19 @@ def configure_display(prefix):
 # ---------------------------------------------------------------- local Fireline server
 
 CANNED, BY_PATH = {}, {}
+PROFILE = None
 
 
 def load_responses():
+    global PROFILE
+    PROFILE = ProfileStore(os.path.join(STATE_DIR, "profiles"), ACTIVE_IDENTITY)
     with open(RESPONSES, encoding="utf-8") as fh:
         for e in json.load(fh):
             url = e["request"]["url"]
             path = url[len(PREFIX):] if url.startswith(PREFIX) else url
             path = path.split("?", 1)[0]
             item = (e["response"]["status_code"], e["response"]["content"].encode("utf-8"))
+            PROFILE.register(path, item[1])
             CANNED[(e["request"]["method"], path)] = item
             BY_PATH[path] = item
 
@@ -607,7 +615,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length") or 0)
         body = self.rfile.read(length) if length else b""
         path, _, query = self.path.lstrip("/").partition("?")
-        if not path:
+        personal = PROFILE.handle(self.command, path, body) if PROFILE else None
+        if personal is not None:
+            status, payload = 200, rewrite_identity_payload(personal)
+        elif not path:
             status, payload = 200, b"Fireline Emulator for Fractured Space (offline launcher)"
             log(self.command + " /")
         else:
@@ -676,6 +687,9 @@ def main():
         with open(identity_file, encoding="utf-8") as fh: player_id = fh.read().strip()
     except OSError:
         pass
+    if not player_id:
+        player_id = str(uuid.uuid4())
+        with open(identity_file, "w", encoding="utf-8") as fh: fh.write(player_id)
     admission = relay = None
     if mode == "host":
         admission = AdmissionServer(os.path.join(STATE_DIR, "approved-guests.json"),
@@ -768,6 +782,7 @@ def main():
     try:
         if progress and progress.stdin:
             progress.stdin.write("45\nStarting Proton…\n75\nWaiting for game window…\n"); progress.stdin.flush()
+        recorder = MatchRecorder(os.path.join(compat, "pfx", "drive_c", "users", "steamuser", "AppData", "Local", "spacegame", "Saved", "FracturedSpace", "fso-results.json"), PROFILE, log)
         game_proc = subprocess.Popen(args, cwd=os.path.dirname(exe), env=env,
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         # Keep the splash only through startup, not for the whole play session.
@@ -781,7 +796,10 @@ def main():
             except Exception:
                 progress.kill()
             progress = None
-        game_proc.wait()
+        while game_proc.poll() is None:
+            recorder.poll()
+            time.sleep(1)
+        recorder.poll()
     except OSError as e:
         fail("Could not start Proton:\n%s" % e)
     finally:
@@ -793,7 +811,9 @@ def main():
                 progress.kill()
     # The game can outlive the proton process; wait for it to close
     while game_running():
+        recorder.poll()
         time.sleep(3)
+    recorder.poll()
     srv.shutdown()
     if relay: relay.close()
     if admission: admission.close()
