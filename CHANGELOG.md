@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — The Expanse source audit
+
+- Inventoried all six downloaded SpaceEngine packages, including archived definitions: one ship and one SM02 mesh per package, with source paths, sizes and SHA-256 hashes.
+- Added model/texture and SpaceEngine adaptation credits to README.md, linked the declared per-asset licenses, and recorded the yacht's conflicting license notices.
+- Added a repeatable source audit script. Playable integration and default-account ownership remain pending compatible Unreal 4.19.2 assets and client/server registration; no new ship assets or installer binaries are published by this audit.
+
 ## 1.4.1 — English-only interfaces and documentation
 
 - Removed automatic Spanish localization and translated strings from the installer, launcher and DirectX 11 F1 menu. All application-owned text now uses English regardless of the Windows display language.

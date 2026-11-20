@@ -1,0 +1,1086 @@
+{
+  "schema": 1,
+  "status": "source-audit-only",
+  "ships": [
+    {
+      "workshop_id": "2211361535",
+      "title": "MCRN Tachi",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2211361535",
+      "model_texture_credit": "Anton Perfilev (wintermute666)",
+      "spaceengine_adapter_credit": "jamesmule",
+      "declared_graphics_license": "CC-BY-NC-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "playable_in_fractured_space": false,
+      "default_account_ownership_when_integrated": true,
+      "ship_definitions": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Tachi/MCRN_Tachi.sss",
+          "name": "MCRN Tachi",
+          "sha256": "28907ab8197a140745ed45e15017486e960c8427084a50b16ae402bb89032d33"
+        }
+      ],
+      "meshes": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Tachi/MCRN_Tachi.pak::MCRN_Tachi.sm",
+          "format": "SM02",
+          "bytes": 14988324
+        }
+      ],
+      "files": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Tachi/MCRN_Tachi.cfg",
+          "bytes": 14757,
+          "sha256": "22654f70c42b8337a8017672e24ae6688ac686adf821938d694032a150eaf791"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Tachi/MCRN_Tachi.pak",
+          "bytes": 5119743,
+          "sha256": "a5fb28ce9a5423d4a3fb92f0ec092c16fa7de4509fe53e2c2c620f30fa099fc7"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Tachi/MCRN_Tachi.sss",
+          "bytes": 647,
+          "sha256": "28907ab8197a140745ed45e15017486e960c8427084a50b16ae402bb89032d33"
+        },
+        {
+          "path": "preview.jpg",
+          "bytes": 357795,
+          "sha256": "793e17a96b9db0e01ea32a16ff586a73516aaf15a43ddbb7c37c7557620b15d2"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_tachi_epstein.ogg",
+          "bytes": 37344,
+          "sha256": "76f37af94e20f40ae281cc17dea3523b959697b5af66a429a1279d338873ebca"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_tachi_maneuvering.ogg",
+          "bytes": 39626,
+          "sha256": "49f76982dc43c97aaeaca1c77ae308cb767f199cadcf483574c436fcd5f09e5e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Aft_Section_BaseColor.png",
+          "bytes": 7173417,
+          "sha256": "6110a1966cc32e8977f6ac6f27cc8b293c456365ed331aedc1b64aafcf78b007"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Aft_Section_Normal.png",
+          "bytes": 12495777,
+          "sha256": "dd1ff63cdfbe5880c60b26bff49f4da4b856c64936fae120037de94bca874a72"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Aft_Section_Specular.png",
+          "bytes": 9797994,
+          "sha256": "e7bfdb655783f0ec19dccdb0ecbf9d19a391628394910b5f8f6ff75c1dfbda69"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Fore_Section_BaseColor.png",
+          "bytes": 8093661,
+          "sha256": "50760ae7d79f7fcb65a17f2c784d0c79c8a97d1e74409f0d659a16424d1a063b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Fore_Section_Normal.png",
+          "bytes": 15492524,
+          "sha256": "12e398327a3aa16e48764fb3d1e495db85f73e552f08d1985350e41815b11286"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Fore_Section_Specular.png",
+          "bytes": 10996361,
+          "sha256": "134e5077c2ecc825f7d9d9d6e90d7ebfdc6f28db8941e4090bcd713dc9d492f2"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/MCRN_Tachi.sml",
+          "bytes": 1202,
+          "sha256": "218820f1b877c5363f4558551b67860c2fd8ae1dac79b4b85921ec32ea9c708c"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Nozzle_And_PDCs_BaseColor.png",
+          "bytes": 1446347,
+          "sha256": "bf4179fdf36d0e33853568de308552c58805261c984dfbe13057b96c98f0bb18"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Nozzle_And_PDCs_Emissive.png",
+          "bytes": 12839,
+          "sha256": "ea721975689f3567e39a555f82a0c92a8714ebd6868a1bc96cb05422c08e45ab"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Nozzle_And_PDCs_Normal.png",
+          "bytes": 3656907,
+          "sha256": "ba16c62164019987fdc300c085576c30327864ce9758f164e5fe9d01be428eb3"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Tachi/Nozzle_And_PDCs_Specular.png",
+          "bytes": 2166008,
+          "sha256": "902efa4efcfaef70abfef2488004f860ea131abee1270786ac629c9f24ba9cbd"
+        }
+      ]
+    },
+    {
+      "workshop_id": "2224316655",
+      "title": "Razorback",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2224316655",
+      "model_texture_credit": "Chris Kuhn; CC0Textures.com",
+      "spaceengine_adapter_credit": "jamesmule; retro-visor",
+      "declared_graphics_license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "playable_in_fractured_space": false,
+      "default_account_ownership_when_integrated": true,
+      "ship_definitions": [
+        {
+          "path": "models/spacecraft/The_Expanse/Razorback/Razorback.sss",
+          "name": "Razorback",
+          "sha256": "f178f7e67cf09b41058c3acbac97351773a9cd6b48c6b3aeec216d9b9f02dee0"
+        }
+      ],
+      "meshes": [
+        {
+          "path": "models/spacecraft/The_Expanse/Razorback/Razorback.pak::Razorback.sm",
+          "format": "SM02",
+          "bytes": 26570572
+        }
+      ],
+      "files": [
+        {
+          "path": "models/spacecraft/The_Expanse/Razorback/Razorback.cfg",
+          "bytes": 12059,
+          "sha256": "f98ffa7765f1b6e90ec1c12483db65e480f766e1d6516d9fd4d350abee0e7b98"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/Razorback/Razorback.pak",
+          "bytes": 10419726,
+          "sha256": "52e73a6b5ddc634dc2e50ec6dabccd28aafdfd150f48b9a73208898e0d66c135"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/Razorback/Razorback.sss",
+          "bytes": 543,
+          "sha256": "f178f7e67cf09b41058c3acbac97351773a9cd6b48c6b3aeec216d9b9f02dee0"
+        },
+        {
+          "path": "preview.jpg",
+          "bytes": 499293,
+          "sha256": "70ce3a98c3cdd73e1736913aa2b600f125fe013343b26d6234276df513677dad"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_razorback_epstein.ogg",
+          "bytes": 26190,
+          "sha256": "735500e3982e627b1d6064a83d121b626dce2cb489c43f3029627cb368925f29"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_razorback_maneuvering.ogg",
+          "bytes": 39626,
+          "sha256": "49f76982dc43c97aaeaca1c77ae308cb767f199cadcf483574c436fcd5f09e5e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/Razorback.sml",
+          "bytes": 1690,
+          "sha256": "3b01807bd557321fc7202df60a76003ddf1ce9c678ca175f8b496726e6633d91"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/red_texture.jpg",
+          "bytes": 2715343,
+          "sha256": "87e3efcb90975d870ee2b42309e1e33ebae1ae8ebfe77730f7b3b862f6a23f9d"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/repeating_grey_color.jpg",
+          "bytes": 733149,
+          "sha256": "fed855af01a4530105a2e275b040176a4b55a3b17d652b364b28445abbe519e1"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/repeating_grey_color_spec.jpg",
+          "bytes": 2250370,
+          "sha256": "57b7fddab9dacfc3fc153ba80ec61f6ab03a1261f6e05acce26f27d2dc506d6e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/repeating_grey_gold.jpg",
+          "bytes": 2765577,
+          "sha256": "7d23a01ffe3f5b92927d26ecec14826ca054f31e0e67eec2a67899d4065d0fd4"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/repeating_grey_gold_spec.jpg",
+          "bytes": 3310953,
+          "sha256": "327a4331db830e75c4f2e99a931e5a5f116d2be6a806abb145b50940e0e85dc6"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/repeating_plastic.jpg",
+          "bytes": 3387485,
+          "sha256": "8deb112039d679c07f8197d899c4b9edb811edb11d7f93c5727ce41c680c7871"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/repeating_plastic_spec.jpg",
+          "bytes": 4056418,
+          "sha256": "df112b8d3006a3828c065956931d6604cc0782d179e408a19034600813d36e96"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/Razorback/rzr_lights.png",
+          "bytes": 1979,
+          "sha256": "7bcfbff93dc8c692e871e4615423f996a996a70d26858df0689963d65afe747b"
+        }
+      ]
+    },
+    {
+      "workshop_id": "2375119898",
+      "title": "MCRN Donnager",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2375119898",
+      "model_texture_credit": "Chris Kuhn; model distributed by strawfinch",
+      "spaceengine_adapter_credit": "jamesmule; retro-visor",
+      "declared_graphics_license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "playable_in_fractured_space": false,
+      "default_account_ownership_when_integrated": true,
+      "ship_definitions": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Donnager/MCRN_Donnager.sss",
+          "name": "MCRN Donnager",
+          "sha256": "da7cd4e19d8510897132925d8445144d72919c9430c44f5db72328d10124471f"
+        }
+      ],
+      "meshes": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Donnager/MCRN_Donnager.pak::MCRN_Donnager.sm",
+          "format": "SM02",
+          "bytes": 129919908
+        }
+      ],
+      "files": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Donnager/MCRN_Donnager.cfg",
+          "bytes": 4304,
+          "sha256": "6791ed20898a3c7eec6a8a962b5c24c1a98beddc63e04f69563143ce83a0741c"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Donnager/MCRN_Donnager.pak",
+          "bytes": 49635338,
+          "sha256": "45c6d43d30accff731f2b61228f6f600815202f0fafb6174923fe26fb8c2a238"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Donnager/MCRN_Donnager.sss",
+          "bytes": 559,
+          "sha256": "da7cd4e19d8510897132925d8445144d72919c9430c44f5db72328d10124471f"
+        },
+        {
+          "path": "preview.jpg",
+          "bytes": 651319,
+          "sha256": "396fa3a20757c3cd7e2befa7a9f6055ff84a5f924df307a3b86b41ddd080a086"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_donnager_epstein.ogg",
+          "bytes": 37344,
+          "sha256": "76f37af94e20f40ae281cc17dea3523b959697b5af66a429a1279d338873ebca"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_donnager_maneuvering.ogg",
+          "bytes": 39626,
+          "sha256": "49f76982dc43c97aaeaca1c77ae308cb767f199cadcf483574c436fcd5f09e5e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/MCRN_Donnager.sml",
+          "bytes": 1341,
+          "sha256": "061a734346bd0a75745f623f7a015fd8946cc9f9db812038ed04df79572bceab"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/mcrn_lights.jpg",
+          "bytes": 8761,
+          "sha256": "8d483807411b742d48829dca5c38f281b05520bee11fbac1ae150d4889a7a4bb"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/Repeating_Grey_Color_Brick.jpg",
+          "bytes": 2133444,
+          "sha256": "aa45c1ca8bf9872cbaec5523dd8ff3965bdc73d882b2c32be85dea75273bd27a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/Repeating_Grey_Color_Brick_spec.jpg",
+          "bytes": 3683881,
+          "sha256": "5b51fc99867613d5db05babe68323e36ed846c0d9cdb0a0e819919598cb04604"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/Repeating_Grey_Gold.jpg",
+          "bytes": 2295525,
+          "sha256": "7ff31f30069334cda38032dd4585d78b9004682a97fa1eca81e74ad65c93df0a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/Repeating_Grey_Gold_spec.jpg",
+          "bytes": 3716721,
+          "sha256": "2d67a5af57387b27108d4897e27c50c2fa09aacab05780d843c826e532e7ab83"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/Repeating_Orange_Color.jpg",
+          "bytes": 1542660,
+          "sha256": "d93c2ca210f77d5217df5e38d0aa09dac2d458553a558754328b26b774878511"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Donnager/Repeating_Orange_Color_Spec.jpg",
+          "bytes": 6059786,
+          "sha256": "5993653f1645113433b76ce73f500148e6015f9df73051196b1e19ebff48a9ea"
+        }
+      ]
+    },
+    {
+      "workshop_id": "2687045417",
+      "title": "UNN Mayotte",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2687045417",
+      "model_texture_credit": "Azzecco (lux_comodo)",
+      "spaceengine_adapter_credit": "jamesmule",
+      "declared_graphics_license": "CC-BY-NC-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "playable_in_fractured_space": false,
+      "default_account_ownership_when_integrated": true,
+      "ship_definitions": [
+        {
+          "path": "models/spacecraft/The_Expanse/UNN_Mayotte/UNN_Mayotte.sss",
+          "name": "UNN Mayotte",
+          "sha256": "6e03d377903eee80604c89c33c689017a9ec304871af8a5454feadf31ecd3aab"
+        }
+      ],
+      "meshes": [
+        {
+          "path": "models/spacecraft/The_Expanse/UNN_Mayotte/UNN_Mayotte.pak::UNN_Mayotte.sm",
+          "format": "SM02",
+          "bytes": 272432812
+        }
+      ],
+      "files": [
+        {
+          "path": "models/spacecraft/The_Expanse/UNN_Mayotte/UNN_Mayotte.cfg",
+          "bytes": 6014,
+          "sha256": "e287936bb9012ea0e628fa8c7544f9c1bc01943450307c34528bca034c4dd491"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/UNN_Mayotte/UNN_Mayotte.pak",
+          "bytes": 134010651,
+          "sha256": "7e7a650cae94b58c37c119d00faaaf6af9ec55a01eb0ba7269c1ab3de7e0ea05"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/UNN_Mayotte/UNN_Mayotte.sss",
+          "bytes": 561,
+          "sha256": "6e03d377903eee80604c89c33c689017a9ec304871af8a5454feadf31ecd3aab"
+        },
+        {
+          "path": "preview.jpg",
+          "bytes": 529637,
+          "sha256": "1cd1a9f972e084840d0351e2dc2fa3ca85d30cf170fc916559e87ddb4f19cf8f"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_mayotte_epstein.ogg",
+          "bytes": 37344,
+          "sha256": "76f37af94e20f40ae281cc17dea3523b959697b5af66a429a1279d338873ebca"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_mayotte_maneuvering.ogg",
+          "bytes": 39626,
+          "sha256": "49f76982dc43c97aaeaca1c77ae308cb767f199cadcf483574c436fcd5f09e5e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_A_BaseColor.png",
+          "bytes": 2219239,
+          "sha256": "90ba1dfb601c6e2bacde520af1e7b94a43b02ea028f52df8a6c4a43e92433edf"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_A_Metallic.png",
+          "bytes": 64683,
+          "sha256": "6fa6593d5cabec163bd6216b55e4bed3faea2fff9766662d2aed8a65929987a1"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_A_Roughness.png",
+          "bytes": 2503175,
+          "sha256": "eabdbd84b586dd932c88d8c211fe63d1f3383a84d23a16a34992ffca30644760"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_Armor_BaseColor.png",
+          "bytes": 2561551,
+          "sha256": "e018b2d03a3fa41c58feb69f845a248fbd140f1ebc52acdfeced7bc15f9420ad"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_Armor_Metallic.png",
+          "bytes": 4145,
+          "sha256": "e7e746011b4aa5eb384e36b062d5d0689172afe30d3a2e0a40cd35696ea12d0b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_Armor_Roughness.png",
+          "bytes": 1235131,
+          "sha256": "2bdfcc43746fab4b7da823d1e82b5af60a1a2b01077d84e1293fc8f9fe86e76e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_BaseColor.png",
+          "bytes": 3143955,
+          "sha256": "c7ec815a36b9ecde30522723fc367c0d65a26cc86539c1d54f7082581ed4fc99"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_Metallic.png",
+          "bytes": 320412,
+          "sha256": "bb8fdfc23db4567606c6b3300fcb6ea806ac384586071064b4dd2aeda09dde59"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Engines_Roughness.png",
+          "bytes": 2652972,
+          "sha256": "35e9db3d8978e18091e847191f0b565f7924ed3281ef308404dfb86a7ead8046"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_BaseColor.png",
+          "bytes": 2550136,
+          "sha256": "dacf2cdbf5131a34e1eea4f7b6eb53a8caca4ef713693513def715d544c11f1a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Front_BaseColor.png",
+          "bytes": 2592467,
+          "sha256": "a1ae813bea5f30215855227b8e477ae1885ae908298575fd6cdd6026f4a55f26"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Front_Metallic.png",
+          "bytes": 17992,
+          "sha256": "c19a12927560b89ec9dc94210b2c639e6dbcfc29c3c62286ed96d6b1e91eba0a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Front_Roughness.png",
+          "bytes": 2259468,
+          "sha256": "ef4e1eb3b80c7f47c244194bfc0b5220148ee639279d4b3fa47fdbdb7fc86a09"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Metallic.png",
+          "bytes": 12286,
+          "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Mid_A_BaseColor.png",
+          "bytes": 3000042,
+          "sha256": "7c39244be3fa54072e1810ba7bd44a7b92df1edd172c36cd98eb0a69d415d100"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Mid_A_Metallic.png",
+          "bytes": 14908,
+          "sha256": "a8ed065b88bb1e9bb7e7f71af10f02e0b6efa83fdedf8d8eecac80c2f6f33356"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Mid_A_Roughness.png",
+          "bytes": 2626315,
+          "sha256": "c2228a3aa6dc97e238ce900910bda95074db3fd8dab65cb9e0ea4072ba6af8e4"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Mid_B_BaseColor.png",
+          "bytes": 2032518,
+          "sha256": "9a5379d42577b74ff25065382d0dcdc8d9d0108aa9b8bcf7cac886bd31c154f4"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Mid_B_Metallic.png",
+          "bytes": 12286,
+          "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Mid_B_Roughness.png",
+          "bytes": 2172554,
+          "sha256": "6efb92764ac0d8589087f3b8dbf68f7833da08757d4b193c10a800cbdef02979"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_MT_BaseColor.png",
+          "bytes": 3217930,
+          "sha256": "64b40e539674461642cdca904c4af567198fd8b151b9e601c2d581de7aeaedf9"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_MT_Metallic.png",
+          "bytes": 12286,
+          "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_MT_Roughness.png",
+          "bytes": 2179699,
+          "sha256": "bc4d1a3851ed4eb20241e54ebac5f1c879a522beb86788a5e88aba20594b54b3"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Hull_Roughness.png",
+          "bytes": 1916290,
+          "sha256": "35a302d90e86dead095564a3ded5c361940bd4dfd9a9ae4a4f124f3cd173feae"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/IMG_Plane_BaseColor.png",
+          "bytes": 1830485,
+          "sha256": "ac8c87e2e67c18112974e9c014445f8d9962ec3e483798f75b4f5ce69b72da89"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/IMG_Plane_Roughness.jpg",
+          "bytes": 493774,
+          "sha256": "2bde380a4548cb6b0727f81512f5468dcd7a333175da715adec7a04ce5bbe457"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/internal_ground_ao_texture.jpg",
+          "bytes": 33497,
+          "sha256": "1aea2d08bfd482b96a97ba8e2d2872f9467d395c48a7a1b61c47f3a2f0a75e5d"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Parts_1_BaseColor.png",
+          "bytes": 1470183,
+          "sha256": "b3eb51ad084c258970b816f76f1559278731640ef9fd12ce171c3f84fcd7da82"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Parts_1_Metallic.png",
+          "bytes": 15482,
+          "sha256": "095b01ea6d755513172074be9bc14ab27022edcf48d85b0120827e9965a1c8f1"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Parts_1_Roughness.png",
+          "bytes": 1182062,
+          "sha256": "ce65fa96896baf82662fe56452ea020fe31bc4cfc2534ef884ff8db86a08d38c"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Parts_Hull_BaseColor.png",
+          "bytes": 2693713,
+          "sha256": "abebb6dbc3e40b2073842261f920d838220af3648e02944b62e7fdef506fff87"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Parts_Hull_Metallic.png",
+          "bytes": 12286,
+          "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Parts_Hull_Roughness.png",
+          "bytes": 2413745,
+          "sha256": "04e377c7b3d46488bb682671d8e0bd0b45842a4d73a2e7f301f390de7a5778a5"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/PDC_BaseColor.jpg",
+          "bytes": 996960,
+          "sha256": "f97fd4f869f813cc56a95df17e705f065732d6893da8c0acfb20ba5b5b38374d"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/PDC_Metallic.jpg",
+          "bytes": 134638,
+          "sha256": "c1e9b0e7158796b23117aebc84b6e5f9cc80bc14402500a5fd68173d9a73816c"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/PDC_Roughness.jpg",
+          "bytes": 1103832,
+          "sha256": "5bc74997b1d037310af11274c454836ea0bc239e49a3eec98f4ba577995fa265"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Railgun_BaseColor.png",
+          "bytes": 2811103,
+          "sha256": "d489a2a8c090584c22f795b80011840cf56d921c79f1906d31a2a57093e873c3"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Railgun_Metallic.png",
+          "bytes": 163455,
+          "sha256": "fa7565d90f2123bcb99737aa7573b97c9d9ff805371c59987724310c0981ac1e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/Railgun_Roughness.png",
+          "bytes": 2715607,
+          "sha256": "2f88e1c378816e20beed67a7a1fb51b249d5038ea9258f04ba17a46b4bc82ca4"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/SD_Front_BaseColor.png",
+          "bytes": 1838798,
+          "sha256": "f17c31c39dbc59be6d4953392b195fec96632c28ba6a3b878cf3f302daba6bfa"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/SD_Front_Metallic.png",
+          "bytes": 12324,
+          "sha256": "542e1bd76e7fee7a7c91bcaa19f822bc748eb5e3d9b972fa17f18d517776e4d5"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/SD_Front_Roughness.png",
+          "bytes": 1501879,
+          "sha256": "03dbc4e8ab47d6bed9c06cef8eb5e68723252e389e74ba739ad47caebb00040e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/UNN_Mayotte/UNN_Mayotte.sml",
+          "bytes": 4315,
+          "sha256": "c7e933edaef1fb601349fe1d241ef74b909eba1c55751a8fbeb2f75c87f77ace"
+        }
+      ]
+    },
+    {
+      "workshop_id": "2687094193",
+      "title": "MCRN Avalanche",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2687094193",
+      "model_texture_credit": "Azzecco (lux_comodo)",
+      "spaceengine_adapter_credit": "jamesmule",
+      "declared_graphics_license": "CC-BY-NC-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "playable_in_fractured_space": false,
+      "default_account_ownership_when_integrated": true,
+      "ship_definitions": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Avalanche/MCRN_Avalanche.sss",
+          "name": "MCRN Avalanche",
+          "sha256": "358f829dd09f741c6886c425bd5588718b26c5fe64b71c31c1e3c36e066d3f16"
+        }
+      ],
+      "meshes": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Avalanche/MCRN_Avalanche.pak::MCRN_Avalanche.sm",
+          "format": "SM02",
+          "bytes": 146187516
+        }
+      ],
+      "files": [
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Avalanche/MCRN_Avalanche.cfg",
+          "bytes": 6969,
+          "sha256": "a62a0630852f4572fbc40a28c8601a70f3a3c07a6a9fb549956c56ae4ec51c43"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Avalanche/MCRN_Avalanche.pak",
+          "bytes": 81741132,
+          "sha256": "e8d33ecc085e06825d94df6a98253b005cbe10ced13f9060f6a30d428c533bb3"
+        },
+        {
+          "path": "models/spacecraft/The_Expanse/MCRN_Avalanche/MCRN_Avalanche.sss",
+          "bytes": 600,
+          "sha256": "358f829dd09f741c6886c425bd5588718b26c5fe64b71c31c1e3c36e066d3f16"
+        },
+        {
+          "path": "preview.jpg",
+          "bytes": 271762,
+          "sha256": "bee62fcea3dc4ccd7903ec27f16bf7cefbbdec9797476d8362eaf0bf39a7814c"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_avalanche_epstein.ogg",
+          "bytes": 37344,
+          "sha256": "76f37af94e20f40ae281cc17dea3523b959697b5af66a429a1279d338873ebca"
+        },
+        {
+          "path": "sounds/spacecraft/The_Expanse/expanse_avalanche_maneuvering.ogg",
+          "bytes": 39626,
+          "sha256": "49f76982dc43c97aaeaca1c77ae308cb767f199cadcf483574c436fcd5f09e5e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/A1_BaseColor.png",
+          "bytes": 2024134,
+          "sha256": "4029635b648dfa252a3bf1a6a4d9a183749b141ce6279d32ddb784c886178b71"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/A1_Metallic.png",
+          "bytes": 277914,
+          "sha256": "4de8102adaaa32ed8526feb071cead91246b4628f4e696f5262d60f13a42b9f0"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/A1_Roughness.png",
+          "bytes": 1866396,
+          "sha256": "eb19cfde1ebc59949dcebcb9ff3790161a8eb3459905180bbdccc81985252a81"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/AIRLOCK_BaseColor.jpg",
+          "bytes": 735788,
+          "sha256": "60dbf88cbb79826a94ec4a4fe41974219812e70a3a5482cc5d52a6c269e44f60"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/AIRLOCK_Normal.jpg",
+          "bytes": 50814,
+          "sha256": "185e3fe46f6ca0521c8a0a28e4172ccb4c34335af42d16ce80985cb29d2cb553"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/AIRLOCK_Roughness.jpg",
+          "bytes": 737943,
+          "sha256": "dc80a605bb3f5021713820f9626b9fd79a84c3724d856a846df0169dbf032ced"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/C1_BaseColor.jpg",
+          "bytes": 232318,
+          "sha256": "be8268347e4b212ab8b5a21885a9740c74b4d591a6d55e505b2d6f30ee812721"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/C1_Metallic.jpg",
+          "bytes": 26015,
+          "sha256": "321f3d080210b46903afdecb77367d9fd185c58e923e86533c23d7462fbbcea9"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/C1_Normal.jpg",
+          "bytes": 13127,
+          "sha256": "d67e6d24cf3b9a500bfaa1318a8c5e4aba4b53f931d3792fcd5de7610507002d"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/C1_Roughness.jpg",
+          "bytes": 302098,
+          "sha256": "c0daea2fb8abcdb95cbf929ddbcb628cd925f288e83e135aa5b5e6d5f83e2a59"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/Engine_BaseColor.png",
+          "bytes": 2022477,
+          "sha256": "80f340d7ce9ef882f9594ae6b03464df8ad89051021450a07b0cf7dd5df24311"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/Engine_Metallic.png",
+          "bytes": 678976,
+          "sha256": "22fe546c98b3a1dd1cf0ba3442270b058fe0ba7b366de638c30f8de45fbdecc6"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/Engine_Roughness.png",
+          "bytes": 1312721,
+          "sha256": "eb704edc9e66cb2311b76de7e5d9c8265595fadac909222bed985f11d9ed714d"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/EngineP_BaseColor.png",
+          "bytes": 1831110,
+          "sha256": "daa6da7b63af25f13cc104ebde2d45cc87637ffbfe596a84bc125b40420a2cf9"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/EngineP_Metallic.png",
+          "bytes": 40811,
+          "sha256": "8027579e5cbde418fe21b87c1851627a31193a379def02d969851a747bafd28e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/EngineP_Roughness.png",
+          "bytes": 2043995,
+          "sha256": "5624e827dea15ff361bbe9884e8d7565ceb232bf381095749024cc4b7b6f8136"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/Eparts_BaseColor.jpg",
+          "bytes": 264505,
+          "sha256": "ada7219f1599a62e453a8be901b911cdfca86c788e471b79598f9f7d33648710"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/Eparts_Metallic.jpg",
+          "bytes": 71984,
+          "sha256": "73da7ab5a0f40c1b2d1fc9ff5510b84ddf8fabfd5a0b3501951eb74d6ccb9f82"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/Eparts_Roughness.jpg",
+          "bytes": 311707,
+          "sha256": "7aaeb1b21777748f2014dcf8a340a5524c1845ba90c830d9fd448ec35690105b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HT_BaseColor.png",
+          "bytes": 1126337,
+          "sha256": "2f7b4b12e36fd42466439ab7ee24e9e261563882f7f832f246620a3b4aa8118b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HT_Roughness.png",
+          "bytes": 1224817,
+          "sha256": "b0d0ffd3d493427767db05d3a5bc038abe7c828b7c0e94da1c063c69bc028bd7"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_ENGN_BaseColor.png",
+          "bytes": 1491728,
+          "sha256": "156928bb647058ad89f9a71a1df8d93f670a1651b4dd72e1fddaa6187950ec1a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_ENGN_Normal.png",
+          "bytes": 1075504,
+          "sha256": "7fdebea271fe3c576fb0c43aac69ed8f23221e1d477c84aac2555de4ab6c6e45"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_ENGN_Roughness.png",
+          "bytes": 1530622,
+          "sha256": "27870c37cb9caa580120c5d3d994507b5f67ffa91d68f50bb5a7671c43cca7f6"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_FRONT_BaseColor.png",
+          "bytes": 2069446,
+          "sha256": "9b225a8c03cd8e6d0c91a34959970870b41327a30c09388f3e9062e52d03d7cd"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_FRONT_Metallic.png",
+          "bytes": 11738,
+          "sha256": "29fba6c2463cf1f29971f08fb7f27394baf69acc3d8e69ea92992c6352baaa0b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_FRONT_Normal.png",
+          "bytes": 1610321,
+          "sha256": "0c2575801ba4dc080cf688709fbaa3ea3499715cc34bf8d3738e9e3aa0b3c450"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_FRONT_Roughness.png",
+          "bytes": 1583513,
+          "sha256": "47478b161f5e195d3ca3aab39f03ee6c89007a21ee6cb0760e86303faf8a0343"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_MID_BaseColor.png",
+          "bytes": 1569791,
+          "sha256": "ad9eb80665f3c075a590c1d773183145327cd0b0eb38efb0d5fea878e74dc84a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_MID_Normal.png",
+          "bytes": 1721770,
+          "sha256": "ae142f72eff4012cd8340e3792e1b295c13f32ee99436c5115b0ac52e9df38fb"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_MID_Roughness.png",
+          "bytes": 1904575,
+          "sha256": "bff4e74ae60a142f686e0618b35c48632d105edacf592ba1515af699eeeb1540"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_PARTS_2_BaseColor.png",
+          "bytes": 1183734,
+          "sha256": "1190a64708a849597f1b3e2c9eda25d816ffc551f7ac70faa6729c949053e012"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_PARTS_2_Roughness.png",
+          "bytes": 1180346,
+          "sha256": "4db1890a8ff43bb19a7f59ce54963373c8190eecac6bc1184d19d0039a309b71"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_PARTS__BaseColor.png",
+          "bytes": 1174778,
+          "sha256": "208fd87a6920fa83af3e3ba85e587766575b0b8b34c169ca46658cd64c9dcb45"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_PARTS__Metallic.png",
+          "bytes": 7998,
+          "sha256": "6549ecb449aa75fe64b85f8afd116e0b70a4a065fa7ea480e1a22886e56312fd"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_PARTS__Normal.png",
+          "bytes": 70545,
+          "sha256": "e645555ef85d1c710ee4977362e3feb37c950c0c128ee6d22399d3e0b601460a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/HULL_PARTS__Roughness.png",
+          "bytes": 1668528,
+          "sha256": "9ebca3f3ce3a8d62b2669296ea3fcb904a12c1b1c97c65bf611807ec9b9fc825"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/internal_ground_ao_texture.jpg",
+          "bytes": 27241,
+          "sha256": "35eaf2b5969af3c00a9d3eebd2c91383c65f576d97335bb87eccfda57c35763f"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/MAIN_TURRET_BaseColor.png",
+          "bytes": 2018385,
+          "sha256": "c05ec6daa6264503db190ad710dbc90a7e90155b4612ed976bf38eadbff3cff9"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/MAIN_TURRET_Metallic.png",
+          "bytes": 9033,
+          "sha256": "9ce814abef484a74f3bdbe7742eed83dbdc5986ebd705f69e905a0bbae702b1e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/MAIN_TURRET_Roughness.png",
+          "bytes": 2007407,
+          "sha256": "7b83eaecffe0affa20397e92d81f954099946be0208a1ec8c22e1a6f1b475c83"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/MCRN_Avalanche.sml",
+          "bytes": 9617,
+          "sha256": "c435653314b84039a21d39dfe61438867a7e72ccfb12db81c346093508c0a924"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P1_BaseColor.png",
+          "bytes": 1760968,
+          "sha256": "726304d783f849fb9d244d954c78e0fbbca8063e5226fd3ce2a811d88aeb1504"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P1_Metallic.png",
+          "bytes": 498983,
+          "sha256": "f48db3893d31d5c87e410930e10f21684f0bbaadc70933e8d7a42c80d8cdaba1"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P1_Roughness.png",
+          "bytes": 2023552,
+          "sha256": "a67c9e683c30855b58d4526f695d2b421f2e15074727d554a322203bdb1f42d7"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P2_BaseColor.png",
+          "bytes": 1416803,
+          "sha256": "22c3b6526ce6e666e935329bd13a15ded256ffd6fbea2f73aeca393bdf5efd4b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P2_Roughness.png",
+          "bytes": 1549358,
+          "sha256": "59ba3b3dfe464a56c614b130bc03cd245ea7b392cd5b57f556b0a25d3e3af520"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P3_BaseColor.jpg",
+          "bytes": 1019532,
+          "sha256": "411a48b8bf9cfd7243744e9af2664999c2e722e80ad59b5fc7c5a82df2963cda"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P3_Metallic.jpg",
+          "bytes": 173702,
+          "sha256": "ff806115ba6ce60ffa29ccd448d615d1a51e295258c14f47080d3a9930dad42c"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P3_Roughness.jpg",
+          "bytes": 799490,
+          "sha256": "bcf516dd9895002f5e830edb08d5ab5ee043fc90d65f9b07c80c2342723aa847"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P4_BaseColor.jpg",
+          "bytes": 266326,
+          "sha256": "f5efc0208d56837081d09f48a723eb9d46c27e0c7d601500f29a0431b836d85f"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P4_Normal.jpg",
+          "bytes": 96164,
+          "sha256": "6899b437dea1f9df1c41484c4f9d4fc242593056d65f7475bb1a9c3852f630a4"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/P4_Roughness.jpg",
+          "bytes": 193064,
+          "sha256": "b122c1ca24d75fffe53bf9bfbcb230ff50af0c5018f0ef1badc1f20c88617e78"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/PK_BaseColor.jpg",
+          "bytes": 687102,
+          "sha256": "303c96eab3d9bd24c5e847cf112bf5c28e0a9ac3eb3a3b7f5bb16513cff38c59"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/PK_Roughness.jpg",
+          "bytes": 941105,
+          "sha256": "f7121ee4a017d1b21ea0ab27017173037f74d9b3277fa46832c2de8f30fffdd6"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/R1_BaseColor.jpg",
+          "bytes": 165071,
+          "sha256": "46ef7c54da5d959d8dd02e9aaa0c9dcb93c9646a753b4ee3ac8807ab069f2f0d"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/R1_Metallic.jpg",
+          "bytes": 81242,
+          "sha256": "a8dd8eb5f743d378deb9c86ad7709675f0e76d63830794d79b0b10ccae88452b"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/R1_Roughness.jpg",
+          "bytes": 225665,
+          "sha256": "a0a315bff9041e13a3cc4707bb7b185735a4a94738e24e155e1d815abb824358"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/SENSORS_BaseColor.png",
+          "bytes": 1693554,
+          "sha256": "dd047335972fe057fcb47294c0ca879cf77d75e6686903eaed5869f230b7f0c0"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/SENSORS_Metallic.png",
+          "bytes": 39236,
+          "sha256": "938739f683244d41cef63f8f991f599da078c02a9d1c48fd407cb353d0a65877"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/SENSORS_Roughness.png",
+          "bytes": 1851678,
+          "sha256": "d22f98dc71fd752c5e56c1c13f3f5073f5e9842fe3ca3887af93699a61befd3e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TARGETING_SYSTEM_BaseColor.jpg",
+          "bytes": 1099380,
+          "sha256": "9604fb00a330f72fd836250fbb91438d27ef03ea83646af9433eeafafb361410"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TARGETING_SYSTEM_Metallic.jpg",
+          "bytes": 134861,
+          "sha256": "4aa0fd5825071025988163b5fbad2e23ad20eaf5aae45cd58163e6a06cb0c3ac"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TARGETING_SYSTEM_Roughness.jpg",
+          "bytes": 988659,
+          "sha256": "622283414fc6f949c1390a49934f38bb5f4a56cf6bd00f34ee492601c0c9ea74"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_A1_BaseColor.png",
+          "bytes": 1680723,
+          "sha256": "93604cd22e8c6f2beb751bfa8c13eeaa3c1a172e5128933b64da3e1a43164a0c"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_A1_Roughness.png",
+          "bytes": 1536631,
+          "sha256": "8f7e1fdfa1d5c34d3f1d586551423fcbc9617f275d510859806d7ecc9cabdd58"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_B1_BaseColor.png",
+          "bytes": 1418222,
+          "sha256": "bc0c4a0b78702f47b636b204dfd8bc444d0905064c2dc85c160fe5dadb51575d"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_B1_Normal.png",
+          "bytes": 16914,
+          "sha256": "cb91027a22b747db5c76a790003418ed11eb6dee3b3b057a7517a9fea4bee94e"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_B1_Roughness.png",
+          "bytes": 1746200,
+          "sha256": "8206d0743bba019633263af8157f2ccd7b6f1d793fa7d88df6c49840b8b8ec25"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_B2_BaseColor.png",
+          "bytes": 1459662,
+          "sha256": "64acb0f893edde7cbadfcc243f65e736006aa3b08e28432761256ad2b976663a"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_B2_Metallic.png",
+          "bytes": 167201,
+          "sha256": "8bfa924969a558949fa027e3ce705e81b2871a393f1b9d764ce7cda5284386f8"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_B2_Normal.png",
+          "bytes": 39335,
+          "sha256": "4b10241b29766cff9eceea1464b30f381406fd60752f7405dda7513b56c432e1"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_B2_Roughness.png",
+          "bytes": 1657445,
+          "sha256": "f0aae744055508ee13a4faf0f4977507d597e5a9d3457eef73a47b3b5cb0dafb"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_BASE_BaseColor.jpg",
+          "bytes": 683286,
+          "sha256": "afdc137548da21a5dd682cd048e8e02b2f1481a4fbeeb348ede65aaf5ca2e87f"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_BASE_Metallic.jpg",
+          "bytes": 57269,
+          "sha256": "e0390c4d6e232f0b869b4ec8242a62443d88880467ed65b846fc147b3e76af64"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_BASE_Roughness.jpg",
+          "bytes": 785195,
+          "sha256": "eaab7b333b85a6a882a23f77ca994cefc9dd9a61fc4f4ee3989690e7c273fda1"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_GUN_BaseColor.png",
+          "bytes": 1916096,
+          "sha256": "b4b79aa0af0996de347666402b457a434290f4c9387cb3cfd6a711e7e0f2c967"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_GUN_Metallic.png",
+          "bytes": 187577,
+          "sha256": "e825c3b14da50d3a61e8d12e13929458786aeef0d9730be2b72eb8c50787ba51"
+        },
+        {
+          "path": "textures/spacecraft/The_Expanse/MCRN_Avalanche/TURRET_GUN_Roughness.png",
+          "bytes": 1794152,
+          "sha256": "623852f3bdc9330fa6f3e39340eb06c8461abe3c323e24de691e8a1600e788b2"
+        }
+      ]
+    },
+    {
+      "workshop_id": "2368610280",
+      "title": "Epstein's Yacht",
+      "source_url": "https://steamcommunity.com/sharedfiles/filedetails/?id=2368610280",
+      "model_texture_credit": "Chris Kun (as credited by the source); strawfinch",
+      "spaceengine_adapter_credit": "retro-visor",
+      "declared_graphics_license": "REQUIRES-VERIFICATION",
+      "license_url": null,
+      "playable_in_fractured_space": false,
+      "default_account_ownership_when_integrated": true,
+      "ship_definitions": [
+        {
+          "path": "EPST.pak::models/spacecraft/TheExpanse/EpsteinYatch.sss",
+          "name": "Epstein's Yatch",
+          "sha256": "06bcd2dbd3ac1dbf36a8b3289e1bb6cf8884e77070a9be12f82b2ab25fecb8b3"
+        }
+      ],
+      "meshes": [
+        {
+          "path": "EPST.pak::models/spacecraft/TheExpanse/EpsteinYatch.sm",
+          "format": "SM02",
+          "bytes": 52129068
+        }
+      ],
+      "files": [
+        {
+          "path": "EPST.pak",
+          "bytes": 31685795,
+          "sha256": "3ed33d3fe9870ad3c662bd9cd2048fc00be098b18dcacb4c22164f3f75693cf2"
+        },
+        {
+          "path": "preview.jpg",
+          "bytes": 563620,
+          "sha256": "c963c676f3ca7ccb0c554a8c4b17363ae64bbda4d195fb990a307493c0770ef8"
+        }
+      ]
+    }
+  ],
+  "audio_policy": "Do not redistribute show-derived audio based on a model license.",
+  "integration_requirements": [
+    "Resolve per-asset redistribution rights",
+    "Convert SM02 geometry/materials",
+    "Author and cook compatible Unreal 4.19.2 assets",
+    "Register client/server ship definitions and default-account ownership",
+    "Verify hangar selection, spawning and gameplay before release"
+  ]
+}

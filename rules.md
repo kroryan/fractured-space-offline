@@ -45,3 +45,9 @@ The import covers the `Space` payload. Bootstrapper application binaries belong 
 ## English-only language policy
 
 All project-owned interfaces, messages, trainer/F1 controls, documentation, release titles and changelogs must be written in English. Do not select another language from the operating system locale or reintroduce translated UI strings when importing reference updates. Keep Fractured Space launched with its English culture setting. Preserve third-party license notices and identifiers unchanged.
+
+## Imported ships and default ownership
+
+Inventory all loose and archived ship definitions in imported packages; do not infer ship count from package count. `tools/audit_expanse.py` and `mods/expanse/source-manifest.json` record the current six-package review. Resolve each asset's license separately, preserve credits and modification notices, and exclude unlicensed show-derived audio. Keep non-GPL graphics under their own applicable licenses.
+
+Every successfully integrated playable ship must be owned by the default local account, alongside the existing fleet. Add ownership only after compatible cooked assets and client/server definitions exist and the ship can actually load; source-only SpaceEngine meshes or fictional inventory entries are not integration. Check hangar selection, spawning and gameplay before publishing a release claiming the ships are included.
