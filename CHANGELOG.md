@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — Server-fix reference review
+
+- Reviewed `Makichika/Fractured-space-fixe-` at `7e43fb70ca660c35ae903fcc1f703b9c0a624cb0` and recorded it in `rules.md` as a reference project.
+- Deferred its advertised server-side fixes because the repository supplies client files and says the server changes are installed on the author's servers; it contains no distributable server implementation to port.
+- Did not import its game executable, Bootstrapper files or event PAKs: the executable differs from this project's patched binary, and the event content requires compatible server support.
+
 ## 1.2.0 — Co-op team distribution
 
 - Added host controls for two to four human players and the number of humans on the host's team, covering all requested splits including 1–1, 1–2, 2–1, 1–3, 2–2 and 3–1.
