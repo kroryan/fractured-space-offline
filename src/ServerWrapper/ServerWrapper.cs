@@ -28,7 +28,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Offline server wrapper")]
-[assembly: System.Reflection.AssemblyVersion("1.1.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.2.0.0")]
 
 static class ServerWrapper
 {
@@ -74,11 +74,12 @@ static class ServerWrapper
     {
         string host = Environment.GetEnvironmentVariable("FSO_COOP_HOST") ?? "127.0.0.1";
         string port = Environment.GetEnvironmentVariable("FSO_COOP_PORT") ?? "7777";
+        string team = SelectedTeam();
         Emit(Stamp() + "LogInit: Fractured Space Offline: joining the co-op host " + host + ":" + port);
         Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: lobby_ready");
         Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: ecg_fs_sp_server_host=" + host);
-        Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: ecg_fs_sp_server_port=" + port);
-        WriteStatus(status, "guest " + host + ":" + port);
+        Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: ecg_fs_sp_server_port=" + port + TeamOption(team));
+        WriteStatus(status, "guest " + host + ":" + port + " team " + team);
         // The client treats our exit as the server ending: stay until it closes us.
         Thread.Sleep(Timeout.Infinite);
         return 0;
@@ -100,7 +101,8 @@ static class ServerWrapper
             if (list.Count > 0 && !list[0].StartsWith("-"))
                 list[0] = Regex.Replace(list[0], @"(?i)(\?game=)[^?&]+", "$1/Game/Blueprints/GameModes/BP_ConquestGameMode_Coop.BP_ConquestGameMode_Coop_C");
             string extra = Environment.GetEnvironmentVariable("FSO_SERVER_URL_EXTRA") ?? "";
-            if (extra.Length > 0 && list.Count > 0 && !list[0].StartsWith("-")) list[0] += extra;
+            if (extra.Length > 0 && list.Count > 0 && !list[0].StartsWith("-"))
+                list[0] += (extra[0] == '?' ? extra : "?" + extra);
             list.Add("-multihome=127.0.0.1");
             string port = Environment.GetEnvironmentVariable("FSO_SERVER_PORT");
             if (!string.IsNullOrEmpty(port)) list.Add("-port=" + port);
@@ -122,25 +124,46 @@ static class ServerWrapper
         bool readyEmitted = false;
         while ((line = p.StandardOutput.ReadLine()) != null)
         {
+            int portMarker = host ? line.IndexOf("ecg_fs_sp_server_port=", StringComparison.Ordinal) : -1;
+            if (portMarker >= 0)
+            {
+                string rawPort = line.Substring(portMarker + 22).Trim();
+                int query = rawPort.IndexOf('?');
+                if (query >= 0) rawPort = rawPort.Substring(0, query);
+                line = line.Substring(0, portMarker + 22) + rawPort + TeamOption(SelectedTeam());
+                WriteStatus(status, "host 127.0.0.1:" + rawPort + " team " + SelectedTeam());
+            }
             Emit(line);
             if (host && !readyEmitted && line.IndexOf("IpNetDriver listening on port", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 string port = Environment.GetEnvironmentVariable("FSO_SERVER_PORT") ?? "7777";
+                string team = SelectedTeam();
                 Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: lobby_ready");
                 Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: ecg_fs_sp_server_host=127.0.0.1");
-                Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: ecg_fs_sp_server_port=" + port);
-                WriteStatus(status, "host 127.0.0.1:" + port);
+                Emit(Stamp() + "SinglePlayerLobbyGameMode: Warning: ecg_fs_sp_server_port=" + port + TeamOption(team));
+                WriteStatus(status, "host 127.0.0.1:" + port + " team " + team);
                 readyEmitted = true;
             }
             if (host)
             {
                 int i = line.IndexOf("ecg_fs_sp_server_port=", StringComparison.Ordinal);
-                if (i >= 0) WriteStatus(status, "host 127.0.0.1:" + line.Substring(i + 22).Trim());
+                if (i >= 0) WriteStatus(status, "host 127.0.0.1:" + line.Substring(i + 22).Split('?')[0].Trim() + " team " + SelectedTeam());
             }
         }
         p.WaitForExit();
         WriteStatus(status, "ended " + p.ExitCode);
         return p.ExitCode;
+    }
+
+    static string SelectedTeam()
+    {
+        string team = Environment.GetEnvironmentVariable("FSO_COOP_TEAM") ?? "1";
+        return team == "2" ? "2" : "1";
+    }
+
+    static string TeamOption(string team)
+    {
+        return "?Team=" + team;
     }
 
     static string Join(IEnumerable<string> args)

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0 — Co-op team distribution
+
+- Added host controls for two to four human players and the number of humans on the host's team, covering all requested splits including 1–1, 1–2, 2–1, 1–3, 2–2 and 3–1.
+- Added per-guest team assignment during host approval, persistent guest team identities, and capacity enforcement in the Windows launcher and Linux AppImage.
+- Passed each assigned team through the dedicated-server wrapper as a `Team` Unreal URL option and included the selected team sizes in the host map URL.
+- Isolated offline installation state from the online Bootstrapper marker; the installer now stops instead of replacing a different Bootstrapper patch in the shared game folder.
+- Updated the launcher and wrapper version to 1.2.0.
+
+### Verification limits
+
+- Team sizes, admission assignments and wrapper URL options are covered by local smoke checks; the game server may override requested teams and still needs a two-live-client confirmation.
+- Bot balancing remains controlled by the game's undocumented server behavior.
+
 ## 1.1.0 — Co-op preview
 
 - Added a Windows launcher mode screen for solo, hosting and joining, with the last selection remembered.

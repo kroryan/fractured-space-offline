@@ -60,12 +60,12 @@ The launcher includes an experimental co-op admission flow. A host must allow in
 
 For Internet play, use a private VPN such as **Tailscale** (recommended) or ZeroTier so both players are on the same virtual LAN; this avoids exposing ports on a public router. On a direct Internet connection, forward TCP 8090 and UDP 7777 to the host PC. Do not expose other management ports.
 
-The game server wrapper and relay are experimental. Human team placement and bot rebalancing depend on undocumented game server behavior and are not guaranteed. The co-op path has not been validated with two live game clients yet.
+The host can choose a party size of two to four humans and how many humans belong on the host's team. Approved guests are assigned to fill those team sizes, and the wrapper passes the selected team in the Unreal join URL. Team placement and bot rebalancing still depend on undocumented game behavior; a two-live-client team-assignment session has not been confirmed.
 
 ### Limitations
 - The account is a **recorded** one, so progress is not saved between sessions.
 - The store and purchases do not work.
-- To play online with the community, use the [Fractured Space Bootstrapper](https://github.com/Tigerhacker/fractured-bootstrapper). Both can be installed together because they use the same patch.
+- To play online with the community, use the [Fractured Space Bootstrapper](https://github.com/Tigerhacker/fractured-bootstrapper). The offline launcher has its own app directory and marker, and reuses the shared game patch when its hashes match. If a different Bootstrapper patch is present, the installer stops instead of overwriting it.
 
 ## Repository layout
 

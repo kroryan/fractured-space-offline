@@ -18,8 +18,8 @@ using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Bootstrapper Offline")]
 [assembly: System.Reflection.AssemblyProduct("Fractured Space Bootstrapper Offline")]
-[assembly: System.Reflection.AssemblyVersion("1.1.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.1.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.2.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.2.0.0")]
 
 static class OfflineLauncher
 {
@@ -35,7 +35,9 @@ static class OfflineLauncher
     static PlayMode selectedMode = PlayMode.Solo;
     static string selectedHost = "";
     static string selectedBindIp = "0.0.0.0";
-    static bool sameTeam = true;
+    static int expectedPlayers = 2;
+    static int hostTeamSize = 2;
+    static int assignedTeam = 1;
 
     class Canned { public int Status; public byte[] Body; }
 
@@ -68,11 +70,14 @@ static class OfflineLauncher
                 if (selectedMode == PlayMode.Host)
                 {
                     string state = Path.Combine(appDir, "approved-guests.json");
-                    admission = new CoopAdmission(IPAddress.Parse(selectedBindIp), state, peer =>
+                    string teamState = Path.Combine(appDir, "approved-guest-teams.json");
+                    admission = new CoopAdmission(IPAddress.Parse(selectedBindIp), state, teamState,
+                        expectedPlayers, hostTeamSize, (peer, team) =>
                     {
                         DialogResult answer = DialogResult.No;
                         var t = new Thread(() => answer = MessageBox.Show(
-                            L("El jugador " + peer + " solicita unirse. ¿Aceptar?", "Player " + peer + " requests to join. Accept?"),
+                            L("El jugador " + peer + " solicita unirse al equipo " + team + ". ¿Aceptar?",
+                              "Player " + peer + " requests to join team " + team + ". Accept?"),
                             Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question));
                         t.SetApartmentState(ApartmentState.STA); t.Start(); t.Join();
                         return answer == DialogResult.Yes;
@@ -83,7 +88,9 @@ static class OfflineLauncher
                 }
                 else if (selectedMode == PlayMode.Join)
                 {
-                    playerId = CoopAdmission.Request(selectedHost, playerId, 120000);
+                    CoopAdmission.JoinResult join = CoopAdmission.Request(selectedHost, playerId, 120000);
+                    playerId = join.PlayerId;
+                    assignedTeam = join.Team;
                     File.WriteAllText(Path.Combine(appDir, "player-id.txt"), playerId);
                 }
             }
@@ -129,7 +136,8 @@ static class OfflineLauncher
                 return 1;
             }
             if (!File.Exists(exe)) { Fail(L("No se encuentra:\n", "Not found:\n") + exe); return 1; }
-            if (!File.Exists(Path.Combine(gameRoot, "bootlegger.json")))
+            if (!File.Exists(Path.Combine(gameRoot, "fractured-space-offline.json")) &&
+                !File.Exists(Path.Combine(gameRoot, "bootlegger.json")))
             {
                 Fail(L("El juego no está parcheado.\nVuelve a ejecutar el instalador de Fractured Space Offline.",
                      "The game is not patched.\nRun the Fractured Space Offline installer again."));
@@ -155,8 +163,16 @@ static class OfflineLauncher
             psi.EnvironmentVariables["SteamAppId"] = "310380";
             psi.EnvironmentVariables["OPENSSL_ia32cap"] = ":~0x20000000";
             if (selectedMode == PlayMode.Host) psi.EnvironmentVariables["FSO_COOP_MODE"] = "host";
-            if (selectedMode == PlayMode.Host) psi.EnvironmentVariables["FSO_SERVER_URL_EXTRA"] = sameTeam ? "?coop=1" : "?coop=0";
+            if (selectedMode == PlayMode.Host)
+            {
+                psi.EnvironmentVariables["FSO_COOP_TEAM"] = "1";
+                int otherTeamSize = expectedPlayers - hostTeamSize;
+                psi.EnvironmentVariables["FSO_SERVER_URL_EXTRA"] = hostTeamSize == expectedPlayers
+                    ? "?coop=1"
+                    : "?coop=0?team1Players=" + hostTeamSize + "?team2Players=" + otherTeamSize;
+            }
             if (selectedMode == PlayMode.Join) { psi.EnvironmentVariables["FSO_COOP_MODE"] = "guest"; psi.EnvironmentVariables["FSO_COOP_HOST"] = selectedHost; }
+            if (selectedMode == PlayMode.Join) psi.EnvironmentVariables["FSO_COOP_TEAM"] = assignedTeam.ToString();
             psi.EnvironmentVariables["FSO_PLAYER_ID"] = playerId;
             try
             {
@@ -193,9 +209,17 @@ static class OfflineLauncher
     {
         string file = Path.Combine(appDir, "launcher-mode.txt");
         int last = 0; try { int.TryParse(File.ReadAllText(file).Trim(), out last); } catch { }
+        string teamFile = Path.Combine(appDir, "coop-team.txt");
+        try
+        {
+            string[] saved = File.ReadAllText(teamFile).Split(',');
+            expectedPlayers = Math.Max(2, Math.Min(4, int.Parse(saved[0])));
+            hostTeamSize = Math.Max(1, Math.Min(expectedPlayers, int.Parse(saved[1])));
+        }
+        catch { expectedPlayers = 2; hostTeamSize = 2; }
         using (var f = new Form())
         {
-            f.Text = Title; f.Width = 480; f.Height = 330; f.StartPosition = FormStartPosition.CenterScreen;
+            f.Text = Title; f.Width = 520; f.Height = 420; f.StartPosition = FormStartPosition.CenterScreen;
             var solo = new RadioButton { Left = 24, Top = 24, Width = 410, Text = L("Jugar solo contra bots", "Play solo vs bots"), Checked = last == 0 };
             var host = new RadioButton { Left = 24, Top = 60, Width = 410, Text = L("Crear partida cooperativa (anfitrión)", "Create co-op game (host)"), Checked = last == 1 };
             var join = new RadioButton { Left = 24, Top = 96, Width = 410, Text = L("Unirse a una partida cooperativa", "Join a co-op game"), Checked = last == 2 };
@@ -205,15 +229,49 @@ static class OfflineLauncher
             var bind = new ComboBox { Left = 145, Top = 162, Width = 250, DropDownStyle = ComboBoxStyle.DropDownList };
             foreach (var a in LocalAddresses()) bind.Items.Add(a);
             if (bind.Items.Count > 0) bind.SelectedIndex = 0;
-            var team = new CheckBox { Left = 46, Top = 196, Width = 370, Text = L("Jugar en el mismo equipo", "Play on the same team"), Checked = true };
-            var go = new Button { Left = 300, Top = 235, Width = 100, Text = L("Continuar", "Continue"), DialogResult = DialogResult.OK };
+            var partyLabel = new Label { Left = 46, Top = 202, Width = 215, Text = L("Jugadores humanos (contándote):", "Human players (including you):") };
+            var party = new NumericUpDown { Left = 270, Top = 198, Width = 65, Minimum = 2, Maximum = 4, Value = expectedPlayers };
+            var teamLabel = new Label { Left = 46, Top = 238, Width = 215, Text = L("Humanos en tu equipo:", "Humans on your team:") };
+            var teamSize = new ComboBox { Left = 270, Top = 234, Width = 175, DropDownStyle = ComboBoxStyle.DropDownList };
+            var distribution = new Label { Left = 46, Top = 270, Width = 410, Height = 38 };
+            Action refreshTeams = () =>
+            {
+                int count = (int)party.Value;
+                int selected = Math.Max(1, Math.Min(count, hostTeamSize));
+                teamSize.Items.Clear();
+                for (int i = 1; i <= count; i++)
+                    teamSize.Items.Add(i == count
+                        ? L("Todos juntos (" + count + ")", "All together (" + count + ")")
+                        : L(i + " en tu equipo / " + (count - i) + " en el otro", i + " on your team / " + (count - i) + " on the other"));
+                teamSize.SelectedIndex = selected - 1;
+                hostTeamSize = selected;
+                distribution.Text = L("El anfitrión irá en el equipo 1. Cada solicitud mostrará el equipo asignado.",
+                                      "The host will be on team 1. Each join request will show its assigned team.");
+            };
+            party.ValueChanged += (s, e) => refreshTeams();
+            teamSize.SelectedIndexChanged += (s, e) => { if (teamSize.SelectedIndex >= 0) hostTeamSize = teamSize.SelectedIndex + 1; };
+            refreshTeams();
+            Action updateEnabled = () =>
+            {
+                bool hosting = host.Checked;
+                ipLabel.Enabled = ip.Enabled = join.Checked;
+                bindLabel.Enabled = bind.Enabled = hosting;
+                partyLabel.Enabled = party.Enabled = teamLabel.Enabled = teamSize.Enabled = distribution.Enabled = hosting;
+            };
+            solo.CheckedChanged += (s, e) => updateEnabled();
+            host.CheckedChanged += (s, e) => updateEnabled();
+            join.CheckedChanged += (s, e) => updateEnabled();
+            updateEnabled();
+            var go = new Button { Left = 335, Top = 325, Width = 110, Text = L("Continuar", "Continue"), DialogResult = DialogResult.OK };
             go.Click += (s,e) => { IPAddress parsed; if (join.Checked && !IPAddress.TryParse(ip.Text.Trim(), out parsed)) { MessageBox.Show(L("Escribe una IP válida.", "Enter a valid IP address.")); f.DialogResult = DialogResult.None; } };
-            f.Controls.AddRange(new Control[] { solo, host, join, ipLabel, ip, bindLabel, bind, team, go }); f.AcceptButton = go;
+            f.Controls.AddRange(new Control[] { solo, host, join, ipLabel, ip, bindLabel, bind, partyLabel, party, teamLabel, teamSize, distribution, go }); f.AcceptButton = go;
             if (f.ShowDialog() != DialogResult.OK) return false;
             selectedMode = solo.Checked ? PlayMode.Solo : host.Checked ? PlayMode.Host : PlayMode.Join;
             selectedHost = ip.Text.Trim();
             selectedBindIp = bind.SelectedItem == null ? "0.0.0.0" : bind.SelectedItem.ToString().Split(' ')[0];
-            sameTeam = team.Checked;
+            expectedPlayers = (int)party.Value;
+            hostTeamSize = Math.Max(1, teamSize.SelectedIndex + 1);
+            try { File.WriteAllText(teamFile, expectedPlayers + "," + hostTeamSize); } catch { }
             try { File.WriteAllText(file, selectedMode == PlayMode.Solo ? "0" : selectedMode == PlayMode.Host ? "1" : "2"); } catch { }
             return true;
         }

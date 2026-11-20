@@ -21,7 +21,9 @@ if ($CoopMode) {
     $expectedState = 'Match State Changed from WaitingToStart to InProgress'
 }
 $map = if ($map) { $map } else { '/Game/Maps/Lobby' }
-$args = @($map + '?game=' + $gameMode, '-nullrhi', '-unattended', '-log',
+$serverUrl = $map + '?game=' + $gameMode
+if ($CoopMode) { $serverUrl += '?coop=0?team1Players=2?team2Players=1' }
+$args = @($serverUrl, '-nullrhi', '-unattended', '-log',
           "-abslog=$log", '-port=17777', '-multihome=127.0.0.1')
 $p = Start-Process -FilePath $server -ArgumentList $args -WorkingDirectory $bin -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput $out -RedirectStandardError $err

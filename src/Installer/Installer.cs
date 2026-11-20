@@ -22,18 +22,19 @@ using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Fractured Space Offline Setup")]
 [assembly: AssemblyProduct("Fractured Space Offline")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
 
 static class Setup
 {
     public const string AppName = "Fractured Space Bootstrapper Offline";
-    public const string AppVersion = "1.1.0";
+    public const string AppVersion = "1.2.0";
     public const string AppExe = "FracturedSpaceBootstrapperOffline.exe";
     public const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\FracturedSpaceBootstrapperOffline";
     public const string DpiKey = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
-    public const int PatchLevel = 30;
+    public const int PatchLevel = 31;
     public const string BackupDirName = "fractured-offline-backup";
+    public const string OfflineMarkerName = "fractured-space-offline.json";
     public const string GameExeRel = @"spacegame\Binaries\Win64\Fractured Space.exe";
 
     public static readonly bool Spanish =
@@ -202,7 +203,28 @@ static class Setup
                         Directory.CreateDirectory(Path.GetDirectoryName(dest));
                         File.Copy(f, dest, true);
                     }
-                    File.Delete(Path.Combine(game, "bootlegger.json"));
+                    string bootlegger = Path.Combine(game, "bootlegger.json");
+                    string bootleggerBackup = Path.Combine(backup, "bootlegger.json");
+                    if (!File.Exists(bootleggerBackup))
+                    {
+                        try
+                        {
+                            if (File.ReadAllText(bootlegger).Trim() == "{\"version\":" + Setup.PatchLevel + ",\"status\":\"ok\"}")
+                                File.Delete(bootlegger);
+                        }
+                        catch { }
+                    }
+                    string offlineMarker = Path.Combine(game, Setup.OfflineMarkerName);
+                    string offlineMarkerBackup = Path.Combine(backup, Setup.OfflineMarkerName);
+                    if (!File.Exists(offlineMarkerBackup))
+                    {
+                        try
+                        {
+                            if (File.ReadAllText(offlineMarker).Trim() == "{\"version\":" + Setup.PatchLevel + ",\"status\":\"ok\"}")
+                                File.Delete(offlineMarker);
+                        }
+                        catch { }
+                    }
                     Directory.Delete(backup, true);
                 }
                 catch (Exception ex)
@@ -378,6 +400,20 @@ class SetupForm : Form
     {
         Log(L("Comprobando parche del juego...", "Checking game patch..."));
         string backup = Path.Combine(game, Setup.BackupDirName);
+        string offlineMarker = Path.Combine(game, Setup.OfflineMarkerName);
+        string bootleggerMarker = Path.Combine(game, "bootlegger.json");
+        bool anotherBootstrapperOwnsPatch = File.Exists(bootleggerMarker) && !File.Exists(offlineMarker);
+        if (anotherBootstrapperOwnsPatch)
+        {
+            foreach (var f in Setup.Patch)
+            {
+                string dest = Path.Combine(game, f.Dest);
+                if (!File.Exists(dest) || Setup.Sha256File(dest) != f.Sha256)
+                    throw new Exception(L(
+                        "Hay un parche del Bootstrapper online distinto en esta carpeta del juego. No se ha sobrescrito. Actualiza o desinstala ese parche y vuelve a intentarlo.",
+                        "A different online Bootstrapper patch is active in this game folder. It was left untouched. Update or uninstall that patch, then try again."));
+            }
+        }
         {
             foreach (var f in Setup.Patch)
             {
@@ -410,8 +446,14 @@ class SetupForm : Form
                 Step();
             }
         }
-        // Same marker the online bootstrapper uses, so both launchers agree it is patched
-        File.WriteAllText(Path.Combine(game, "bootlegger.json"), "{\"version\":" + Setup.PatchLevel + ",\"status\":\"ok\"}");
+        // Keep this launcher's state separate; bootlegger.json belongs to the online Bootstrapper.
+        string markerBackup = Path.Combine(backup, Setup.OfflineMarkerName);
+        if (File.Exists(offlineMarker) && !File.Exists(markerBackup))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(markerBackup));
+            File.Copy(offlineMarker, markerBackup);
+        }
+        File.WriteAllText(offlineMarker, "{\"version\":" + Setup.PatchLevel + ",\"status\":\"ok\"}");
         InstallServerWrapper(game, backup);
         Log(L("Parche aplicado (nivel ", "Patch applied (level ") + Setup.PatchLevel + ").");
 

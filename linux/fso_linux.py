@@ -45,7 +45,8 @@ ACTIVE_IDENTITY = os.environ.get("FSO_PLAYER_ID", RECORDED_IDENTITY)
 GAME_EXE_REL = "spacegame/Binaries/Win64/Fractured Space.exe"
 BACKUP_DIR = "fractured-offline-backup"
 SERVER_EXE_REL = "spacegame/Binaries/Win64/spserver.exe"
-PATCH_LEVEL = 30
+PATCH_LEVEL = 31
+OFFLINE_MARKER = "fractured-space-offline.json"
 
 PATCH = [
     ("Fractured Space.exe", GAME_EXE_REL, "fa6288c2d914366e14175c1d9ebbb459f6bd605c348b6148e9eea33d7290bc2a"),
@@ -180,12 +181,30 @@ def choose_mode():
         elif addresses:
             os.environ["FSO_BIND_HOST"] = addresses[0].split()[0]
         if shutil.which("zenity"):
-            same = subprocess.run(["zenity", "--question", "--title=" + APP,
-                                   "--text=Should human players be on the same team?" ]).returncode == 0
-            os.environ["FSO_SAME_TEAM"] = "1" if same else "0"
+            p = subprocess.run(["zenity", "--forms", "--title=" + APP,
+                                "--text=Choose the co-op human team distribution",
+                                "--add-entry=Total human players (2-4, including you)",
+                                "--add-entry=Humans on your team (1-total)"], capture_output=True, text=True)
+            if p.returncode: return None
+            try: party_size, host_team_size = [int(x.strip()) for x in p.stdout.strip().split("|")]
+            except (ValueError, TypeError): fail("Enter a valid player count and host-team size.")
         elif shutil.which("kdialog"):
-            same = subprocess.run(["kdialog", "--yesno", "Should human players be on the same team?", "--title", APP]).returncode == 0
-            os.environ["FSO_SAME_TEAM"] = "1" if same else "0"
+            p = subprocess.run(["kdialog", "--title", APP, "--inputbox",
+                                "Total human players (2-4, including you)", "2"], capture_output=True, text=True)
+            if p.returncode: return None
+            try: party_size = int(p.stdout.strip())
+            except ValueError: fail("Enter a valid total human-player count.")
+            p = subprocess.run(["kdialog", "--title", APP, "--inputbox",
+                                "Humans on your team (1-%d)" % party_size, str(party_size)], capture_output=True, text=True)
+            if p.returncode: return None
+            try: host_team_size = int(p.stdout.strip())
+            except ValueError: fail("Enter a valid host-team size.")
+        else:
+            party_size, host_team_size = 2, 2
+        if not 2 <= party_size <= 4 or not 1 <= host_team_size <= party_size:
+            fail("Choose 2-4 human players and a host-team size from 1 to that total.")
+        os.environ["FSO_PARTY_SIZE"] = str(party_size)
+        os.environ["FSO_HOST_TEAM_SIZE"] = str(host_team_size)
     return mode
 
 
@@ -214,13 +233,23 @@ def local_ipv4_addresses():
 
 class AdmissionServer:
     """TCP join-only service. It has no remote account or server admin API."""
-    def __init__(self, state_file):
+    def __init__(self, state_file, team_file, party_size, host_team_size):
         self.state_file = state_file
+        self.team_file = team_file
+        self.party_size = max(2, min(4, int(party_size)))
+        self.host_team_size = max(1, min(self.party_size, int(host_team_size)))
         try:
             with open(state_file, encoding="utf-8") as fh:
                 self.guests = json.load(fh)
         except (OSError, ValueError):
             self.guests = {}
+        try:
+            with open(team_file, encoding="utf-8") as fh:
+                self.guest_teams = json.load(fh)
+        except (OSError, ValueError):
+            self.guest_teams = {}
+        self.session_teams = {}
+        self.pending_teams = {}
         self.allowed = set()
         self.lock = threading.Lock()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -229,8 +258,8 @@ class AdmissionServer:
         self.running = True
         threading.Thread(target=self._serve, daemon=True).start()
 
-    def _approval(self, peer):
-        msg = "Player %s requests to join. Accept?" % peer
+    def _approval(self, peer, team):
+        msg = "Player %s requests to join team %d. Accept?" % (peer, team)
         try:
             if shutil.which("zenity"):
                 return subprocess.run(["zenity", "--question", "--title=" + APP, "--text=" + msg]).returncode == 0
@@ -239,6 +268,18 @@ class AdmissionServer:
         except OSError:
             pass
         return False
+
+    def _reserve_team(self, token):
+        teams = list(self.session_teams.values()) + list(self.pending_teams.values())
+        team_one = sum(1 for team in teams if team == 1)
+        team_two = sum(1 for team in teams if team == 2)
+        if team_one < self.host_team_size - 1:
+            self.pending_teams[token] = 1
+            return 1
+        if team_two < self.party_size - self.host_team_size:
+            self.pending_teams[token] = 2
+            return 2
+        return 0
 
     def _serve(self):
         while self.running:
@@ -256,16 +297,32 @@ class AdmissionServer:
                 req = json.loads(raw.decode("utf-8"))
                 if req.get("op") != "join": return
                 prior = req.get("id", "")
-                with self.lock: ident = self.guests.get(prior)
                 peer = addr[0]
-                if not ident and not self._approval(peer):
-                    conn.sendall(b'{"status":"rejected","id":""}\n'); return
+                token = str(__import__("uuid").uuid4())
+                with self.lock:
+                    ident = self.guests.get(prior)
+                    if ident and ident in self.session_teams:
+                        team = self.session_teams[ident]
+                        self.allowed.add(peer)
+                        conn.sendall((json.dumps({"status":"accepted", "id":ident, "team":team}) + "\n").encode())
+                        return
+                    team = self._reserve_team(token)
+                    if not team:
+                        conn.sendall(b'{"status":"full","id":"","team":0}\n'); return
+                if not ident and not self._approval(peer, team):
+                    with self.lock: self.pending_teams.pop(token, None)
+                    conn.sendall(b'{"status":"rejected","id":"","team":0}\n'); return
                 ident = ident or str(__import__("uuid").uuid4())
                 with self.lock:
-                    self.guests[ident] = ident; self.allowed.add(peer)
+                    self.pending_teams.pop(token, None)
+                    self.guests[ident] = ident
+                    self.guest_teams[ident] = team
+                    self.session_teams[ident] = team
+                    self.allowed.add(peer)
                     os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
                     with open(self.state_file, "w", encoding="utf-8") as fh: json.dump(self.guests, fh)
-                conn.sendall((json.dumps({"status":"accepted", "id":ident}) + "\n").encode())
+                    with open(self.team_file, "w", encoding="utf-8") as fh: json.dump(self.guest_teams, fh)
+                conn.sendall((json.dumps({"status":"accepted", "id":ident, "team":team}) + "\n").encode())
             except Exception as exc:
                 log("Join request error: %s" % exc)
 
@@ -423,6 +480,15 @@ def sha256_file(path):
 def patch_game(game):
     log("Checking game patch...")
     backup = os.path.join(game, BACKUP_DIR)
+    offline_marker = os.path.join(game, OFFLINE_MARKER)
+    bootlegger_marker = os.path.join(game, "bootlegger.json")
+    other_bootstrapper_owns_patch = os.path.isfile(bootlegger_marker) and not os.path.isfile(offline_marker)
+    if other_bootstrapper_owns_patch:
+        for src, rel, sha in PATCH:
+            dest = os.path.join(game, rel)
+            if not os.path.isfile(dest) or sha256_file(dest) != sha:
+                fail("A different online Bootstrapper patch is active in this game folder. "
+                     "It was left untouched. Update or uninstall that patch, then try again.")
     for src, rel, sha in PATCH:
         dest = os.path.join(game, rel)
         if os.path.isfile(dest) and sha256_file(dest) == sha:
@@ -438,7 +504,7 @@ def patch_game(game):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.copyfile(srcp, dest)
         log("  patched " + src)
-    with open(os.path.join(game, "bootlegger.json"), "w") as fh:
+    with open(offline_marker, "w") as fh:
         fh.write('{"version":%d,"status":"ok"}' % PATCH_LEVEL)
     wrapper_src = os.path.join(DATA_DIR, "spserver-wrapper.exe")
     server = os.path.join(game, SERVER_EXE_REL)
@@ -600,7 +666,10 @@ def main():
         pass
     admission = relay = None
     if mode == "host":
-        admission = AdmissionServer(os.path.join(STATE_DIR, "approved-guests.json"))
+        admission = AdmissionServer(os.path.join(STATE_DIR, "approved-guests.json"),
+                                    os.path.join(STATE_DIR, "approved-guest-teams.json"),
+                                    os.environ.get("FSO_PARTY_SIZE", "2"),
+                                    os.environ.get("FSO_HOST_TEAM_SIZE", "2"))
         try: relay = UdpRelay(admission)
         except OSError as e:
             admission.close(); fail("Could not open UDP 7777 for co-op: %s" % e)
@@ -610,8 +679,10 @@ def main():
             with socket.create_connection((os.environ["FSO_COOP_HOST"], 8090), timeout=120) as client:
                 client.sendall((json.dumps({"op":"join", "id":player_id}) + "\n").encode())
                 response = json.loads(client.makefile("rb").readline().decode())
+            if response.get("status") == "full": fail("The host's selected co-op player capacity is full.")
             if response.get("status") != "accepted": fail("The host rejected the join request.")
             player_id = response["id"]
+            assigned_team = int(response.get("team", 2))
             with open(identity_file, "w", encoding="utf-8") as fh: fh.write(player_id)
         except Exception as e:
             fail("Could not join host on TCP 8090:\n%s" % e)
@@ -660,11 +731,16 @@ def main():
     })
     if mode == "host":
         env["FSO_COOP_MODE"] = "host"
-        env["FSO_SERVER_URL_EXTRA"] = "?coop=" + os.environ.get("FSO_SAME_TEAM", "1")
+        party_size = int(os.environ.get("FSO_PARTY_SIZE", "2"))
+        host_team_size = int(os.environ.get("FSO_HOST_TEAM_SIZE", str(party_size)))
+        env["FSO_COOP_TEAM"] = "1"
+        env["FSO_SERVER_URL_EXTRA"] = ("?coop=1" if host_team_size == party_size else
+            "?coop=0?team1Players=%d?team2Players=%d" % (host_team_size, party_size - host_team_size))
         env["FSO_BIND_HOST"] = os.environ.get("FSO_BIND_HOST", "0.0.0.0")
     if mode == "join":
         env["FSO_COOP_MODE"] = "guest"
         env["FSO_COOP_HOST"] = os.environ["FSO_COOP_HOST"]
+        env["FSO_COOP_TEAM"] = str(assigned_team)
     exe = os.path.join(game, GAME_EXE_REL)
     # 'proton' is a Python script; run it directly if executable, else via python3
     runner = [proton] if os.access(proton, os.X_OK) else [sys.executable, proton]
