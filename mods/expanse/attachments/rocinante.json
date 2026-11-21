@@ -1,0 +1,12 @@
+{
+  "TurretHardpoint06F21017465AC0F1E14BECB492D35F5A": [132, 0, 31],
+  "TurretHardpoint9D8CA93A420ECF749B840080826806B9": [85, -40, 10],
+  "ThrusterParticle_GEN_VARIABLE": [-278, 3, 3],
+  "ThrusterParticle1_GEN_VARIABLE": [-278, 3, -3],
+  "ThrusterParticle2_GEN_VARIABLE": [-278, -3, -3],
+  "ThrusterParticle3_GEN_VARIABLE": [-278, -3, 3],
+  "ThrusterParticle4_GEN_VARIABLE": [-278, -4, 0],
+  "ThrusterParticle5_GEN_VARIABLE": [-278, 0, -4],
+  "ThrusterParticle6_GEN_VARIABLE": [-278, 4, 0],
+  "ThrusterParticle7_GEN_VARIABLE": [-278, 0, 4]
+}

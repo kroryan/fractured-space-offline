@@ -9,3 +9,4 @@ patch/** binary
 *.desktop text eol=lf
 linux/AppRun text eol=lf
 linux/runtime-x86_64 binary
+mods/expanse/payload/** binary

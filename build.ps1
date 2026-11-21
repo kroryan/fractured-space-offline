@@ -1,6 +1,7 @@
 # Builds dist\FracturedSpaceOfflineSetup.exe using the C# compiler that ships with Windows
 # (.NET Framework 4.x). No extra tools needed.
 #   powershell -ExecutionPolicy Bypass -File build.ps1
+param([switch]$LocalFleet)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $dist = Join-Path $root 'dist'
@@ -77,12 +78,36 @@ if (Test-Path $trainerZip) { Remove-Item -LiteralPath $trainerZip }
 
 # --- Installer (embeds launcher + data + client patch) ---
 $patchRes = Get-ChildItem (Join-Path $root 'patch') -File | ForEach-Object { "/resource:$($_.FullName),patch/$($_.Name)" }
+$responses = Join-Path $root 'server\responses.json'
+if ($LocalFleet) {
+    $fleetFolder = Join-Path $obj 'expanse-authoring'
+    if (-not (Test-Path -LiteralPath (Join-Path $fleetFolder 'fleet-manifest.json'))) {
+        $fleetFolder = Join-Path $root 'mods\expanse\payload'
+    }
+    $fleet = Join-Path $fleetFolder 'FSO_Expanse_Experimental_P.pak'
+    $manifest = Join-Path $fleetFolder 'fleet-manifest.json'
+    $responses = Join-Path $fleetFolder 'candidate-responses.json'
+    if (-not (Test-Path -LiteralPath $fleet) -and (Test-Path -LiteralPath (Join-Path $fleetFolder 'pak-parts.json'))) {
+        & python (Join-Path $root 'tools\restore_expanse_payload.py')
+        if ($LASTEXITCODE -ne 0) { throw 'Could not restore cooked fleet payload.' }
+    }
+    foreach ($required in @($fleet, $manifest, $responses)) {
+        if (-not (Test-Path -LiteralPath $required)) { throw "Missing local fleet input: $required" }
+    }
+    foreach ($entry in (Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json)) {
+        $payload = Join-Path $fleetFolder $entry.src
+        if (-not (Test-Path -LiteralPath $payload)) { throw "Missing local fleet resource: $payload" }
+        $patchRes += "/resource:$payload,patch/$($entry.src)"
+    }
+    $patchRes += "/resource:$manifest,fleet-manifest.json"
+}
 $setup = Join-Path $dist 'FracturedSpaceOfflineSetup.exe'
+if ($LocalFleet) { $setup = Join-Path $dist 'FracturedSpaceOfflineSetup-ExpanseTest.exe' }
 & $csc /nologo /target:winexe /optimize+ "/out:$setup" "/win32icon:$ico" $refs `
     "/resource:$launcher,launcher.exe" "/resource:$(Join-Path $obj 'fso_offline_menu.dll'),fso_offline_menu.dll" $patchRes `
     "/resource:$trainerZip,trainer.zip" `
     "/resource:$wrapper,spserver-wrapper.exe" `
-    "/resource:$(Join-Path $root 'server\responses.json'),responses.json" `
+    "/resource:$responses,responses.json" `
     "/resource:$(Join-Path $root 'LICENSE'),LICENSE" `
     "/resource:$(Join-Path $root 'NOTICE.md'),NOTICE.md" `
     "/resource:$(Join-Path $root 'src\Overlay\third_party\LICENSES.md'),overlay-licenses.md" `
@@ -96,8 +121,14 @@ Get-Item $setup | Select-Object FullName, Length
 # --- Linux AppImage (needs Python 3) ---
 $py = Get-Command python -ErrorAction SilentlyContinue
 if ($py) {
-    & $py.Source (Join-Path $root 'linux\build_appimage.py')
+    $linuxArgs = @((Join-Path $root 'linux\build_appimage.py'))
+    if ($LocalFleet) { $linuxArgs += '--local-fleet' }
+    & $py.Source @linuxArgs
     if ($LASTEXITCODE -ne 0) { throw 'AppImage build failed' }
-} else {
+} elseif (-not $LocalFleet) {
     Write-Warning 'Python 3 not found: skipping the Linux AppImage'
+}
+if ($LocalFleet -and $py) {
+    & $py.Source (Join-Path $root 'tools\write_expanse_checksums.py')
+    if ($LASTEXITCODE -ne 0) { throw 'Local fleet test checksum generation failed' }
 }

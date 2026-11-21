@@ -1,0 +1,5 @@
+{
+  "Cooldown": 12,
+  "ChargeTime": 2.5,
+  "MaxConcurrentTurrets": 2
+}

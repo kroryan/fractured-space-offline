@@ -48,6 +48,26 @@ All project-owned interfaces, messages, trainer/F1 controls, documentation, rele
 
 ## Imported ships and default ownership
 
+### Current release gate
+
+For the Expanse fleet integration, prepare the Windows installer and Linux AppImage locally. The user has authorized pushing this work to the separate `expanse` branch. Keep it off `main`; do not create, publish or upload a GitHub release until the user explicitly requests one after testing. The user will install the Windows test build; do not update the installed game on their behalf. Preserve this gate across continuation turns.
+
 Inventory all loose and archived ship definitions in imported packages; do not infer ship count from package count. `tools/audit_expanse.py` and `mods/expanse/source-manifest.json` record the current seven-package review. Resolve each asset's license separately, preserve credits and modification notices, and exclude unlicensed show-derived audio. Keep non-GPL graphics under their own applicable licenses.
 
 Every successfully integrated playable ship must be owned by the default local account, alongside the existing fleet. Add ownership only after compatible cooked assets and client/server definitions exist and the ship can actually load; source-only SpaceEngine meshes or fictional inventory entries are not integration. Check hangar selection, spawning and gameplay before publishing a release claiming the ships are included.
+
+The reviewed Expanse fleet is mandatory product content. Ship assets, registration, local-account ownership, notices and compatibility data must be installed by the normal Windows installer and Linux AppImage without an opt-in checkbox, component selector, extra download or post-install conversion step. Installer options must never offer a way to omit those ships while presenting the build as the Expanse-fleet edition.
+
+## Expanse weapon geometry and coordinate verification
+
+Never overlay an added weapon on a baked source weapon. Reuse and articulate the source weapon meshes where possible. If substituting a different weapon mesh, remove the corresponding original geometry from the hull and place the replacement at the verified original mounting point. Maintain one visual assembly per intended weapon; do not leave duplicate guns, floating mounts or stock archetype weapons on an imported hull.
+
+Verify all seven source models' forward direction, engine nozzles and exhaust direction against actual imported geometry. The measured Blender/UE4.19 calibration maps Blender `(x,y,z)` to Unreal `(-y,-x,z)` with the current FBX settings. Geometry, armour regions, weapon mounts, sockets and effects must use the shared conversion in `tools/expanse_axes.py`. An engine-effect position or a bounding-box length alone is insufficient to approve orientation or weapon placement. Preserve the source surface mounts and pivots and verify articulation before declaring the fleet ready.
+
+Every imported ship must also have native selector portraits under its generated
+ship GUID. Render the actual adapted model with the vanilla transparent backdrop,
+horizontal three-quarter framing and native image dimensions; do not substitute
+a stock ship image or a fictional AI-generated ship. Run
+`tools/build_expanse_portraits.ps1` and `tests/test_expanse_portraits.py` after
+visible model changes. Include main, large, store and mastery-card images in the
+mandatory Windows/Linux manifests, with the corresponding asset-license notices.

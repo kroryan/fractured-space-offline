@@ -1,0 +1,9 @@
+{
+  "MaxHealth": 16500,
+  "MaxEnergy": 6500,
+  "EnergyRegenRate": 85,
+  "MinCameraHorizontalDistance": 1050,
+  "MaxCameraHorizontalDistance": 2100,
+  "MinCameraVerticalDistance": 380,
+  "MaxCameraVerticalDistance": 700
+}

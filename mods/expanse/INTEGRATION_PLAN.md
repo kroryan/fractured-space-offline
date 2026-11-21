@@ -1,6 +1,10 @@
 # The Expanse fleet integration plan
 
-Status: planned work, not implemented gameplay. Unreal Engine 4.19.2 installation is in progress on the user's machine. Installing the editor is a prerequisite; it does not establish that new Fractured Space ship classes can already be authored or registered.
+Status: all seven hulls are converted, cooked and packaged in the local Windows/Linux test builds. Deterministic ship definitions, independent hull classes, original articulated weapon assemblies, source-based exhaust locations and transparent native selector portraits are generated under `obj/expanse-authoring`. Live gameplay and balance validation remain user playtests.
+
+Current mounts are derived from reviewed source geometry instead of inherited stock positions. Original guns are removed from the baked hull before their articulated assemblies are added, and the generated loadouts reference independent fleet-specific weapon systems. Native class loading and cooked muzzle checks do not prove live aiming, recoil, hit effects or balance. The exact test configuration and remaining gameplay checks are recorded in [AUTHORING.md](AUTHORING.md).
+
+Delivery gate: prepare Windows and Linux binaries locally and push the integration to the separate `expanse` branch as requested. The user installs and tests the Windows build. Do not update their installed game or publish a release without a new request.
 
 ## Fleet identity and ownership
 
@@ -21,10 +25,10 @@ These are gameplay design targets, not final statistics or claims that every lis
 | UNN Mayotte | Heavy battleship / artillery | Railgun-style primary fire, torpedoes and defensive PDCs, subject to model and source verification. | Strong ranged pressure and hull; slow turns, restricted firing arcs and vulnerability to flanking. |
 | MCRN Donnager | Capital battleship / fleet anchor | Heavy railgun-style battery, torpedoes and PDC coverage, subject to mount verification. | High durability and area pressure; large target, slow handling, clear reload windows and limited pursuit ability. |
 | MCRN Chariot-Type Dropship | Shuttle / boarding-support role | Verify the modeled/canon armament first; no invented heavy battery. Use game-supported utility actions for support rather than claiming a new marine boarding simulation. | Small and agile, low durability and combat output; utility should justify its place in a team. |
-| Razorback | Civilian racing pinnace / reconnaissance | Unarmed base configuration. Sensor and objective utility are gameplay adaptations, not claims of canon weapons. | Very fast, extremely fragile; contributes information and positioning rather than heavy damage. |
+| Razorback | Lightly armed racing pinnace / reconnaissance | One light cannon fitted to a verified solid hull mounting point, plus a bounded propulsion boost. This added armament is a gameplay adaptation; the source racing model has no existing gun to retain or duplicate. | Very fast and fragile, with modest defensive fire rather than capital-ship damage. |
 | Epstein's Yacht | Civilian experimental craft / exploration-support | Unarmed base configuration, pending license clearance. A controlled propulsion burst may represent its experimental drive. | Low durability, limited combat contribution and restricted burst duration; no permanent acceleration or invulnerability. |
 
-The civilian craft must not be advertised as equivalent combat dueling ships. If the game cannot support a useful noncombat role without undermining the match, retain ownership and access for suitable sandbox/scenario use and document mode restrictions instead of adding fictional weapons.
+The civilian craft must not be advertised as equivalent combat dueling ships. Razorback's single added light cannon is an explicit gameplay adaptation. The yacht remains unarmed; preserve its civilian role unless a different armament is requested.
 
 ## Balance method
 

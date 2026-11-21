@@ -1,6 +1,6 @@
 # The Expanse ship source review
 
-Status: source inventory and licensing review only. These ships are **not yet playable or included in the installer**. No model, texture, preview image or sound from the Workshop packages is redistributed by this directory.
+Status: the seven converted ships are included in the **test installer and AppImage**, with source-based weapon mounts and native selector portraits. Authoring, payload and class-loading checks are separate from live gameplay validation, which remains a user playtest. Development is published on the separate `expanse` branch; a public release is not yet authorized. The isolated Unreal 4.19.2 authoring project remains under ignored `obj/`; the redistributable cooked bundle is tracked in `payload/` with Git LFS. See [AUTHORING.md](AUTHORING.md) for rebuilding and validation.
 
 The seven downloaded packages each contain one `.sss` ship definition and one `.sm` mesh. The inventory includes definitions inside ZIP-based `.pak` files; no additional ship variants were found in these downloads. See `source-manifest.json` for paths, byte counts and SHA-256 hashes. The source spells the yacht name "Epstein's Yatch"; the display name in this review uses "Yacht".
 
@@ -20,7 +20,13 @@ The planned in-game display name for the Tachi asset is **Rocinante**, preservin
 
 These are the source publishers' license declarations, not a guarantee that they control every underlying right. The model licenses do not establish permission to redistribute recordings from the television series. Show-derived audio must be excluded from an import unless separately licensed. Existing game audio can be referenced instead. Credits do not imply endorsement by the artists, SpaceEngine or The Expanse rights holders.
 
-The GPL-3.0 license for this project's code does not relicense third-party graphics. Any distributed graphics must have their own license notices, source links, original credits and a record of conversion/modification. No graphics have been converted or distributed by this review.
+The GPL-3.0 license for this project's code does not relicense third-party graphics. Any distributed graphics must have their own license notices, source links, original credits and a record of conversion/modification. Local conversions include coordinate/unit conversion, material translation and triangle reduction for runtime use. Yacht textures are excluded from the local conversion and replaced with a newly authored neutral material while their redistribution rights remain unresolved.
+
+The requested Razorback light-cannon retrofit uses separate, scaled Tachi PDC
+meshes and their texture by Anton Perfilev (`wintermute666`), adapted by
+jamesmule. These adapted weapon assets retain **CC BY-NC-SA 4.0** and the
+Rocinante/Tachi source credits above; the original Razorback hull remains
+separate CC0 content. Its new mounting collar is project-authored CC0 geometry.
 
 ## Technical requirements before integration
 
@@ -30,7 +36,7 @@ Required work:
 
 1. Resolve asset-specific redistribution rights, including the yacht's conflicting notices. Retain license text and attribution with any converted assets.
 2. Convert SM02 meshes and materials, validate scale/orientation and optimize the larger models. The published SM01 documentation alone is insufficient to assume an SM02 parser is correct.
-3. Author and cook assets with a toolchain compatible with the game's Unreal 4.19.2 build. No compatible editor/cooking toolchain or authoring project was found in this workspace or the inspected installation locations.
+3. Author and cook assets with a toolchain compatible with the game's Unreal 4.19.2 build. The installed editor and isolated project are now available; import success alone does not establish cooked runtime compatibility.
 4. Implement compatible client/server ship definitions: visuals, collision, weapon attachment points, movement, loadouts, UI and spawn registration. A model by itself is not a playable ship.
 5. Register each successfully integrated ship in the local account's default ownership, preserving the existing fleet. Merely adding fictional licenses to `responses.json` does not create a ship the client can load.
 6. Verify hangar selection, player/bot spawning, solo/co-op behavior and installer/uninstaller handling, then build and publish a stable release with the actual cooked assets.

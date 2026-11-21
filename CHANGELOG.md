@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — Expanse test branch
+
+- Added seven mandatory imported ships, separate native ship identities, default account ownership, source weapon assemblies, engine nozzle mapping and 42 native selector images. Credits and asset-specific licenses accompany the payload; yacht source textures and show audio are excluded.
+- Corrected the source atlas V orientation and muzzle socket rotation. Rocinante PDCs permit limited depression and fire with one eligible gun; forward mounts have restricted arcs. Other articulated source guns use the same corrected socket convention.
+- Replaced stock-hull vernier/shell effect meshes with separate Expanse effects parts and localized native damage particles on imported hull surfaces. Disabled surplus stock thruster components.
+- Added reproducible authoring, cooked-asset validation, native class-loading probes and mandatory Windows/Linux payload checks. The cooked payload is stored with Git LFS on `expanse`; local test binaries retain the ExpanseTest filenames. Live combat and balance still require testing before a release.
+
 ## Unreleased — The Expanse source audit
 
 - Expanded the current inventory to seven ships with the Chariot-Type Dropship, and added a proposed integration/balance plan. The Tachi asset is planned to appear as Rocinante with its source model unchanged.

@@ -10,6 +10,8 @@ import os
 import shutil
 import struct
 import sys
+import argparse
+import json
 
 LINUX = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(LINUX)
@@ -48,6 +50,11 @@ def copy_lf(src, dst):
 
 
 def main():
+    parser = argparse.ArgumentParser(__doc__)
+    parser.add_argument('--local-fleet', action='store_true')
+    args = parser.parse_args()
+    if os.path.commonpath([os.path.realpath(APPDIR), os.path.realpath(OBJ)]) != os.path.realpath(OBJ):
+        raise SystemExit('AppDir resolved outside the local obj directory')
     shutil.rmtree(APPDIR, ignore_errors=True)
     share = os.path.join(APPDIR, SHARE)
     os.makedirs(os.path.join(share, "patch"))
@@ -62,13 +69,24 @@ def main():
 
     shutil.copyfile(os.path.join(LINUX, "profile_store.py"), os.path.join(share, "profile_store.py"))
     copy_lf(os.path.join(LINUX, "fso_linux.py"), os.path.join(share, "fso_linux.py"))
-    shutil.copyfile(os.path.join(ROOT, "server", "responses.json"), os.path.join(share, "responses.json"))
+    fleet_folder = os.path.join(OBJ, 'expanse-authoring')
+    if not os.path.isfile(os.path.join(fleet_folder, 'fleet-manifest.json')):
+        fleet_folder = os.path.join(ROOT, 'mods', 'expanse', 'payload')
+    if args.local_fleet and not os.path.isfile(os.path.join(fleet_folder, 'FSO_Expanse_Experimental_P.pak')):
+        import subprocess
+        subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'restore_expanse_payload.py')], check=True)
+    response_source = os.path.join(fleet_folder, 'candidate-responses.json') if args.local_fleet else os.path.join(ROOT, 'server', 'responses.json')
+    shutil.copyfile(response_source, os.path.join(share, "responses.json"))
     shutil.copyfile(os.path.join(ROOT, "LICENSE"), os.path.join(share, "LICENSE"))
     wrapper = os.path.join(OBJ, "spserver-wrapper.exe")
     if os.path.isfile(wrapper):
         shutil.copyfile(wrapper, os.path.join(share, "spserver-wrapper.exe"))
     for f in os.listdir(os.path.join(ROOT, "patch")):
         shutil.copyfile(os.path.join(ROOT, "patch", f), os.path.join(share, "patch", f))
+    if args.local_fleet:
+        shutil.copyfile(os.path.join(fleet_folder, 'fleet-manifest.json'), os.path.join(share, 'fleet-manifest.json'))
+        for entry in json.load(open(os.path.join(fleet_folder, 'fleet-manifest.json'), encoding='utf-8')):
+            shutil.copyfile(os.path.join(fleet_folder, entry['src']), os.path.join(share, 'patch', entry['src']))
 
     sqfs = os.path.join(OBJ, "app.squashfs")
     count, size = mksquashfs.build(APPDIR, sqfs, ["AppRun", SHARE + "/fso_linux.py"])
@@ -77,15 +95,16 @@ def main():
     runtime = open(os.path.join(LINUX, "runtime-x86_64"), "rb").read()
     if runtime[:4] != b"\x7fELF" or runtime[8:11] != b"AI\x02":
         raise SystemExit("linux/runtime-x86_64 is not an AppImage type2 runtime")
-    with open(OUT, "wb") as out:
+    output = os.path.join(DIST, 'FracturedSpaceOffline-ExpanseTest-x86_64.AppImage') if args.local_fleet else OUT
+    with open(output, "wb") as out:
         out.write(runtime)
         with open(sqfs, "rb") as fh:
             shutil.copyfileobj(fh, out)
     try:
-        os.chmod(OUT, 0o755)
+        os.chmod(output, 0o755)
     except OSError:
         pass
-    print("AppImage: %s (%.1f MB)" % (OUT, os.path.getsize(OUT) / 1e6))
+    print("AppImage: %s (%.1f MB)" % (output, os.path.getsize(output) / 1e6))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,79 @@
+[
+  {
+    "slug": "rocinante",
+    "display_name": "Rocinante",
+    "workshop_id": "2211361535",
+    "archetype_ship": "ship_28.json",
+    "system_source": "BP_SYS_M02_MID_C28_Interceptor",
+    "data_source": "Bp_Sys_ShipData_ship_M02_C28_Interceptor",
+    "part_source": "BP_SHP_MID_M02_C28_Interceptor_01",
+    "role": "mobile escort",
+    "description": "A fast escort corvette with point-defence and guided ordnance."
+  },
+  {
+    "slug": "avalanche",
+    "display_name": "MCRN Avalanche",
+    "workshop_id": "2687094193",
+    "archetype_ship": "ship_14.json",
+    "system_source": "BP_SYS_M01_C14_Destroyer",
+    "data_source": "Bp_Sys_ShipData_ship_M01_C14_Destroyer_A",
+    "part_source": "BP_SHP_M01_LRG_C14_A_001_DESTROYER_2",
+    "role": "light gun escort",
+    "description": "A mobile escort with two original articulated ballistic cannons and a propulsion boost."
+  },
+  {
+    "slug": "mayotte",
+    "display_name": "UNN Mayotte",
+    "workshop_id": "2687045417",
+    "archetype_ship": "ship_2.json",
+    "system_source": "BP_SYS_M01_LRG_CO1_Flagship",
+    "data_source": "Bp_Sys_ShipData_ship_M01_C01_Flagship",
+    "part_source": "BP_SHP_M01_LRG_C02_A_001_FLAGSHIP",
+    "role": "artillery battleship",
+    "description": "A slow artillery capital ship with two heavy railguns and 42 original point-defence cannons."
+  },
+  {
+    "slug": "donnager",
+    "display_name": "MCRN Donnager",
+    "workshop_id": "2375119898",
+    "archetype_ship": "ship_2.json",
+    "system_source": "BP_SYS_M01_LRG_CO1_Flagship",
+    "data_source": "Bp_Sys_ShipData_ship_M01_C01_Flagship",
+    "part_source": "BP_SHP_M01_LRG_C02_A_001_FLAGSHIP",
+    "role": "fleet-anchor battleship",
+    "description": "A durable capital ship with two heavy railguns and six forward guided-torpedo tubes."
+  },
+  {
+    "slug": "chariot",
+    "display_name": "MCRN Chariot-Type Dropship",
+    "workshop_id": "2375181309",
+    "archetype_ship": "ship_7.json",
+    "system_source": "BP_SYS_M02_SML_C07_Corvette_A",
+    "data_source": "Bp_Sys_ShipData_ship_M02_C07_Corvette",
+    "part_source": "BP_SHP_SML_M02_C07_Corvette_01",
+    "role": "support shuttle",
+    "description": "A fragile support shuttle with two original light cannons and compatible area-defence utility."
+  },
+  {
+    "slug": "razorback",
+    "display_name": "Razorback",
+    "workshop_id": "2224316655",
+    "archetype_ship": "ship_28.json",
+    "system_source": "BP_SYS_M02_MID_C28_Interceptor",
+    "data_source": "Bp_Sys_ShipData_ship_M02_C28_Interceptor",
+    "part_source": "BP_SHP_MID_M02_C28_Interceptor_01",
+    "role": "reconnaissance pinnace",
+    "description": "A fast racing pinnace retrofitted with one light defensive cannon and a propulsion boost."
+  },
+  {
+    "slug": "epstein_yacht",
+    "display_name": "Epstein's Yacht",
+    "workshop_id": "2368610280",
+    "archetype_ship": "ship_28.json",
+    "system_source": "BP_SYS_M02_MID_C28_Interceptor",
+    "data_source": "Bp_Sys_ShipData_ship_M02_C28_Interceptor",
+    "part_source": "BP_SHP_MID_M02_C28_Interceptor_01",
+    "role": "experimental utility craft",
+    "description": "An unarmed civilian experimental craft with a controlled propulsion burst."
+  }
+]

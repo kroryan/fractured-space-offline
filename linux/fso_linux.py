@@ -76,6 +76,15 @@ PATCH = [
     ("hangar-script.js", "spacegame/Content/UIResources/frontend/views/hangar/hangar-script.js", "b3290327dfa2c94af87a58aa13b3021706f5685f249edbcd1a34bbb40ff8eede"),
 ]
 
+fleet_manifest = os.path.join(DATA_DIR, 'fleet-manifest.json')
+if os.path.isfile(fleet_manifest):
+    with open(fleet_manifest, encoding='utf-8') as fleet_file:
+        for fleet_entry in json.load(fleet_file):
+            destination = fleet_entry['dest'].replace('\\', '/')
+            if os.path.isabs(destination) or '..' in destination.split('/'):
+                raise ValueError('Invalid embedded fleet destination')
+            PATCH.append((fleet_entry['src'], destination, fleet_entry['sha256']))
+
 log_lock = threading.Lock()
 
 

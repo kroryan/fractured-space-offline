@@ -1,0 +1,82 @@
+Fractured Space Offline - The Expanse fleet asset notices
+
+These graphics retain their asset-specific licenses, separately from the
+project's GPL-3.0 source-code license. Credits do not imply endorsement.
+Noncommercial restrictions apply to the assets identified below.
+
+Rocinante (source model: MCRN Tachi)
+Original model/textures: Anton Perfilev (wintermute666).
+SpaceEngine adaptation: jamesmule.
+Source: https://steamcommunity.com/sharedfiles/filedetails/?id=2211361535
+License: CC BY-NC-SA 4.0
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+The adapted graphics remain under CC BY-NC-SA 4.0.
+The display name was changed from Tachi to Rocinante as requested; this does
+not represent a newly modeled later-series railgun variant.
+
+Razorback
+Original model: Chris Kuhn. Additional textures: CC0Textures.com.
+SpaceEngine adaptation: jamesmule and retro-visor.
+Source: https://steamcommunity.com/sharedfiles/filedetails/?id=2224316655
+License declared by source publisher: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Razorback light-cannon retrofit (project adaptation): the separate cannon and
+servo meshes reuse the Rocinante/Tachi PDC by Anton Perfilev (wintermute666),
+adapted by jamesmule, scaled and mounted by this project. Those adapted meshes
+and their original texture remain CC BY-NC-SA 4.0, with the source and license
+linked in the Rocinante entry above. This does not change the CC0 declaration
+for the separate original Razorback hull. The mounting collar is new geometry
+authored by this project and dedicated under CC0 1.0.
+The combined Razorback selector portraits include that adapted cannon and
+are distributed under CC BY-NC-SA 4.0. Other selector portraits retain the
+license applicable to the adapted ship depicted in each image.
+
+MCRN Donnager
+Original model: Chris Kuhn; distributed by strawfinch.
+SpaceEngine adaptation: jamesmule and retro-visor.
+Source: https://steamcommunity.com/sharedfiles/filedetails/?id=2375119898
+License declared by source publisher: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+
+UNN Mayotte
+Original model/textures: Azzecco (lux_comodo).
+SpaceEngine adaptation: jamesmule.
+Source: https://steamcommunity.com/sharedfiles/filedetails/?id=2687045417
+License: CC BY-NC 4.0
+https://creativecommons.org/licenses/by-nc/4.0/
+
+MCRN Avalanche
+Original model/textures: Azzecco (lux_comodo).
+SpaceEngine adaptation: jamesmule.
+Source: https://steamcommunity.com/sharedfiles/filedetails/?id=2687094193
+License: CC BY-NC 4.0
+https://creativecommons.org/licenses/by-nc/4.0/
+
+MCRN Chariot-Type Dropship
+Original model: Chris Kuhn; distributed by strawfinch.
+SpaceEngine adaptation: jamesmule.
+Source: https://steamcommunity.com/sharedfiles/filedetails/?id=2375181309
+License declared by source publisher: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Epstein's Yacht (source spelling: Epstein's Yatch)
+Original model credited as Chris Kun by the source; distributed by
+strawfinch / owlstraw. SpaceEngine adaptation: retro-visor.
+Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2368610280
+Model: https://sketchfab.com/3d-models/epsteins-yacht-the-expanse-137498e7aabb47dfaee3fe2652fadefa
+The source model's license metadata states CC Attribution, although its
+description refers to CC0. Preserve attribution and the CC BY 4.0 conditions:
+https://creativecommons.org/licenses/by/4.0/
+The Workshop author's modified textures are excluded. The conversion uses a
+new neutral material instead; no permission to redistribute those textures
+is asserted.
+
+Conversion/modifications by the Fractured Space Offline project:
+SM02 geometry decoding; coordinate/unit conversion; runtime mesh reduction;
+material translation; Unreal Engine 4.19.2 import/cooking; game-specific hull,
+weapon, collision and effect adaptation. Original source identity and hashes
+are recorded in mods/expanse/source-manifest.json in the project source.
+
+No television-derived audio from these Workshop packages is included. Game
+audio and effects are referenced from the user's existing game installation.

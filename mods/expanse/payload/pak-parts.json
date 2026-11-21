@@ -1,0 +1,26 @@
+{
+  "filename": "FSO_Expanse_Experimental_P.pak",
+  "sha256": "2f3ebc444a7020847deb94066a401860ec2d040d058e8aace6b2027359b365ee",
+  "parts": [
+    {
+      "name": "FSO_Expanse_Experimental_P.pak.part000",
+      "sha256": "e274229ecc0406d6a42e247ff19f309275d3bd83694a27e4f0bfedd45f15b0d4"
+    },
+    {
+      "name": "FSO_Expanse_Experimental_P.pak.part001",
+      "sha256": "18b1484c6778ecce1d66149eb4f0b8b9815fd3b3b66072cd032404f7217345be"
+    },
+    {
+      "name": "FSO_Expanse_Experimental_P.pak.part002",
+      "sha256": "ee16fb21f40472153654f4cfaa1d7dcba8fc7a5d36c168168cdc480f54d944f8"
+    },
+    {
+      "name": "FSO_Expanse_Experimental_P.pak.part003",
+      "sha256": "b8bb1a5e754ca661084f40088e2bdac328231aa89dcdd8430b6a957991a801f8"
+    },
+    {
+      "name": "FSO_Expanse_Experimental_P.pak.part004",
+      "sha256": "542b8d3aa54c34907a7760abb23860984bb579e6f8cd4814e45542555e46f5e6"
+    }
+  ]
+}

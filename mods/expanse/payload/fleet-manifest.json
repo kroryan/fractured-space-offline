@@ -1,0 +1,222 @@
+[
+  {
+    "src": "FSO_Expanse_Experimental_P.pak",
+    "dest": "spacegame/Content/Paks/FSO_Expanse_Experimental_P.pak",
+    "sha256": "2f3ebc444a7020847deb94066a401860ec2d040d058e8aace6b2027359b365ee"
+  },
+  {
+    "src": "expanse-asset-notices.txt",
+    "dest": "spacegame/Content/Expanse/ASSET_NOTICES.txt",
+    "sha256": "30d67f6806c1b20c0ecf3da3c4f44e45bc704ce3d7446247e17e56b743061cbb"
+  },
+  {
+    "src": "expanse-690FFA9A0B695FB2897CF02FBD834C69-main.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/690FFA9A0B695FB2897CF02FBD834C69/main.png",
+    "sha256": "4dcc81c444e8798780e15024180597a4765ecf2ab2b2d79fcf049d27c4c7f394"
+  },
+  {
+    "src": "expanse-690FFA9A0B695FB2897CF02FBD834C69-store.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/690FFA9A0B695FB2897CF02FBD834C69/store.png",
+    "sha256": "df70f378aced2fd4bea958f61d0c065f921344032a4ce8b70c5063f6fe1e86f2"
+  },
+  {
+    "src": "expanse-690FFA9A0B695FB2897CF02FBD834C69-large.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/690FFA9A0B695FB2897CF02FBD834C69/large.png",
+    "sha256": "2f7185f16fbf7c7955b2cd1eb65bb1fedc54165e953ebd75867312bf40166274"
+  },
+  {
+    "src": "expanse-690FFA9A0B695FB2897CF02FBD834C69-bronze.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/690FFA9A0B695FB2897CF02FBD834C69/bronze.png",
+    "sha256": "c66481d5494a439194c859a1d30576124bc092bb0e5ae8dd068cfafc82163c03"
+  },
+  {
+    "src": "expanse-690FFA9A0B695FB2897CF02FBD834C69-silver.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/690FFA9A0B695FB2897CF02FBD834C69/silver.png",
+    "sha256": "95e2d5d6ff085053ccf8c7aaeda8dd1a010ee9f8ead12050ea0222f209910d98"
+  },
+  {
+    "src": "expanse-690FFA9A0B695FB2897CF02FBD834C69-gold.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/690FFA9A0B695FB2897CF02FBD834C69/gold.png",
+    "sha256": "49750fbd7ca87728bde880bc492619c66abeb82086c99c3189f1b3a600174052"
+  },
+  {
+    "src": "expanse-A9C937D5D3CE573FAD53A3E8C3D1618A-main.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/A9C937D5D3CE573FAD53A3E8C3D1618A/main.png",
+    "sha256": "e0e6108055353c8525b37bd58e46a5ff228338763c6b66f200eb921e9fe759e0"
+  },
+  {
+    "src": "expanse-A9C937D5D3CE573FAD53A3E8C3D1618A-store.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/A9C937D5D3CE573FAD53A3E8C3D1618A/store.png",
+    "sha256": "f608a77ddbf47c2ff3cc858037e125129c2d9c762cd7f0d147768e5982ff1a72"
+  },
+  {
+    "src": "expanse-A9C937D5D3CE573FAD53A3E8C3D1618A-large.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/A9C937D5D3CE573FAD53A3E8C3D1618A/large.png",
+    "sha256": "ecc9ef01ee64f971c22eb3b565468a5881d9113ff9d88f891ee9e7c79762544a"
+  },
+  {
+    "src": "expanse-A9C937D5D3CE573FAD53A3E8C3D1618A-bronze.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/A9C937D5D3CE573FAD53A3E8C3D1618A/bronze.png",
+    "sha256": "cd288f8f4e95546e6fb3fd152c9d4a36513577710e665e57a43a826f8758c5aa"
+  },
+  {
+    "src": "expanse-A9C937D5D3CE573FAD53A3E8C3D1618A-silver.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/A9C937D5D3CE573FAD53A3E8C3D1618A/silver.png",
+    "sha256": "ca593c85fbeb341e3e6cce9ece708d605beed91e3585e860241ee9760be5dca0"
+  },
+  {
+    "src": "expanse-A9C937D5D3CE573FAD53A3E8C3D1618A-gold.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/A9C937D5D3CE573FAD53A3E8C3D1618A/gold.png",
+    "sha256": "aeca2028831cb0ba286e72022e926b2efef1ce3b9e906f992313f106fcf3c348"
+  },
+  {
+    "src": "expanse-F61B0D647BB15236B73D37723CA5954A-main.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/F61B0D647BB15236B73D37723CA5954A/main.png",
+    "sha256": "901537ec48b2e7edf6d6f08b8d3497f0abdabebb567d1fe2af6b6c810d34a586"
+  },
+  {
+    "src": "expanse-F61B0D647BB15236B73D37723CA5954A-store.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/F61B0D647BB15236B73D37723CA5954A/store.png",
+    "sha256": "af256171b324b7bcd522039392a34130e305b443ea9f8f3a5b0e8ca85c6115d6"
+  },
+  {
+    "src": "expanse-F61B0D647BB15236B73D37723CA5954A-large.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/F61B0D647BB15236B73D37723CA5954A/large.png",
+    "sha256": "20065c886b24d1606eda082242001a2d16921acb623e899f85570d4a980052a8"
+  },
+  {
+    "src": "expanse-F61B0D647BB15236B73D37723CA5954A-bronze.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/F61B0D647BB15236B73D37723CA5954A/bronze.png",
+    "sha256": "636585c918fe733001276dad5b9106bc3c95cc4818954fcc7fab9fec42133a66"
+  },
+  {
+    "src": "expanse-F61B0D647BB15236B73D37723CA5954A-silver.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/F61B0D647BB15236B73D37723CA5954A/silver.png",
+    "sha256": "07c156e94e96e4462045be68c23accbfab10eb4aa56eec6842acd4d6760c21e4"
+  },
+  {
+    "src": "expanse-F61B0D647BB15236B73D37723CA5954A-gold.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/F61B0D647BB15236B73D37723CA5954A/gold.png",
+    "sha256": "04d4db89a8cf7e1822af0153ee983687db8b6ae32425fcb3c48f3ec978b33ad1"
+  },
+  {
+    "src": "expanse-5E6E723A508E5F5A81EF5FEC205097A2-main.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/5E6E723A508E5F5A81EF5FEC205097A2/main.png",
+    "sha256": "5993c9146aa290727029e6fdc60ceab97660d15cd2dc319b18c597c0254b6272"
+  },
+  {
+    "src": "expanse-5E6E723A508E5F5A81EF5FEC205097A2-store.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/5E6E723A508E5F5A81EF5FEC205097A2/store.png",
+    "sha256": "b50d62eecdeda810eebb6bcd79f1059846a97eded1d5140473007fde77b7d298"
+  },
+  {
+    "src": "expanse-5E6E723A508E5F5A81EF5FEC205097A2-large.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/5E6E723A508E5F5A81EF5FEC205097A2/large.png",
+    "sha256": "0688e68dca364d4a3cdcb0295a7d1a78c5ba1b018736ca9f69d4b38f4b0e4677"
+  },
+  {
+    "src": "expanse-5E6E723A508E5F5A81EF5FEC205097A2-bronze.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/5E6E723A508E5F5A81EF5FEC205097A2/bronze.png",
+    "sha256": "ce5c8a096c2d2537a18dc91acbcb555ac4055333dcc9bfa9d280d182005ae8c7"
+  },
+  {
+    "src": "expanse-5E6E723A508E5F5A81EF5FEC205097A2-silver.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/5E6E723A508E5F5A81EF5FEC205097A2/silver.png",
+    "sha256": "ee55c0400af4116a319e6525981e1eb29c4189c96ddd063f406b4ebf0e698bfa"
+  },
+  {
+    "src": "expanse-5E6E723A508E5F5A81EF5FEC205097A2-gold.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/5E6E723A508E5F5A81EF5FEC205097A2/gold.png",
+    "sha256": "1cc4c1a52c522dd9d78e50c02b81032945d64a52d184a5ca5212fa16a917f304"
+  },
+  {
+    "src": "expanse-2C06D271B50D514B9AF36F2E9E37090E-main.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/2C06D271B50D514B9AF36F2E9E37090E/main.png",
+    "sha256": "60e4565caaf1de939d211009f26c078c491dd7e3e61d66dab6112fc23b52e42a"
+  },
+  {
+    "src": "expanse-2C06D271B50D514B9AF36F2E9E37090E-store.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/2C06D271B50D514B9AF36F2E9E37090E/store.png",
+    "sha256": "6d2ccee386f189a650f2006b094612214973f86a4e4d2e81a441bd97669080ab"
+  },
+  {
+    "src": "expanse-2C06D271B50D514B9AF36F2E9E37090E-large.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/2C06D271B50D514B9AF36F2E9E37090E/large.png",
+    "sha256": "125622822293843ae819d7514aeacf2e49db417b5a216fbce985cbb753f48953"
+  },
+  {
+    "src": "expanse-2C06D271B50D514B9AF36F2E9E37090E-bronze.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/2C06D271B50D514B9AF36F2E9E37090E/bronze.png",
+    "sha256": "38267d9ca3f7936e0f27cbad847a7821fb8a0fca31aa4e1f0f728bf823d124f0"
+  },
+  {
+    "src": "expanse-2C06D271B50D514B9AF36F2E9E37090E-silver.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/2C06D271B50D514B9AF36F2E9E37090E/silver.png",
+    "sha256": "6acdbfe4b1e28a6f5cd427ed25e708a309069207dd95022fd9373ca4cdea051f"
+  },
+  {
+    "src": "expanse-2C06D271B50D514B9AF36F2E9E37090E-gold.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/2C06D271B50D514B9AF36F2E9E37090E/gold.png",
+    "sha256": "38267d9ca3f7936e0f27cbad847a7821fb8a0fca31aa4e1f0f728bf823d124f0"
+  },
+  {
+    "src": "expanse-09020058DC0A557E9BA0017A4D5B1E81-main.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/09020058DC0A557E9BA0017A4D5B1E81/main.png",
+    "sha256": "56fcddb2cff77888ba8b18059c18ccd4eb824db20b64c9e15a36e65d56ecf620"
+  },
+  {
+    "src": "expanse-09020058DC0A557E9BA0017A4D5B1E81-store.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/09020058DC0A557E9BA0017A4D5B1E81/store.png",
+    "sha256": "56fcddb2cff77888ba8b18059c18ccd4eb824db20b64c9e15a36e65d56ecf620"
+  },
+  {
+    "src": "expanse-09020058DC0A557E9BA0017A4D5B1E81-large.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/09020058DC0A557E9BA0017A4D5B1E81/large.png",
+    "sha256": "d3dbed098aad5bad475d6d237bfab21085f6e30336b0ae2fb58fc1c85f440728"
+  },
+  {
+    "src": "expanse-09020058DC0A557E9BA0017A4D5B1E81-bronze.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/09020058DC0A557E9BA0017A4D5B1E81/bronze.png",
+    "sha256": "379a000a3e5d71748d5c70f6fa709bc675e728099db03736f244cfc086872cde"
+  },
+  {
+    "src": "expanse-09020058DC0A557E9BA0017A4D5B1E81-silver.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/09020058DC0A557E9BA0017A4D5B1E81/silver.png",
+    "sha256": "50ae30133b4fc30672292e2045d24dafc4ac315eb9ec65cfe82d99486b674e78"
+  },
+  {
+    "src": "expanse-09020058DC0A557E9BA0017A4D5B1E81-gold.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/09020058DC0A557E9BA0017A4D5B1E81/gold.png",
+    "sha256": "379a000a3e5d71748d5c70f6fa709bc675e728099db03736f244cfc086872cde"
+  },
+  {
+    "src": "expanse-57E837A567235BE7B347B9F02D3AADEF-main.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/57E837A567235BE7B347B9F02D3AADEF/main.png",
+    "sha256": "8f7f9acc21ab859a280cd4472f919ef99599ae1c58b7f94c7d469220b3350e44"
+  },
+  {
+    "src": "expanse-57E837A567235BE7B347B9F02D3AADEF-store.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/57E837A567235BE7B347B9F02D3AADEF/store.png",
+    "sha256": "ee71a29fc83f1d1a364ea715374a8af274e40c17f9167399e1136f7b256d8586"
+  },
+  {
+    "src": "expanse-57E837A567235BE7B347B9F02D3AADEF-large.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/57E837A567235BE7B347B9F02D3AADEF/large.png",
+    "sha256": "c58bc0e78b1e34dd96d26dd81225768a724f438d8b7a9154801fcd3e418f40e2"
+  },
+  {
+    "src": "expanse-57E837A567235BE7B347B9F02D3AADEF-bronze.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/57E837A567235BE7B347B9F02D3AADEF/bronze.png",
+    "sha256": "821af4da8ba425d8bae8571eee06eb1215ba3124ce391492178364c826f5381d"
+  },
+  {
+    "src": "expanse-57E837A567235BE7B347B9F02D3AADEF-silver.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/57E837A567235BE7B347B9F02D3AADEF/silver.png",
+    "sha256": "ac1cc5d6f3b6d0ab1b9481df31e1e3fc81afba6845058a06116ff52ef37059b4"
+  },
+  {
+    "src": "expanse-57E837A567235BE7B347B9F02D3AADEF-gold.png",
+    "dest": "spacegame/Content/UIResources/frontend/images/ships/57E837A567235BE7B347B9F02D3AADEF/gold.png",
+    "sha256": "ac1cc5d6f3b6d0ab1b9481df31e1e3fc81afba6845058a06116ff52ef37059b4"
+  }
+]

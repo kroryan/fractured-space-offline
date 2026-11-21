@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Web.Script.Serialization;
 
 [assembly: AssemblyTitle("Fractured Space Offline Setup")]
 [assembly: AssemblyProduct("Fractured Space Offline")]
@@ -53,7 +54,7 @@ static class Setup
         public PatchFile(string src, string dest, string sha, bool text) { Src = src; Dest = dest; Sha256 = sha; Text = text; }
     }
 
-    public static readonly PatchFile[] Patch = new[]
+    static readonly PatchFile[] StockPatch = new[]
     {
         new PatchFile("player.js", @"spacegame\Content\UIResources\frontend\script\player.js", "8e722a3a5205808fc84cad489c0e9f0c70ccac96bdc43ba58006400429c8ffaa", false),
         new PatchFile("common.js", @"spacegame\Content\UIResources\frontend\script\common.js", "42c777e308cbbbb147ad95c9ba84e116f696f8c9c98e800ee1f769a551b37d2c", false),
@@ -77,6 +78,29 @@ static class Setup
         new PatchFile("results-script.js", @"spacegame\Content\UIResources\frontend\views\results\results-script.js", "c3cf69101faccd85c84c54102a377fb16f8cd05ed18ea7ca2beef3d3303d4852", true),
         new PatchFile("hangar-script.js", @"spacegame\Content\UIResources\frontend\views\hangar\hangar-script.js", "b3290327dfa2c94af87a58aa13b3021706f5685f249edbcd1a34bbb40ff8eede", true),
     };
+
+    public static readonly PatchFile[] Patch = LoadPatchManifest();
+
+    static PatchFile[] LoadPatchManifest()
+    {
+        var result = new List<PatchFile>(StockPatch);
+        using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("fleet-manifest.json"))
+        {
+            if (stream == null) return result.ToArray();
+            using (var reader = new StreamReader(stream))
+            {
+                var files = new JavaScriptSerializer().Deserialize<Dictionary<string, string>[]>(reader.ReadToEnd());
+                foreach (var file in files)
+                {
+                    string destination = file["dest"].Replace('/', '\\');
+                    if (Path.IsPathRooted(destination) || destination.Contains(".."))
+                        throw new InvalidDataException("Invalid embedded fleet destination.");
+                    result.Add(new PatchFile(file["src"], destination, file["sha256"], false));
+                }
+            }
+        }
+        return result.ToArray();
+    }
 
     [STAThread]
     static int Main(string[] args)
@@ -437,7 +461,7 @@ class SetupForm : Form
                 if (File.Exists(dest))
                 {
                     string b = Path.Combine(backup, f.Dest);
-                    if (!File.Exists(b))
+                    if (!File.Exists(b) && !File.Exists(b + ".fso-absent"))
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(b));
                         File.Copy(dest, b);
