@@ -62,7 +62,9 @@ Copy-Item (Join-Path $root 'src\Overlay\build\fso_offline_menu.dll') (Join-Path 
 
 # --- Launcher ---
 $launcher = Join-Path $obj 'launcher.exe'
-& $csc /nologo /target:winexe /platform:x64 /optimize+ "/out:$launcher" "/win32icon:$ico" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs') (Join-Path $root 'src\Launcher\CoopAdmission.cs') (Join-Path $root 'src\Launcher\UdpRelay.cs') (Join-Path $root 'src\Launcher\ProfileStore.cs') (Join-Path $root 'src\Launcher\MatchRecorder.cs') (Join-Path $root 'src\Launcher\OverlayLoader.cs') (Join-Path $root 'src\Launcher\TrainerBridge.cs')
+$gameHash = Join-Path $obj 'game-exe.sha256'
+[IO.File]::WriteAllText($gameHash, (Get-FileHash -LiteralPath (Join-Path $root 'patch\Fractured Space.exe') -Algorithm SHA256).Hash.ToLowerInvariant())
+& $csc /nologo /target:winexe /platform:x64 /optimize+ "/out:$launcher" "/win32icon:$ico" "/resource:$gameHash,game-exe.sha256" $refs (Join-Path $root 'src\Launcher\OfflineLauncher.cs') (Join-Path $root 'src\Launcher\CoopAdmission.cs') (Join-Path $root 'src\Launcher\UdpRelay.cs') (Join-Path $root 'src\Launcher\ProfileStore.cs') (Join-Path $root 'src\Launcher\MatchRecorder.cs') (Join-Path $root 'src\Launcher\OverlayLoader.cs') (Join-Path $root 'src\Launcher\TrainerBridge.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Launcher build failed' }
 
 # --- Dedicated server wrapper (installed beside the original spserver.exe) ---

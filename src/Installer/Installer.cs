@@ -482,6 +482,21 @@ class SetupForm : Form
                 Step();
             }
         }
+        // Switching editions by installing the normal build must disable the
+        // fleet PAK as well as replacing its catalog. Keep a recoverable copy.
+        if (Assembly.GetExecutingAssembly().GetManifestResourceInfo("fleet-manifest.json") == null)
+        {
+            string fleet = Path.Combine(game, @"spacegame\Content\Paks\FSO_Expanse_Experimental_P.pak");
+            if (File.Exists(fleet))
+            {
+                string retired = Path.Combine(Setup.InstallDir, "disabled-fleet");
+                Directory.CreateDirectory(retired);
+                string saved = Path.Combine(retired, DateTime.UtcNow.Ticks + "-FSO_Expanse_Experimental_P.pak");
+                File.Copy(fleet, saved);
+                File.Delete(fleet);
+                Log("Disabled the Expanse test PAK for the normal edition (recovery copy retained).");
+            }
+        }
         // Keep this launcher's state separate; bootlegger.json belongs to the online Bootstrapper.
         string markerBackup = Path.Combine(backup, Setup.OfflineMarkerName);
         if (File.Exists(offlineMarker) && !File.Exists(markerBackup))

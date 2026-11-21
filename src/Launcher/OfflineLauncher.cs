@@ -139,6 +139,8 @@ static class OfflineLauncher
                 return 1;
             }
             if (!File.Exists(exe)) { Fail(("Not found:\n") + exe); return 1; }
+            string patchError = GetPatchError(exe);
+            if (patchError != null) { listener.Stop(); Fail(patchError); return 1; }
             if (!File.Exists(Path.Combine(gameRoot, "fractured-space-offline.json")) &&
                 !File.Exists(Path.Combine(gameRoot, "bootlegger.json")))
             {
@@ -209,6 +211,23 @@ static class OfflineLauncher
             listener.Stop();
             return 0;
         }
+    }
+
+    static string GetPatchError(string executable)
+    {
+        using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("game-exe.sha256"))
+        {
+            if (stream == null) return "The launcher patch verification data is missing. Reinstall Fractured Space Offline.";
+            string expected;
+            using (var reader = new StreamReader(stream)) expected = reader.ReadToEnd().Trim();
+            using (var hash = System.Security.Cryptography.SHA256.Create())
+            using (var file = File.OpenRead(executable))
+            {
+                string actual = BitConverter.ToString(hash.ComputeHash(file)).Replace("-", "").ToLowerInvariant();
+                if (actual == expected) return null;
+            }
+        }
+        return "The game executable no longer matches the offline patch. It may have been restored by an uninstall, Steam verification or another launcher.\n\nClose the game and run the installer for the edition you want to play again. Your player profile does not need to be deleted.";
     }
 
     static string LoadPlayerId(string appDir)

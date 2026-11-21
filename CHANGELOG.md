@@ -2,6 +2,7 @@
 
 ## Unreleased — Expanse test branch
 
+- Detect restored or replaced game executables before starting offline play, with clear reinstall instructions instead of a Fireline login/data error. The normal installer disables a remaining Expanse test PAK when switching editions; player profiles are preserved.
 - Added seven mandatory imported ships, separate native ship identities, default account ownership, source weapon assemblies, engine nozzle mapping and 42 native selector images. Credits and asset-specific licenses accompany the payload; yacht source textures and show audio are excluded.
 - Corrected the source atlas V orientation and muzzle socket rotation. Rocinante PDCs permit limited depression and fire with one eligible gun; forward mounts have restricted arcs. Other articulated source guns use the same corrected socket convention.
 - Replaced stock-hull vernier/shell effect meshes with separate Expanse effects parts and localized native damage particles on imported hull surfaces. Disabled surplus stock thruster components.
