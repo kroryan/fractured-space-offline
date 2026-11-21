@@ -129,7 +129,7 @@ The installer and AppImage include the game-side fixes from [Makichika/Fractured
 
 ### The Expanse fleet test branch
 
-The `expanse` branch includes seven converted ships in its Windows and Linux test installers, with separate native identities, default account ownership, source weapon assemblies and selector portraits. Live gameplay and balance remain under test. The [source review](mods/expanse/README.md) records attribution and per-asset licenses; [authoring instructions](mods/expanse/AUTHORING.md) explain rebuilding from the Git LFS payload and updating the assets. No public release has been published for this fleet.
+The `expanse` branch includes seven converted ships in its Windows and Linux test installers, with separate native identities, default account ownership, source weapon assemblies and selector portraits. Live gameplay and balance remain under test. The [source review](mods/expanse/README.md) records attribution and per-asset licenses; [authoring instructions](mods/expanse/AUTHORING.md) explain rebuilding from the tracked cooked payload and updating the assets. No public release has been published for this fleet.
 
 | Ship | Model / texture credit | SpaceEngine adaptation | Declared graphics license |
 | --- | --- | --- | --- |
