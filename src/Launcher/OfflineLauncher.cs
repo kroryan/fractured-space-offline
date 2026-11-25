@@ -18,8 +18,8 @@ using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Fractured Space Bootstrapper Offline")]
 [assembly: System.Reflection.AssemblyProduct("Fractured Space Bootstrapper Offline")]
-[assembly: System.Reflection.AssemblyVersion("1.4.1.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.4.1.0")]
+[assembly: System.Reflection.AssemblyVersion("1.5.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.5.0.0")]
 
 static class OfflineLauncher
 {
@@ -33,6 +33,7 @@ static class OfflineLauncher
     static ProfileStore profile;
     static TrainerBridge trainer;
     static readonly string menuToken = Guid.NewGuid().ToString("N");
+    static readonly string launchNonce = Guid.NewGuid().ToString("N");
     static readonly object logLock = new object();
     enum PlayMode { Solo, Host, Join }
     static PlayMode selectedMode = PlayMode.Solo;
@@ -49,7 +50,7 @@ static class OfflineLauncher
     {
         string appDir = AppDomain.CurrentDomain.BaseDirectory;
         logPath = Path.Combine(appDir, "requests.log");
-        int port = 8080;
+        int port = 0;
         bool serveOnly = false;
         for (int i = 0; i < args.Length; i++)
         {
@@ -109,6 +110,7 @@ static class OfflineLauncher
             {
                 listener = new TcpListener(IPAddress.Loopback, port);
                 listener.Start();
+                port = ((IPEndPoint)listener.LocalEndpoint).Port;
             }
             catch (Exception ex)
             {
@@ -139,6 +141,8 @@ static class OfflineLauncher
                 return 1;
             }
             if (!File.Exists(exe)) { Fail(("Not found:\n") + exe); return 1; }
+            string patchError = GetPatchError(exe);
+            if (patchError != null) { listener.Stop(); Fail(patchError); return 1; }
             if (!File.Exists(Path.Combine(gameRoot, "fractured-space-offline.json")) &&
                 !File.Exists(Path.Combine(gameRoot, "bootlegger.json")))
             {
@@ -157,6 +161,12 @@ static class OfflineLauncher
                 AppDomain.CurrentDomain.ProcessExit += (sender, e) => trainer.Dispose();
             }
             try { ConfigureDisplay(); } catch (Exception ex) { Log("Display config failed: " + ex.Message); }
+            string launchFlag = Path.Combine(gameRoot, @"spacegame\Content\UIResources\frontend\views\gamemodes\bootstrapper-launch.json");
+            try {
+                File.WriteAllText(launchFlag, new JavaScriptSerializer().Serialize(new {
+                    offline = true, check = "http://127.0.0.1:" + port + "/bootstrapper/launch-check", nonce = launchNonce }));
+            } catch (Exception ex) { Fail("Could not write offline launch state: " + ex.Message); return 1; }
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) => ClearLaunchFlag(launchFlag);
             using (var progress = new LaunchProgress())
             {
                 progress.Show(); progress.Set(65, ("Preparing the local server…"));
@@ -207,8 +217,31 @@ static class OfflineLauncher
             if (relay != null) relay.Dispose();
             if (trainer != null) trainer.Dispose();
             listener.Stop();
+            ClearLaunchFlag(launchFlag);
             return 0;
         }
+    }
+
+    static void ClearLaunchFlag(string path)
+    {
+        try { if (File.ReadAllText(path).Contains(launchNonce)) File.Delete(path); } catch { }
+    }
+
+    static string GetPatchError(string executable)
+    {
+        using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("game-exe.sha256"))
+        {
+            if (stream == null) return "The launcher patch verification data is missing. Reinstall Fractured Space Offline.";
+            string expected;
+            using (var reader = new StreamReader(stream)) expected = reader.ReadToEnd().Trim();
+            using (var hash = System.Security.Cryptography.SHA256.Create())
+            using (var file = File.OpenRead(executable))
+            {
+                string actual = BitConverter.ToString(hash.ComputeHash(file)).Replace("-", "").ToLowerInvariant();
+                if (actual == expected) return null;
+            }
+        }
+        return "The game executable no longer matches the offline patch. It may have been restored by an uninstall, Steam verification or another launcher.\n\nClose the game and run the installer for the edition you want to play again. Your player profile does not need to be deleted.";
     }
 
     static string LoadPlayerId(string appDir)
@@ -514,7 +547,9 @@ static class OfflineLauncher
                     Canned c;
                     int status = 200;
                     byte[] payload;
-                    if (path == "status" || path == "action" || path == "requests")
+                    if (path == "bootstrapper/launch-check")
+                        payload = Encoding.UTF8.GetBytes(new JavaScriptSerializer().Serialize(new { nonce = launchNonce }));
+                    else if (path == "status" || path == "action" || path == "requests")
                     {
                         var args = System.Web.HttpUtility.ParseQueryString(query);
                         if (args["t"] != menuToken) { status = 403; payload = Encoding.UTF8.GetBytes("Forbidden"); }
@@ -552,6 +587,7 @@ static class OfflineLauncher
                     string reason = status == 200 ? "OK" : status == 201 ? "Created" : status == 404 ? "Not Found" : "Status";
                     string header = "HTTP/1.1 " + status + " " + reason + "\r\n" +
                                     "Content-Type: application/json\r\n" +
+                                    (path == "bootstrapper/launch-check" ? "Access-Control-Allow-Origin: *\r\nCache-Control: no-store\r\n" : "") +
                                     "Content-Length: " + payload.Length + "\r\n" +
                                     "Connection: " + (close ? "close" : "keep-alive") + "\r\n\r\n";
                     byte[] hb = Encoding.ASCII.GetBytes(header);

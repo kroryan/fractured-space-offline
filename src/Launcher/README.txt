@@ -5,7 +5,7 @@ https://github.com/kroryan/fractured-space-offline
 How to play
 -----------
 Open "Fractured Space Bootstrapper Offline" (Start menu, desktop or search).
-- Starts a built-in local server (Fireline emulator) on http://127.0.0.1:8080
+- Starts a built-in local server (Fireline emulator) on a free localhost port
 - Launches the game against it (no Discord, no internet), in windowed
   fullscreen at your screen resolution
 - When you close the game, the launcher exits too

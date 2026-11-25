@@ -61,6 +61,7 @@ def main():
         open(os.path.join(APPDIR, name), "wb").write(png)
 
     shutil.copyfile(os.path.join(LINUX, "profile_store.py"), os.path.join(share, "profile_store.py"))
+    copy_lf(os.path.join(LINUX, 'proton_support.py'), os.path.join(share, 'proton_support.py'))
     copy_lf(os.path.join(LINUX, "fso_linux.py"), os.path.join(share, "fso_linux.py"))
     shutil.copyfile(os.path.join(ROOT, "server", "responses.json"), os.path.join(share, "responses.json"))
     shutil.copyfile(os.path.join(ROOT, "LICENSE"), os.path.join(share, "LICENSE"))

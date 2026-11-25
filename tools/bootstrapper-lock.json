@@ -1,0 +1,102 @@
+{
+  "repository": "https://github.com/Tigerhacker/fractured-bootstrapper",
+  "release": "v2.0.1",
+  "revision": "db67933003c5dd453edd9d46ed20758c595affa4",
+  "patch_level": 34,
+  "archive_sha256": "790c579a21adb0d794c7d18267a5fbdd801cc9b8ad61644073364542a227ece1",
+  "files": [
+    {
+      "file": "BaseEngine.ini",
+      "destination": "Engine/Config/BaseEngine.ini",
+      "upstream_sha256": "047690ae6ce7ba5c0c7a5c8ab5b786050f02f985f3f8958f4d66f85ad1223dd4",
+      "sha256": "047690ae6ce7ba5c0c7a5c8ab5b786050f02f985f3f8958f4d66f85ad1223dd4",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "Fractured Space.exe",
+      "destination": "spacegame/Binaries/Win64/Fractured Space.exe",
+      "upstream_sha256": "432144749c867c9bb423e6970cd7a09de0672790bd2c727b4bef3ab596cad406",
+      "sha256": "432144749c867c9bb423e6970cd7a09de0672790bd2c727b4bef3ab596cad406",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "ClientConfig.json",
+      "destination": "spacegame/ClientConfig.json",
+      "upstream_sha256": "0087a651ad5fbb235fa438b8d3a3f47cf2f6b11b3f88c528f82c48ccdc8d4b91",
+      "sha256": "0087a651ad5fbb235fa438b8d3a3f47cf2f6b11b3f88c528f82c48ccdc8d4b91",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "BP.pak",
+      "destination": "spacegame/Content/Paks/BP.pak",
+      "upstream_sha256": "51fd7ea2aa695fb8761b245845c8bc8241c0fd1f6439f5136e86e0b630ee5245",
+      "sha256": "51fd7ea2aa695fb8761b245845c8bc8241c0fd1f6439f5136e86e0b630ee5245",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "nsloctext.js",
+      "destination": "spacegame/Content/UIResources/frontend/data/translations/nsloctext.js",
+      "upstream_sha256": "d677ad0f5d8efa53b7f24ef6574fa348d469de33e96033ad95c0f39316a71c0b",
+      "sha256": "d677ad0f5d8efa53b7f24ef6574fa348d469de33e96033ad95c0f39316a71c0b",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "gamemodes-config.js",
+      "destination": "spacegame/Content/UIResources/frontend/views/gamemodes/gamemodes-config.js",
+      "upstream_sha256": "3c4faf4289b6cff79c4a7af42fd0d027b26ee8cde8b273da6ffdee9e095c5067",
+      "sha256": "3c4faf4289b6cff79c4a7af42fd0d027b26ee8cde8b273da6ffdee9e095c5067",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "gamemodes-styles.css",
+      "destination": "spacegame/Content/UIResources/frontend/views/gamemodes/gamemodes-styles.css",
+      "upstream_sha256": "51b2eddc2dc7193bb954bc19f8706994ba7070d13fe2f7eedd079403a08e3a4d",
+      "sha256": "51b2eddc2dc7193bb954bc19f8706994ba7070d13fe2f7eedd079403a08e3a4d",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "hangar-script.js",
+      "destination": "spacegame/Content/UIResources/frontend/views/hangar/hangar-script.js",
+      "upstream_sha256": "b3290327dfa2c94af87a58aa13b3021706f5685f249edbcd1a34bbb40ff8eede",
+      "sha256": "b3290327dfa2c94af87a58aa13b3021706f5685f249edbcd1a34bbb40ff8eede",
+      "adaptation": "Published payload, unchanged."
+    },
+    {
+      "file": "results-script.js",
+      "destination": "spacegame/Content/UIResources/frontend/views/results/results-script.js",
+      "upstream_sha256": "ace5e5197f6779efd46531c0f08c6b2b7d963f3ee23533bcbea3c6ab7c710766",
+      "sha256": "c3cf69101faccd85c84c54102a377fb16f8cd05ed18ea7ca2beef3d3303d4852",
+      "adaptation": "Preserve live personal match-result recording."
+    },
+    {
+      "file": "startgame-script.js",
+      "destination": "spacegame/Content/UIResources/frontend/views/startgame/startgame-script.js",
+      "upstream_sha256": "bac58eaa7f06a1b2401e5300e0141739055736bfb66d285e28b0096b83bcc1bb",
+      "sha256": "1c62a37d09fc3930aa97e7b798c337e95ce1d24be4829fa15e62eb23de7711af",
+      "adaptation": "Preserve offline server ordering."
+    },
+    {
+      "file": "startgame-style.css",
+      "destination": "spacegame/Content/UIResources/frontend/views/startgame/startgame-style.css",
+      "upstream_sha256": "49e856f3667e0c22db18a8c864c62ae66f1e1e2940d0efb783955ea6e0460301",
+      "sha256": "49e856f3667e0c22db18a8c864c62ae66f1e1e2940d0efb783955ea6e0460301",
+      "adaptation": "Published payload, unchanged."
+    }
+  ],
+  "retired_overlays": [
+    "Makichika_MapJamming_P.pak",
+    "Makichika_ProtectorShield_P.pak",
+    "Makichika_VenturerSkins_P.pak"
+  ],
+  "note": "Release v2.0.1 includes the five fixes still marked testing in the tagged source. The published ZIP is authoritative for this integration.",
+  "entitlements": {
+    "source": "Official v2.0.1 Debian package resources/data/fireline-responses.json",
+    "source_sha256": "1e7a51eaa0908fca96573951d7a39dd1803b02a21d60a667c5a1fabbfa693777",
+    "routes": [
+      "/o/_identities/197a97fc-4179-43f4-b009-9432ac0c8e53/licenses",
+      "/o/_identities/197a97fc-4179-43f4-b009-9432ac0c8e53/licenses",
+      "/licenses/bundle/check"
+    ],
+    "policy": "Only license/bundle routes imported; profile, statistics, crew XP and identity rewriting preserved."
+  }
+}

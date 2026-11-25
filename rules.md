@@ -2,6 +2,8 @@
 
 ## Keep upstream projects in sync
 
+`main` is the normal offline product. The user has parked `expanse` as a secondary development branch. Do not merge its fleet, catalog or mandatory ship assets into `main`. Main installers must disable any leftover Expanse test PAK when switching back; retain a recovery copy and preserve player profiles. Publishing normal stable releases does not authorize an Expanse release.
+
 This project incorporates work from these upstream repositories:
 
 - `https://github.com/Tigerhacker/refireline` — Fireline emulator and recorded-response foundation.
@@ -33,6 +35,12 @@ The reviewed revision and exact imported bytes are recorded in `tools/makichika-
 5. Review the resulting diff, check local Fireline support, build both binaries and run relevant smoke checks. Bump the patch level/version and update the changelog for a release. Document server-dependent functionality accurately.
 
 The import covers the `Space` payload. Bootstrapper application binaries belong to a different launcher; implement any needed service in our own launcher before claiming equivalent online integration.
+
+## Updating Tigerhacker Bootstrapper
+
+Use `tools/bootstrapper-lock.json` and `docs/bootstrapper-updates.md` as the review baseline. Compare both new source commits and published release assets: v2.0.1's published package includes changes absent from its tagged source manifest. Validate the release ZIP against its SHA256SUMS before importing with `tools/sync_bootstrapper.py`. Preserve offline statistics hooks and server ordering. Import only the reviewed license/bundle routes with `tools/sync_bootstrapper_entitlements.py`; never replace local progression/statistics or player identity behavior with captured history. Review changes to that route inventory before applying the script.
+
+Retire overlay PAKs when their assets are incorporated upstream, including removal from both installer manifests and recovery-safe retirement in existing installs. Never copy the online Bootstrapper application directory or import Discord authentication, avatar services or Electron updater requirements into the offline launcher. Keep the published-client hashes, platform manifests, notices and changelog in sync; build Windows/Linux and run payload, profile, UI and relevant native loading checks before a stable release.
 
 ## Dreadnought launcher and Fractured Space trainer reference
 

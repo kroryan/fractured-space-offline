@@ -4,15 +4,17 @@
 - Finds the Fractured Space install in your Steam libraries
 - Applies the client patch (from ../patch, verified by SHA-256; originals backed up)
 - Finds a Proton installation to run the game with
-- Runs a local Fireline emulator on http://127.0.0.1:8080 (recorded responses)
+- Runs a local Fireline emulator on a free localhost port (recorded responses)
 - Starts the game in windowed fullscreen and stops the server when it exits
 
 Only needs Python 3.7+ (standard library). Environment overrides:
   FSO_GAME_DIR   path to the game folder (.../steamapps/common/Space)
   FSO_PROTON     path to a Proton folder or its 'proton' script
-  FSO_PORT       local server port (default 8080)
+  FSO_PORT       local server port (default: choose a free port)
+  FSO_USE_RUNTIME  set to 0 to bypass the Steam Linux Runtime container
 """
 import glob
+import atexit
 import uuid
 import base64
 import hashlib
@@ -32,6 +34,7 @@ import zlib
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from profile_store import ProfileStore, MatchRecorder
+from proton_support import case_path, launch_command
 
 APP = "Fractured Space Offline"
 APPID = "310380"
@@ -42,17 +45,20 @@ RESPONSES = os.path.join(DATA_DIR, "responses.json")
 STATE_DIR = os.path.join(os.environ.get("XDG_DATA_HOME", os.path.expanduser("~/.local/share")),
                          "fractured-space-offline")
 LOG = os.path.join(STATE_DIR, "requests.log")
-PORT = int(os.environ.get("FSO_PORT", "8080"))
+PORT = int(os.environ.get("FSO_PORT", "0"))
+LAUNCH_NONCE = uuid.uuid4().hex
 PREFIX = "https://api.fireteam.net/"
 RECORDED_IDENTITY = "197a97fc-4179-43f4-b009-9432ac0c8e53"
 ACTIVE_IDENTITY = os.environ.get("FSO_PLAYER_ID", RECORDED_IDENTITY)
 GAME_EXE_REL = "spacegame/Binaries/Win64/Fractured Space.exe"
 BACKUP_DIR = "fractured-offline-backup"
 SERVER_EXE_REL = "spacegame/Binaries/Win64/spserver.exe"
-PATCH_LEVEL = 33
+PATCH_LEVEL = 35
 OFFLINE_MARKER = "fractured-space-offline.json"
 
 PATCH = [
+    ("gamemodes-styles.css", "spacegame/Content/UIResources/frontend/views/gamemodes/gamemodes-styles.css", "51b2eddc2dc7193bb954bc19f8706994ba7070d13fe2f7eedd079403a08e3a4d"),
+    ("BaseEngine.ini", "Engine/Config/BaseEngine.ini", "047690ae6ce7ba5c0c7a5c8ab5b786050f02f985f3f8958f4d66f85ad1223dd4"),
     ("player.js", "spacegame/Content/UIResources/frontend/script/player.js", "8e722a3a5205808fc84cad489c0e9f0c70ccac96bdc43ba58006400429c8ffaa"),
     ("common.js", "spacegame/Content/UIResources/frontend/script/common.js", "42c777e308cbbbb147ad95c9ba84e116f696f8c9c98e800ee1f769a551b37d2c"),
     ("scoreboard.js", "spacegame/Content/UIResources/frontend/map/scoreboard.js", "91a4d1342dbee1786421eba7ab138126e599ef5819881ba512f7d77f3d39368b"),
@@ -60,18 +66,15 @@ PATCH = [
     ("drafting-style.css", "spacegame/Content/UIResources/frontend/drafting/drafting-style.css", "141794cd40ffbf06c30d3f05cdaea2be05fc6c60384143922b7dbf5dd6b45079"),
     ("drafting-script.js", "spacegame/Content/UIResources/frontend/drafting/drafting-script.js", "f0123b19191d9208581fd8a77dcd9c440af1d8f3cff1b6811dce16aafa5cfdb1"),
     ("Makichika_XmasEvent_P.pak", "spacegame/Content/Paks/Makichika_XmasEvent_P.pak", "c20482888a928d878548da0ef51073abcdb7ef6bf9e3c51cfdb793bf5a419a48"),
-    ("Makichika_VenturerSkins_P.pak", "spacegame/Content/Paks/Makichika_VenturerSkins_P.pak", "b5dd72b42563c75da64883903a57f151919c119a86ad90bdc6ca26072dedb997"),
-    ("Makichika_ProtectorShield_P.pak", "spacegame/Content/Paks/Makichika_ProtectorShield_P.pak", "527ee940e636dab6fbeb53099ba6008cedb36fde3b0a46f89826cdda2b3eb8e1"),
-    ("Makichika_MapJamming_P.pak", "spacegame/Content/Paks/Makichika_MapJamming_P.pak", "ae20f8f7ab1a7c59ea433b8b5d93a7ae3f9089c8169710b3705371d7d53b6aa1"),
     ("Makichika_DiscordAvatars_P.pak", "spacegame/Content/Paks/Makichika_DiscordAvatars_P.pak", "9ef2d2f35d9ef8df8a0e26258992a6e018db5f47d50e2cef8bc012017812a23c"),
     ("Makichika_CharonEvent_P.pak", "spacegame/Content/Paks/Makichika_CharonEvent_P.pak", "8718acfd43663cd9613a5c2993e2596b23f081b57490db1beefe9826d491fde2"),
-    ("Fractured Space.exe", "spacegame/Binaries/Win64/Fractured Space.exe", "faefbe37c6403fd1097ea5351711f364b1fba421c20cac002587b06c54d12f1e"),
+    ("Fractured Space.exe", "spacegame/Binaries/Win64/Fractured Space.exe", "432144749c867c9bb423e6970cd7a09de0672790bd2c727b4bef3ab596cad406"),
     ("ClientConfig.json", "spacegame/ClientConfig.json", "0087a651ad5fbb235fa438b8d3a3f47cf2f6b11b3f88c528f82c48ccdc8d4b91"),
     ("startgame-script.js", "spacegame/Content/UIResources/frontend/views/startgame/startgame-script.js", "1c62a37d09fc3930aa97e7b798c337e95ce1d24be4829fa15e62eb23de7711af"),
     ("startgame-style.css", "spacegame/Content/UIResources/frontend/views/startgame/startgame-style.css", "49e856f3667e0c22db18a8c864c62ae66f1e1e2940d0efb783955ea6e0460301"),
-    ("gamemodes-config.js", "spacegame/Content/UIResources/frontend/views/gamemodes/gamemodes-config.js", "7d864d2985f05b81cd37199c4150652c4becf9c5cc253f160c2f38d7db7509bd"),
-    ("nsloctext.js", "spacegame/Content/UIResources/frontend/data/translations/nsloctext.js", "c1d43e513deb470d763b5d023db9275d3cde6bb689c45f1da110eb14ddd091af"),
-    ("BP.pak", "spacegame/Content/Paks/BP.pak", "cac460fbce8a33e8f155b9a4abd14c15981156978b3a2d420dc2b468399d1681"),
+    ("gamemodes-config.js", "spacegame/Content/UIResources/frontend/views/gamemodes/gamemodes-config.js", "3c4faf4289b6cff79c4a7af42fd0d027b26ee8cde8b273da6ffdee9e095c5067"),
+    ("nsloctext.js", "spacegame/Content/UIResources/frontend/data/translations/nsloctext.js", "d677ad0f5d8efa53b7f24ef6574fa348d469de33e96033ad95c0f39316a71c0b"),
+    ("BP.pak", "spacegame/Content/Paks/BP.pak", "51fd7ea2aa695fb8761b245845c8bc8241c0fd1f6439f5136e86e0b630ee5245"),
     ("results-script.js", "spacegame/Content/UIResources/frontend/views/results/results-script.js", "c3cf69101faccd85c84c54102a377fb16f8cd05ed18ea7ca2beef3d3303d4852"),
     ("hangar-script.js", "spacegame/Content/UIResources/frontend/views/hangar/hangar-script.js", "b3290327dfa2c94af87a58aa13b3021706f5685f249edbcd1a34bbb40ff8eede"),
 ]
@@ -436,7 +439,7 @@ def library_folders(root):
 
 
 def is_game_dir(p):
-    return bool(p) and os.path.isdir(os.path.join(p, "spacegame", "Binaries", "Win64"))
+    return bool(p) and all(case_path(os.path.join(p, name)) for name in ('Engine', 'launcher', 'spacegame/Binaries/Win64'))
 
 
 def find_game(roots):
@@ -447,7 +450,7 @@ def find_game(roots):
         fail("FSO_GAME_DIR does not look like the Fractured Space folder:\n" + env)
     for root in roots:
         for lib in library_folders(root):
-            p = os.path.join(lib, "common", "Space")
+            p = case_path(os.path.join(lib, "common", "Space"))
             if is_game_dir(p):
                 return p, lib
     return None, None
@@ -499,14 +502,17 @@ def patch_game(game):
     offline_marker = os.path.join(game, OFFLINE_MARKER)
     bootlegger_marker = os.path.join(game, "bootlegger.json")
     other_bootstrapper_owns_patch = os.path.isfile(bootlegger_marker) and not os.path.isfile(offline_marker)
+    for src, rel, sha in PATCH:
+        if not case_path(os.path.dirname(os.path.join(game, rel))):
+            fail('A required game folder is missing: ' + os.path.dirname(rel) + '. Verify the Steam installation before retrying.')
     if other_bootstrapper_owns_patch:
         for src, rel, sha in PATCH:
-            dest = os.path.join(game, rel)
+            dest = case_path(os.path.join(game, rel)) or os.path.join(game, rel)
             if not os.path.isfile(dest) or sha256_file(dest) != sha:
                 fail("A different online Bootstrapper patch is active in this game folder. "
                      "It was left untouched. Update or uninstall that patch, then try again.")
     for src, rel, sha in PATCH:
-        dest = os.path.join(game, rel)
+        dest = case_path(os.path.join(game, rel)) or os.path.join(case_path(os.path.dirname(os.path.join(game, rel))) or os.path.dirname(os.path.join(game, rel)), os.path.basename(rel))
         if os.path.isfile(dest) and sha256_file(dest) == sha:
             continue
         srcp = os.path.join(PATCH_DIR, src)
@@ -514,12 +520,22 @@ def patch_game(game):
             fail("Bundled patch file is corrupted: " + src)
         if os.path.isfile(dest):
             b = os.path.join(backup, rel)
-            if not os.path.exists(b):
+            if not os.path.exists(b) and not os.path.exists(b + '.fso-absent'):
                 os.makedirs(os.path.dirname(b), exist_ok=True)
                 shutil.copy2(dest, b)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.copyfile(srcp, dest)
         log("  patched " + src)
+    for name in ('Makichika_MapJamming_P.pak', 'Makichika_ProtectorShield_P.pak',
+                 'Makichika_VenturerSkins_P.pak', 'FSO_Expanse_Experimental_P.pak'):
+        old = case_path(os.path.join(game, 'spacegame/Content/Paks', name))
+        if old and os.path.isfile(old):
+            recovery = os.path.join(STATE_DIR, 'disabled-paks')
+            os.makedirs(recovery, exist_ok=True)
+            saved = os.path.join(recovery, uuid.uuid4().hex + '-' + name)
+            shutil.copy2(old, saved)
+            os.unlink(old)
+            log('Retired superseded or secondary fleet PAK (recovery copy retained): ' + name)
     with open(offline_marker, "w") as fh:
         fh.write('{"version":%d,"status":"ok"}' % PATCH_LEVEL)
     wrapper_src = os.path.join(DATA_DIR, "spserver-wrapper.exe")
@@ -616,7 +632,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
         body = self.rfile.read(length) if length else b""
         path, _, query = self.path.lstrip("/").partition("?")
         personal = PROFILE.handle(self.command, path, body) if PROFILE else None
-        if personal is not None:
+        if path == 'bootstrapper/launch-check':
+            status, payload = 200, json.dumps({'nonce': LAUNCH_NONCE}).encode('utf-8')
+        elif personal is not None:
             status, payload = 200, rewrite_identity_payload(personal)
         elif not path:
             status, payload = 200, b"Fireline Emulator for Fractured Space (offline launcher)"
@@ -635,6 +653,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(payload)))
+        if path == 'bootstrapper/launch-check':
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Cache-Control', 'no-store')
         self.end_headers()
         if self.command != "HEAD":
             self.wfile.write(payload)
@@ -648,9 +669,11 @@ class Server(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 
 def start_server():
+    global PORT
     load_responses()
     try:
         srv = Server(("127.0.0.1", PORT), Handler)
+        PORT = srv.server_address[1]
     except OSError as e:
         fail("Port %d is in use (is the offline launcher already running?)\n%s" % (PORT, e))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
@@ -767,13 +790,32 @@ def main():
         env["FSO_COOP_MODE"] = "guest"
         env["FSO_COOP_HOST"] = os.environ["FSO_COOP_HOST"]
         env["FSO_COOP_TEAM"] = str(assigned_team)
-    exe = os.path.join(game, GAME_EXE_REL)
+    exe = case_path(os.path.join(game, GAME_EXE_REL)) or os.path.join(game, GAME_EXE_REL)
     # 'proton' is a Python script; run it directly if executable, else via python3
-    runner = [proton] if os.access(proton, os.X_OK) else [sys.executable, proton]
-    args = runner + ["run", exe,
-                     "-flhost=http://127.0.0.1:%d" % PORT, "-discord=offline", "-culture=en-GB"]
+    libraries = list(dict.fromkeys(l for root in roots for l in library_folders(root)))
+    try:
+        args, env = launch_command(proton, libraries, game,
+            ["-flhost=http://127.0.0.1:%d" % PORT, "-discord=offline", "-culture=en-GB"], env,
+            use_runtime=os.environ.get('FSO_USE_RUNTIME', '1') != '0')
+    except RuntimeError as error:
+        srv.shutdown()
+        fail(str(error))
+    launch_flag = os.path.join(case_path(os.path.join(game, 'spacegame/Content/UIResources/frontend/views/gamemodes')), 'bootstrapper-launch.json')
+    with open(launch_flag, 'w', encoding='utf-8') as stream:
+        json.dump({'offline': True, 'check': 'http://127.0.0.1:%d/bootstrapper/launch-check' % PORT,
+                   'nonce': LAUNCH_NONCE}, stream)
+    def clear_launch_flag():
+        try:
+            with open(launch_flag, encoding='utf-8') as stream:
+                if json.load(stream).get('nonce') != LAUNCH_NONCE:
+                    return
+            os.unlink(launch_flag)
+        except (OSError, ValueError):
+            pass
+    atexit.register(clear_launch_flag)
     log("Starting game...")
     progress = None
+    launch_log = None
     if shutil.which("zenity"):
         progress = subprocess.Popen(["zenity", "--progress", "--title=" + APP, "--text=Preparing Proton…",
                                      "--percentage=15", "--auto-close", "--no-cancel"],
@@ -783,8 +825,11 @@ def main():
         if progress and progress.stdin:
             progress.stdin.write("45\nStarting Proton…\n75\nWaiting for game window…\n"); progress.stdin.flush()
         recorder = MatchRecorder(os.path.join(compat, "pfx", "drive_c", "users", "steamuser", "AppData", "Local", "spacegame", "Saved", "FracturedSpace", "fso-results.json"), PROFILE, log)
+        logs_dir = os.path.join(STATE_DIR, 'logs')
+        os.makedirs(logs_dir, exist_ok=True)
+        launch_log = open(os.path.join(logs_dir, 'last-launch.log'), 'ab')
         game_proc = subprocess.Popen(args, cwd=os.path.dirname(exe), env=env,
-                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                     stdout=launch_log, stderr=subprocess.STDOUT)
         # Keep the splash only through startup, not for the whole play session.
         deadline = time.time() + 180
         while time.time() < deadline and game_proc.poll() is None and not game_running():
@@ -803,6 +848,8 @@ def main():
     except OSError as e:
         fail("Could not start Proton:\n%s" % e)
     finally:
+        if launch_log:
+            launch_log.close()
         if progress:
             try:
                 progress.stdin.close()
@@ -815,6 +862,7 @@ def main():
         time.sleep(3)
     recorder.poll()
     srv.shutdown()
+    clear_launch_flag()
     if relay: relay.close()
     if admission: admission.close()
     log("Game closed.")

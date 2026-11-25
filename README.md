@@ -10,7 +10,7 @@ Everything needed is in this repository. The installer does not download anythin
 2. Download **`FracturedSpaceOfflineSetup.exe`** from [Releases](https://github.com/kroryan/fractured-space-offline/releases/latest).
 3. Run it. Check that the game folder is correct (usually `...\steamapps\common\Space`; click *Browse* if it was not detected) and click **Install**.
 4. Open **Fractured Space Bootstrapper Offline** from the Start menu or the desktop.
-5. In game: **Play → Training → Solo vs AI**.
+5. In game: **Play → Training → Solo vs AI**, **Frontline**, or a **Legacy Episode**.
 
 The installer:
 - Applies the client patch to the game. The files are embedded in the installer (the `patch/` folder of this repository) and checked by SHA-256. The original files are backed up to `<game>\fractured-offline-backup`.
@@ -40,13 +40,15 @@ Requirements: Python 3 (installed on almost every distro and on SteamOS). Steam 
 
 Overrides: `FSO_GAME_DIR=/path/to/steamapps/common/Space`, `FSO_PROTON=/path/to/Proton`, `FSO_PORT=8080`. The log is written to `~/.local/share/fractured-space-offline/requests.log`.
 
+The backend chooses a free localhost port unless overridden. Modern Proton builds run through their declared Steam Linux Runtime, which must be installed in Steam Tools. `FSO_USE_RUNTIME=0` bypasses the container when troubleshooting. Flatpak Steam's client library is detected, AppImage library overrides are cleared before Proton starts, and launch output is retained in `~/.local/share/fractured-space-offline/logs/last-launch.log`.
+
 ## How it works
 
 ```
 FracturedSpaceBootstrapperOffline.exe
- ├─ local HTTP server on 127.0.0.1:8080   ← answers like api.fireteam.net (recorded responses)
+ ├─ local HTTP server on a free 127.0.0.1 port   ← recorded api.fireteam.net responses
  ├─ sets windowed fullscreen at the screen's native resolution
- └─ starts "Fractured Space.exe" -flhost=http://127.0.0.1:8080 -discord=offline
+ └─ starts "Fractured Space.exe" -flhost=http://127.0.0.1:<port> -discord=offline
 ```
 
 - The game needs the **Fireline** service to log in and to load the account, ships and progression.
@@ -123,11 +125,13 @@ set SteamAppId=310380
 
 ## Community client updates
 
-The installer and AppImage include the game-side fixes from [Makichika/Fractured-space-fixe-](https://github.com/Makichika/Fractured-space-fixe-): updated client executable, drafting UI, visual fixes and event content. Event modes and effect clocks need compatible server logic; Discord avatars need the online Bootstrapper avatar service and use fallback avatars offline. See `tools/makichika-lock.json` for the imported revision and `rules.md` for the update workflow.
+The installer and AppImage integrate the published [Tigerhacker Bootstrapper v2.0.1](https://github.com/Tigerhacker/fractured-bootstrapper/releases/tag/v2.0.1) client fixes and relevant offline behavior, alongside retained [Makichika client fixes](https://github.com/Makichika/Fractured-space-fixe-). The three visual overlay PAKs now incorporated in BP.pak are retired during upgrade. Event content still requires compatible local server logic; Discord avatars retain their offline fallback. See [the update review](docs/bootstrapper-updates.md), `tools/bootstrapper-lock.json` and `tools/makichika-lock.json` for provenance and limits.
 
 ## Credits and license
 
 ### The Expanse ship sources under review
+
+**Secondary project, currently parked:** Expanse integration remains on the separate `expanse` branch. The normal `main` binaries do not include its ships or catalog. Installing the normal version directly disables a remaining test-fleet PAK, preserving a recovery copy and your player profiles.
 
 The downloaded SpaceEngine sources have been inventoried, including ship definitions inside their ZIP-based PAKs. Each of the seven reviewed packages contains one ship; these ships are not yet integrated or included in the installer. The [full source review](mods/expanse/README.md) records attribution, license links, technical blockers and the required default-account ownership behavior once playable assets exist. No third-party graphics or sounds are redistributed by this review.
 

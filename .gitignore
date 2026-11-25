@@ -5,3 +5,6 @@ __pycache__/
 
 
 src/Overlay/build/
+tools/FleetAssetTool/bin/
+mods/expanse/payload/*.pak
+mods/expanse/payload/*.assembling

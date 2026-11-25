@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 — Bootstrapper 2.0.1 offline integration
+
+- Integrated the published Tigerhacker/fractured-bootstrapper v2.0.1 client patch (upstream patch level 34), including the firing-range null lobby-interface guard, destroyed-missile warning cleanup, drafting player-cache refresh, minimap jamming display, Protector shield-field visuals and Venturer skin bindings. Kept the offline launcher, local identities, F1 trainer and personal match statistics.
+- Added Solo vs AI Frontline and the revised Solo/Legacy layouts. Integrated the published license and bundle responses for missing entitlements without replacing account progression, crew XP or statistics. Imported the upstream BaseEngine network configuration.
+- Added a per-launch nonce check so the Online tile is disabled only while this offline session is live. A stale flag after a crash cannot disable a later online launch. The local backend now chooses a free port by default.
+- Adapted Steam Linux Runtime container selection, Flatpak Steam client-library HOME handling, case-insensitive path resolution, AppImage environment cleanup and Proton wait-for-exit behavior. Linux launch output is retained in logs/last-launch.log. Linux runtime behavior is covered by fixture tests; it has not been executed on a Linux host for this release.
+- Retired the three superseded Makichika overlay PAKs, retaining recovery copies when upgrading. The normal installer also disables a remaining Expanse test PAK. Added executable verification with repair instructions for restored/unpatched game files and preserved original backup markers on repeated updates.
+- Main remains the normal fleet edition; Expanse is a separate, paused secondary branch and is not included in these binaries. The source audit below is historical, not a release announcement for imported ships.
+
 ## Unreleased — The Expanse source audit
 
 - Expanded the current inventory to seven ships with the Chariot-Type Dropship, and added a proposed integration/balance plan. The Tachi asset is planned to appear as Rocinante with its source model unchanged.
